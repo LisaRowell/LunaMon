@@ -43,7 +43,7 @@ bool NMEASource::processBuffer() {
       // We had a carriage return without the associated line feed. Toss out any
       // characters that we had accumulated in the line and move on, processing
       // the buffer.
-      Serial.print("NMEA line with CR, but no LF. Ignoring.");
+      Serial.println("NMEA line with CR, but no LF. Ignoring.");
       inputLine.reset();
       carriageReturnFound = false;
     }
