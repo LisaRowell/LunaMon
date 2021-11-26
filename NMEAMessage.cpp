@@ -38,6 +38,7 @@ NMEAMessage *parseNMEAMessage(NMEALine &nmeaLine) {
       break;
 
     case NMEA_MSG_TYPE_UNKNOWN:
+    default:
       printNMEATalker(talker);
       Serial.print(" unknown message type ");
       Serial.println(msgTypeStr);
