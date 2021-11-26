@@ -6,7 +6,7 @@
 
 uint32_t Coordinate::tenthsSecondScaler() {
   uint32_t scaler = 1;
-  unsigned i;
+  int i;
   for (i = 0; i < (minutePrecision - 1); i++) {
     scaler = scaler * 10;
   }
