@@ -5,6 +5,8 @@
 #include "MQTTConnection.h"
 #include "MQTTClient.h"
 #include "MQTTMessage.h"
+#include "MQTTConnectMessage.h"
+#include "MQTTConnectAckMessage.h"
 #include "Error.h"
 
 MQTTBroker::MQTTBroker() : wifiIsConnected(false), wifiServer(portNumber) {
@@ -147,7 +149,7 @@ void MQTTBroker::messageReceived(MQTTConnection *connection, MQTTMessage &messag
   MQTTMessageType msgType = message.messageType();
   switch (msgType) {
     case MQTT_MSG_CONNECT:
-      connectMessageReceived(message);
+      connectMessageReceived(connection, message);
       break;
 
     case MQTT_MSG_RESERVED1:
@@ -163,13 +165,34 @@ void MQTTBroker::messageReceived(MQTTConnection *connection, MQTTMessage &messag
   connection->resetMessageBuffer();
 }
 
-void MQTTBroker::connectMessageReceived(MQTTMessage &message) {
+void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage &message) {
+  MQTTConnectMessage connectMessage(message);
+  if (!connectMessage.parse()) {
+    Serial.println("Bad connect message. Terminating connection.");
+    connection->stop();
+    return;
+  }
+
   uint8_t errorCode;
-  char clientID[MQTT_MAX_CLIENT_ID_LENGTH + 1];
-  if (message.parseConnectMessage(errorCode, clientID)) {
-    Serial.println("OK so far connect message");
-  } else {
-    Serial.println("Bad connect message");
+  errorCode = connectMessage.sanityCheck();
+  if (errorCode == 0) {
+    // Since this is a light weight broker, and a work in progress, we reject a few currently
+    // unsupported types of connections.
+    if (!connectMessage.cleanSession()) {
+      Serial.println("MQTT CONNECT with Clean Session false: Currently unsupported");
+      errorCode = MQTT_CONNACK_REFUSED_SERVER_UNAVAILABLE;
+    } else if (connectMessage.hasWill()) {
+      Serial.println("MQTT CONNECT with Will: Currently unsupported");
+      errorCode = MQTT_CONNACK_REFUSED_SERVER_UNAVAILABLE;
+    } else if (connectMessage.hasUserName()) {
+      Serial.println("MQTT CONNECT message with Password set");
+      errorCode = MQTT_CONNACK_REFUSED_USERNAME_OR_PASSWORD;
+    } else if (connectMessage.hasPassword()) {
+      Serial.println("MQTT CONNECT message with Password set");
+      errorCode = MQTT_CONNACK_REFUSED_USERNAME_OR_PASSWORD;
+    } else {
+      Serial.println("OK so far connect message");
+    }
   }
 }
 

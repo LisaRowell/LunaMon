@@ -30,44 +30,10 @@ enum MQTTMessageType : char {
   MQTT_MSG_RESERVED2 = 15
 };
 
-struct MQTTConnectVariableHeader {
-  uint8_t protocolNameLengthMSB;
-  uint8_t protocolNameLengthLSB;
-  uint8_t protocolName[4];
-  uint8_t level;
-  uint8_t flags;
-  uint8_t keepAliveMSB;
-  uint8_t keepAliveLSB;
-};
-
-#define MQTT_PROTOCOL_LEVEL 4
-
-#define MQTT_CONNECT_FLAGS_RESERVED_MASK      0x01
-#define MQTT_CONNECT_FLAGS_CLEAN_SESSION_MASK 0x02
-#define MQTT_CONNECT_FLAGS_WILL_MASK          0x04
-#define MQTT_CONNECT_FLAGS_WILL_QOS_MASK      0x18
-#define MQTT_CONNECT_FLAGS_WILL_QOS_SHIFT 3
-#define MQTT_CONNECT_FLAGS_WILL_RETAIN_MASK   0x20
-#define MQTT_CONNECT_FLAGS_PASSWORD_MASK      0x40
-#define MQTT_CONNECT_FLAGS_USER_NAME_MASK     0x80
-
-#define MQTT_MAX_CLIENT_ID_LENGTH 23
-
-#define MQTT_CONNACK_ACCEPTED                     0x00
-#define MQTT_CONNACK_REFUSED_PROTOCOL_VERSION     0x01
-#define MQTT_CONNACK_REFUSED_IDENTIFIER_REJECTED  0x02
-#define MQTT_CONNACK_REFUSED_SERVER_UNAVAILABLE   0x03
-#define MQTT_CONNACK_REFUSED_USERNAME_OR_PASSWORD 0x04
-#define MQTT_CONNACK_REFUSED_NOT_AUTHORIZED       0x05
-
 class MQTTMessage {
-  private:
+  protected:
     struct MQTTFixedHeader *fixedHeader;
     uint32_t length;
-    union variableHeader_tag {
-      struct MQTTConnectVariableHeader *connect;
-      unsigned none;
-    } variableHeader;
 
     uint8_t fixedHeaderFlags();
     uint32_t fixedHeaderSize();
@@ -79,7 +45,6 @@ class MQTTMessage {
     MQTTMessage(uint8_t *messageData, uint32_t messageLength);
     enum MQTTMessageType messageType();
     const char *messageTypeStr();
-    bool parseConnectMessage(uint8_t &errorCode, char *clientID);
 };
 
 #endif
