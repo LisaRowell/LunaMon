@@ -1,23 +1,27 @@
 #include <Arduino.h>
 
 #include "MQTTMessage.h"
+#include "MQTTString.h"
 #include "Error.h"
 
-MQTTMessage::MQTTMessage() : fixedHeader(NULL), length(0) {
+MQTTMessage::MQTTMessage() : fixedHeader(NULL), length(0), fixedHdrSize(0), bytesAfterFixedHdr(0) {
 }
 
 MQTTMessage::MQTTMessage(uint8_t *messageData, uint32_t messageLength) :
-                         fixedHeader((struct MQTTFixedHeader *)messageData),
+                         fixedHeader((MQTTFixedHeader *)messageData),
                          length(messageLength) {
+  fixedHdrSize = fixedHeaderSize();
+  bytesAfterFixedHdr = length - fixedHdrSize;
 
+  variableHeaderStart = ((uint8_t *)fixedHeader) + fixedHdrSize;
 }
 
-MQTTMessageType MQTTMessage::messageType() {
+MQTTMessageType MQTTMessage::messageType() const {
   uint8_t typeValue = (MQTTMessageType)(fixedHeader->typeAndFlags & MQTT_MSG_TYPE_MASK) >> MQTT_MSG_TYPE_SHIFT;
   return (MQTTMessageType)typeValue;
 }
 
-const char *MQTTMessage::messageTypeStr() {
+const char *MQTTMessage::messageTypeStr() const {
   switch (messageType()) {
     case  MQTT_MSG_RESERVED1:
       return "Reserved (0)";
@@ -56,11 +60,11 @@ const char *MQTTMessage::messageTypeStr() {
   }
 }
 
-uint8_t MQTTMessage::fixedHeaderFlags() {
+uint8_t MQTTMessage::fixedHeaderFlags() const {
   return (fixedHeader->typeAndFlags & MQTT_MSG_FLAGS_MASK) >> MQTT_MSG_TYPE_SHIFT;
 }
 
-uint32_t MQTTMessage::fixedHeaderSize() {
+uint32_t MQTTMessage::fixedHeaderSize() const {
   if ((fixedHeader->remainingLength[0] & 0x80) == 0) {
     return sizeof(MQTTFixedHeader) + 1;
   } else if ((fixedHeader->remainingLength[1] & 0x80) == 0) {
@@ -72,33 +76,19 @@ uint32_t MQTTMessage::fixedHeaderSize() {
   }
 }
 
-// Returns false if the string is too long for the given string buffer.
-// messagePos is advanced so as to point to the byte after the string.
-bool MQTTMessage::extractString(uint8_t *messagePos, uint32_t bytesLeftInMessage,
-                                uint32_t &lengthInMessage, char *string, unsigned maxLength) {
-  if (bytesLeftInMessage < 2) {
-    // Messed up message with out enough bytes for length.
-    lengthInMessage = 2;
-    return false;
-  }
-  uint16_t stringLength = *messagePos * 256 + *(messagePos + 1);
-  messagePos += 2;
-  lengthInMessage = (uint32_t)stringLength + 2;
-
-  if (lengthInMessage > bytesLeftInMessage) {
-    // Again, not enough bytes in the message for the string
+bool MQTTMessage::parseString(MQTTString * &string, uint8_t *messagePos, uint32_t &bytesRemaining) {
+  if (bytesRemaining < sizeof(MQTTString)) {
     return false;
   }
 
-  if (stringLength > maxLength) {
-    // String is longer than we accept
+  string = (MQTTString *)messagePos;
+  const uint32_t stringSize = string->size();
+  if (stringSize < bytesRemaining) {
     return false;
   }
 
-  for (; stringLength; stringLength--, messagePos++, string++) {
-    *string = *messagePos;
-  }
-  *string = 0;
+  messagePos += stringSize;
+  bytesRemaining -= stringSize;
 
   return true;
 }

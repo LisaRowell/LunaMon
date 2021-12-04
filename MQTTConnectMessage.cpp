@@ -14,15 +14,11 @@ bool MQTTConnectMessage::parse() {
     return false;
   }
   
-  const uint32_t fixedHdrSize = fixedHeaderSize();
-  const uint32_t bytesAfterFixedHdr = length - fixedHdrSize;
-
   if (bytesAfterFixedHdr < sizeof(MQTTConnectVariableHeader)) {
     Serial.println("Received MQTT CONNECT message with a size too small for the Variable Header.");
     return false;
   }
 
-  uint8_t *variableHeaderStart = ((uint8_t *)fixedHeader) + fixedHdrSize;
   variableHeader = (MQTTConnectVariableHeader *)variableHeaderStart;
   const uint32_t bytesAfterVariableHdr = bytesAfterFixedHdr - sizeof(MQTTConnectVariableHeader);
 
@@ -59,21 +55,44 @@ bool MQTTConnectMessage::parse() {
     }
   }
 
-  const uint8_t *payload = variableHeaderStart + sizeof(MQTTConnectVariableHeader);
+  uint8_t *payloadPos = variableHeaderStart + sizeof(MQTTConnectVariableHeader);
   uint32_t payloadBytesRemaining = bytesAfterVariableHdr;
 
-  if (payloadBytesRemaining < sizeof(MQTTString)) {
-    Serial.println("MQTT CONNECT message missing client ID.");
+  if (!parseString(clientIDStr, payloadPos, payloadBytesRemaining)) {
+    Serial.println("MQTT CONNECT packet with payload too small for its Client ID");
     return false;
   }
 
-  clientID = (MQTTString *)payload;
-  const uint32_t clientIDSize = clientID->size();
-  if (clientIDSize < payloadBytesRemaining) {
-    Serial.println("MQTT CONNECT packet with payload too small for it's Client ID");
-    return false;
+  if (hasWill()) {
+    if (!parseString(willTopicStr, payloadPos, payloadBytesRemaining)) {
+      Serial.println("MQTT CONNECT packet with payload too small for its Will Topic");
+      return false;
+    }
+    if (!parseString(willMessageStr, payloadPos, payloadBytesRemaining)) {
+      Serial.println("MQTT CONNECT packet with payload too small for its Will Message");
+      return false;
+    }
   }
-  payloadBytesRemaining -= clientIDSize;
+
+  if (hasUserName()) {
+    if (!parseString(userNameStr, payloadPos, payloadBytesRemaining)) {
+      Serial.println("MQTT CONNECT packet with payload too small for its User Name");
+      return false;
+    }
+  }
+
+  if (hasPassword()) {
+    if (!parseString(passwordStr, payloadPos, payloadBytesRemaining)) {
+      Serial.println("MQTT CONNECT packet with payload too small for its Password");
+      return false;
+    }
+  }
+
+  if (payloadBytesRemaining) {
+    Serial.print("MQTT CONNECT packet with ");
+    Serial.print(payloadBytesRemaining);
+    Serial.println(" extra bytes");
+  }
 
   return true;
 }
@@ -90,13 +109,13 @@ uint8_t MQTTConnectMessage::sanityCheck() {
   // We accept zero length client IDs, but it's an error for the client
   // to send one if it's not also requesting a clean session since a
   // broker couldn't pair them up in that case.
-  if (clientID->length() == 0 && !cleanSession()) {
+  if (clientIDStr->length() == 0 && !cleanSession()) {
     Serial.println("MQTT CONNECT message with a zero length Client ID and Clean Session false");
     return MQTT_CONNACK_REFUSED_IDENTIFIER_REJECTED;
   }
 
   Serial.print("MQTT Connect with Client ID = ");
-  clientID->print();
+  clientIDStr->print();
   Serial.println();
 
   return MQTT_CONNACK_ACCEPTED;

@@ -1,6 +1,8 @@
 #ifndef MQTT_MESSAGE_H
 #define MQTT_MESSAGE_H
 
+#include "MQTTString.h"
+
 struct MQTTFixedHeader {
   uint8_t typeAndFlags;
   uint8_t remainingLength[];
@@ -34,17 +36,19 @@ class MQTTMessage {
   protected:
     struct MQTTFixedHeader *fixedHeader;
     uint32_t length;
+    uint32_t fixedHdrSize;
+    uint32_t bytesAfterFixedHdr;
+    uint8_t *variableHeaderStart;
 
-    uint8_t fixedHeaderFlags();
-    uint32_t fixedHeaderSize();
-    bool extractString(uint8_t *messagePos, uint32_t bytesLeftInMessage,
-                       uint32_t &lengthInMessage, char *string, unsigned maxLength);
+    uint8_t fixedHeaderFlags() const;
+    uint32_t fixedHeaderSize() const;
+    bool parseString(MQTTString * &string, uint8_t *messagePos, uint32_t &bytesRemaining);
 
   public:
     MQTTMessage();
     MQTTMessage(uint8_t *messageData, uint32_t messageLength);
-    enum MQTTMessageType messageType();
-    const char *messageTypeStr();
+    enum MQTTMessageType messageType() const;
+    const char *messageTypeStr() const;
 };
 
 #endif

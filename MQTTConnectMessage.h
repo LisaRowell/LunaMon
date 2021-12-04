@@ -34,7 +34,11 @@ struct MQTTConnectVariableHeader {
 class MQTTConnectMessage : MQTTMessage {
   private:
     MQTTConnectVariableHeader *variableHeader;
-    MQTTString *clientID;
+    MQTTString *clientIDStr;
+    MQTTString *willTopicStr;
+    MQTTString *willMessageStr;
+    MQTTString *userNameStr;
+    MQTTString *passwordStr;
 
   public:
     MQTTConnectMessage(MQTTMessage const &message);
