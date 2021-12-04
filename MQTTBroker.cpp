@@ -152,6 +152,10 @@ void MQTTBroker::messageReceived(MQTTConnection *connection, MQTTMessage &messag
       connectMessageReceived(connection, message);
       break;
 
+    case MQTT_MSG_CONNACK:
+      serverOnlyMsgReceivedError(connection, message);
+      break;
+
     case MQTT_MSG_RESERVED1:
     case MQTT_MSG_RESERVED2:
       reservedMsgReceivedError(connection, message);
@@ -169,35 +173,54 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
   MQTTConnectMessage connectMessage(message);
   if (!connectMessage.parse()) {
     Serial.println("Bad connect message. Terminating connection.");
-    connection->stop();
+    terminateConnection(connection);
     return;
   }
 
   uint8_t errorCode;
   errorCode = connectMessage.sanityCheck();
-  if (errorCode == 0) {
-    // Since this is a light weight broker, and a work in progress, we reject a few currently
-    // unsupported types of connections.
-    if (!connectMessage.cleanSession()) {
-      Serial.println("MQTT CONNECT with Clean Session false: Currently unsupported");
-      errorCode = MQTT_CONNACK_REFUSED_SERVER_UNAVAILABLE;
-    } else if (connectMessage.hasWill()) {
-      Serial.println("MQTT CONNECT with Will: Currently unsupported");
-      errorCode = MQTT_CONNACK_REFUSED_SERVER_UNAVAILABLE;
-    } else if (connectMessage.hasUserName()) {
-      Serial.println("MQTT CONNECT message with Password set");
-      errorCode = MQTT_CONNACK_REFUSED_USERNAME_OR_PASSWORD;
-    } else if (connectMessage.hasPassword()) {
-      Serial.println("MQTT CONNECT message with Password set");
-      errorCode = MQTT_CONNACK_REFUSED_USERNAME_OR_PASSWORD;
-    } else {
-      Serial.println("OK so far connect message");
-    }
+  if (errorCode != MQTT_CONNACK_ACCEPTED) {
+    sendMQTTConnectAckMessage(connection, false, errorCode);
+    return;
   }
+
+  // Since this is a light weight broker, and a work in progress, we reject a few currently
+  // unsupported types of connections.
+  if (!connectMessage.cleanSession()) {
+    Serial.println("MQTT CONNECT with Clean Session false: Currently unsupported");
+    sendMQTTConnectAckMessage(connection, false, MQTT_CONNACK_REFUSED_SERVER_UNAVAILABLE);
+    return;
+  }
+  if (connectMessage.hasWill()) {
+    Serial.println("MQTT CONNECT with Will: Currently unsupported");
+    sendMQTTConnectAckMessage(connection, false, MQTT_CONNACK_REFUSED_SERVER_UNAVAILABLE);
+    return;
+  }
+  if (connectMessage.hasUserName()) {
+    Serial.println("MQTT CONNECT message with Password set");
+    sendMQTTConnectAckMessage(connection, false, MQTT_CONNACK_REFUSED_USERNAME_OR_PASSWORD);
+    return;
+  }
+  if (connectMessage.hasPassword()) {
+    Serial.println("MQTT CONNECT message with Password set");
+    sendMQTTConnectAckMessage(connection, false, MQTT_CONNACK_REFUSED_USERNAME_OR_PASSWORD);
+    return;
+  }
+
+  Serial.println("OK so far connect message");
+
+  sendMQTTConnectAckMessage(connection, false, MQTT_CONNACK_ACCEPTED);
 }
 
 void MQTTBroker::reservedMsgReceivedError(MQTTConnection *connection, MQTTMessage &message) {
   Serial.print("Received reserved message ");
+  Serial.print(message.messageTypeStr());
+  Serial.println(". Terminating connection");
+  terminateConnection(connection);
+}
+
+void MQTTBroker::serverOnlyMsgReceivedError(MQTTConnection *connection, MQTTMessage &message) {
+  Serial.print("Received server->client only message ");
   Serial.print(message.messageTypeStr());
   Serial.println(". Terminating connection");
   terminateConnection(connection);

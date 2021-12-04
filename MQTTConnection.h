@@ -29,6 +29,7 @@ class MQTTConnection {
     bool matches(WiFiClient &wifiClient);
     bool readMessageData(MQTTMessage &message, bool &errorTerminateConnection);
     void resetMessageBuffer();
+    bool write(const uint8_t *data, size_t size);
     void stop();
 };
 

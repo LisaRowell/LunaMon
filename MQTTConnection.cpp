@@ -158,6 +158,10 @@ void MQTTConnection::readToBuffer(size_t readAmount) {
   bytesInBuffer += readAmount;
 }
 
+bool MQTTConnection::write(const uint8_t *data, size_t size) {
+  return wifiClient.write(data, size);
+}
+
 void MQTTConnection::stop() {
   Serial.print("Stopping client ");
   Serial.print(wifiClient.remoteIP());
