@@ -7,6 +7,7 @@
 #include "MQTTMessage.h"
 #include "MQTTConnectMessage.h"
 #include "MQTTConnectAckMessage.h"
+#include "MQTTDisconnectMessage.h"
 #include "Error.h"
 
 MQTTBroker::MQTTBroker() : wifiIsConnected(false), wifiServer(portNumber) {
@@ -156,6 +157,10 @@ void MQTTBroker::messageReceived(MQTTConnection *connection, MQTTMessage &messag
       serverOnlyMsgReceivedError(connection, message);
       break;
 
+    case MQTT_MSG_DISCONNECT:
+      disconnectMessageReceived(connection, message);
+      break;
+
     case MQTT_MSG_RESERVED1:
     case MQTT_MSG_RESERVED2:
       reservedMsgReceivedError(connection, message);
@@ -210,6 +215,21 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
   Serial.println("OK so far connect message");
 
   sendMQTTConnectAckMessage(connection, false, MQTT_CONNACK_ACCEPTED);
+}
+
+void MQTTBroker::disconnectMessageReceived(MQTTConnection *connection, MQTTMessage &message) {
+  MQTTDisconnectMessage disconnectMessage(message);
+
+  // We do this for the log message, the connection is going the way of the water buffalo
+  // either way.
+  if (!disconnectMessage.parse()) {
+    Serial.println("Bad disconnect message. Terminating connection.");
+    terminateConnection(connection);
+    return;
+  }
+
+  Serial.println("Stopping client due to DISCONNECT");
+  terminateConnection(connection);
 }
 
 void MQTTBroker::reservedMsgReceivedError(MQTTConnection *connection, MQTTMessage &message) {

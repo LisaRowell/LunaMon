@@ -92,6 +92,7 @@ bool MQTTConnectMessage::parse() {
     Serial.print("MQTT CONNECT packet with ");
     Serial.print(payloadBytesRemaining);
     Serial.println(" extra bytes");
+    return false;
   }
 
   return true;
