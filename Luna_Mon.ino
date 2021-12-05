@@ -6,6 +6,8 @@
 #include "NMEASource.h"
 #include "WiFiManager.h"
 #include "MQTTBroker.h"
+#include "DataModel.h"
+#include "TimeConstants.h"
 
 NMEAMessageHandler nmeaMessageHandler;
 NMEASource usbSerialNMEASource(Serial, nmeaMessageHandler);
@@ -13,6 +15,8 @@ WiFiManager wifiManager;
 MQTTBroker mqttBroker;
 
 void setup() {
+  controllerUpTime.set(millis() / msInSecond);
+
   Serial.begin(9600);
 
   // For the time being, wait to get started until serial connects to that
@@ -27,4 +31,9 @@ void loop() {
   wifiManager.service();
   usbSerialNMEASource.service();
   mqttBroker.service();
+
+  const uint32_t currentUpTime = millis() / msInSecond;
+  if (currentUpTime != controllerUpTime.currentValue()) {
+    controllerUpTime.set(currentUpTime);
+  }
 }
