@@ -22,6 +22,7 @@ void MQTTBroker::begin(WiFiManager &wifiManager) {
 }
 
 void MQTTBroker::service() {
+  checkForLostConnections();
   serviceClients();
 
   if (wifiIsConnected) {
@@ -74,6 +75,25 @@ void MQTTBroker::serviceWiFiClientWithData(WiFiClient &wifiClient) {
 void MQTTBroker::terminateConnection(MQTTConnection *connection) {
   connection->stop();
 
+  if (connection->hasMQTTClient()) {
+    MQTTClient *client = connection->client();
+    bool retain = client->disconnect();
+    if (!retain) {
+      unsigned clientPos;
+      bool clientFound;
+      for (clientPos = 0, clientFound = false; clientPos < maxMQTTClients && !clientFound; clientPos++) {
+        if (clientValid[clientPos] && &clients[clientPos] == client) {
+          clientFound = true;
+          clientValid[clientPos] = false;
+        }
+      }
+
+      if (!clientFound) {
+        fatalError("Lost track of a MQTT Session and couldn't delete it");
+      }
+    }
+  }
+
   unsigned connectionPos;
   for (connectionPos = 0; connectionPos < maxMQTTClients; connectionPos++) {
     if (&connections[connectionPos] == connection) {
@@ -125,6 +145,35 @@ void MQTTBroker::wifiDisconnected() {
   fatalError("Lost WiFi connection. Code needs to be written for this...");
 }
 
+void MQTTBroker::checkForLostConnections() {
+  unsigned connectionIndex;
+  for (connectionIndex = 0; connectionIndex < maxMQTTClients; connectionIndex++) {
+    if (connectionValid[connectionIndex]) {
+      MQTTConnection &connection = connections[connectionIndex];
+      if (connection.wasDisconnected()) {
+        MQTTClient *mqttClient = connection.client();
+        bool retainConnection = mqttClient->disconnect();
+        if (!retainConnection) {
+          invalidateClient(mqttClient);
+        }
+        connectionValid[connectionIndex] = false;
+      }
+    }
+  }
+}
+
+void MQTTBroker::invalidateClient(MQTTClient *client) {
+  unsigned clientIndex;
+  for (clientIndex = 0; clientIndex < maxMQTTClients; clientIndex++) {
+    if (clientValid[clientIndex] && &clients[clientIndex] == client) {
+      clientValid[clientIndex] = false;
+      return;
+    }
+  }
+
+  fatalError("Lost track of a MQTT client and couldn't invalidate it.");
+}
+
 void MQTTBroker::serviceClients() {
   unsigned clientIndex;
 
@@ -167,7 +216,7 @@ void MQTTBroker::messageReceived(MQTTConnection *connection, MQTTMessage &messag
       break;
 
     default:
-      Serial.print("Received unimplement message type ");
+      Serial.print("Received unimplemented message type ");
       Serial.println(message.messageTypeStr());
   }  
 
@@ -175,6 +224,13 @@ void MQTTBroker::messageReceived(MQTTConnection *connection, MQTTMessage &messag
 }
 
 void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage &message) {
+  // Per the MQTT specification, we try a second CONNECT for a connection as a protocol
+  // error.
+  if (connection->hasMQTTClient()) {
+    Serial.println("Second MQTT CONNECT received for a connection.");
+    terminateConnection(connection);
+  }
+
   MQTTConnectMessage connectMessage(message);
   if (!connectMessage.parse()) {
     Serial.println("Bad connect message. Terminating connection.");
@@ -191,11 +247,6 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
 
   // Since this is a light weight broker, and a work in progress, we reject a few currently
   // unsupported types of connections.
-  if (!connectMessage.cleanSession()) {
-    Serial.println("MQTT CONNECT with Clean Session false: Currently unsupported");
-    sendMQTTConnectAckMessage(connection, false, MQTT_CONNACK_REFUSED_SERVER_UNAVAILABLE);
-    return;
-  }
   if (connectMessage.hasWill()) {
     Serial.println("MQTT CONNECT with Will: Currently unsupported");
     sendMQTTConnectAckMessage(connection, false, MQTT_CONNACK_REFUSED_SERVER_UNAVAILABLE);
@@ -212,9 +263,71 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
     return;
   }
 
-  Serial.println("OK so far connect message");
+  const MQTTString *clientIDStr = connectMessage.clientID();
+  char clientID[maxMQTTClientIDLength + 1];
+  if (!clientIDStr->copyTo(clientID, maxMQTTClientIDLength)) {
+    Serial.print("MQTT CONNECT message with too long of a Client ID:");
+    clientIDStr->print();
+    Serial.println();
+    sendMQTTConnectAckMessage(connection, false, MQTT_CONNACK_REFUSED_IDENTIFIER_REJECTED);
+    return;
+  }
 
-  sendMQTTConnectAckMessage(connection, false, MQTT_CONNACK_ACCEPTED);
+  MQTTClient *client = findMatchingSession(clientID);
+  if (client) {
+    if (client->isConnected()) {
+      Serial.print("MQTT CONNECT message received for a Client ID (");
+      Serial.print(clientID);
+      Serial.println(") that already has an active Connection");
+      sendMQTTConnectAckMessage(connection, false, MQTT_CONNACK_REFUSED_SERVER_UNAVAILABLE);
+    } else {
+      const bool cleanSession = connectMessage.cleanSession();
+      client->reconnect(cleanSession, connection);
+      connection->connectTo(client);
+      sendMQTTConnectAckMessage(connection, !cleanSession, MQTT_CONNACK_ACCEPTED);
+    }
+  } else {
+    client = findAvailableSession();
+    if (client) {
+      client->begin(connectMessage.cleanSession(), clientID, connection);
+      connection->connectTo(client);
+      Serial.print("MQTT Client '");
+      Serial.print(clientID);
+      Serial.println("' connected with new Session");
+      sendMQTTConnectAckMessage(connection, false, MQTT_CONNACK_ACCEPTED);
+    } else {
+      Serial.print("MQTT CONNECT with Sessions full. Client ID ");
+      Serial.print(clientID);
+      Serial.println(" refused.");
+      sendMQTTConnectAckMessage(connection, false, MQTT_CONNACK_REFUSED_SERVER_UNAVAILABLE);
+    }
+  }
+}
+
+MQTTClient *MQTTBroker::findMatchingSession(const char *clientID) {
+  unsigned sessionIndex;
+  for (sessionIndex = 0; sessionIndex < maxMQTTClients; sessionIndex++) {
+    if (clientValid[sessionIndex]) {
+      MQTTClient &session = clients[sessionIndex];
+      if (session.matches(clientID)) {
+        return &session;
+      }
+    }
+  }
+
+  return NULL;
+}
+
+MQTTClient *MQTTBroker::findAvailableSession() {
+  unsigned sessionIndex;
+  for (sessionIndex = 0; sessionIndex < maxMQTTClients; sessionIndex++) {
+    if (!clientValid[sessionIndex]) {
+      clientValid[sessionIndex] = true;
+      return &clients[sessionIndex];
+    }
+  }
+
+  return NULL;
 }
 
 void MQTTBroker::disconnectMessageReceived(MQTTConnection *connection, MQTTMessage &message) {
@@ -223,7 +336,15 @@ void MQTTBroker::disconnectMessageReceived(MQTTConnection *connection, MQTTMessa
   // We do this for the log message, the connection is going the way of the water buffalo
   // either way.
   if (!disconnectMessage.parse()) {
-    Serial.println("Bad disconnect message. Terminating connection.");
+    Serial.println("Bad MQTT DISCONNECT message. Terminating connection.");
+    terminateConnection(connection);
+    return;
+  }
+
+  // Flag if we're getting a DISCONNECT for a connection that didn't actually get connected
+  // with a session.
+  if (!connection->hasMQTTClient()) {
+    Serial.println("Received MQTT DISCONNECT message for a connection that wasn't connected to a session.");
     terminateConnection(connection);
     return;
   }

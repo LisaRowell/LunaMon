@@ -25,8 +25,6 @@ struct MQTTConnectVariableHeader {
 #define MQTT_CONNECT_FLAGS_PASSWORD_MASK      0x40
 #define MQTT_CONNECT_FLAGS_USER_NAME_MASK     0x80
 
-#define MQTT_MAX_CLIENT_ID_LENGTH 23
-
 // These two are up for debate.
 #define MQTT_MAX_TOPIC_LENGTH 255
 #define MQTT_MAX_WILL_MESSAGE_LENGTH 255
@@ -51,6 +49,7 @@ class MQTTConnectMessage : MQTTMessage {
     bool hasUserName();
     bool hasPassword();
     uint16_t keepAliveSec();
+    const MQTTString *clientID();
 };
 
 #endif

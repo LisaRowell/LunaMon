@@ -6,6 +6,7 @@
 
 void MQTTConnection::begin(WiFiClient &wifiClient) {
   this->wifiClient = wifiClient;
+  mqttClient = NULL;
 }
 
 bool MQTTConnection::matches(WiFiClient &wifiClient) {
@@ -162,6 +163,18 @@ bool MQTTConnection::write(const uint8_t *data, size_t size) {
   return wifiClient.write(data, size);
 }
 
+bool MQTTConnection::hasMQTTClient() {
+  return mqttClient != NULL;
+}
+
+void MQTTConnection::connectTo(MQTTClient *client) {
+  mqttClient = client;
+}
+
+MQTTClient *MQTTConnection::client() {
+  return mqttClient;
+}
+
 void MQTTConnection::stop() {
   Serial.print("Stopping client ");
   Serial.print(wifiClient.remoteIP());
@@ -169,4 +182,11 @@ void MQTTConnection::stop() {
   Serial.println(wifiClient.remotePort());
   wifiClient.flush();
   wifiClient.stop();
+}
+
+bool MQTTConnection::wasDisconnected() {
+  // Under the hood, the WiFiNINA driver will close a connection if a call
+  // connected() detects that the TCP connection has been closed. We therefore
+  // do anything to clean up, like call flush or stop. 
+  return !wifiClient.connected();
 }

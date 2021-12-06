@@ -149,3 +149,7 @@ bool MQTTConnectMessage::hasPassword() {
 uint16_t MQTTConnectMessage::keepAliveSec() {
   return variableHeader->keepAliveMSB * 256 + variableHeader->keepAliveLSB;
 }
+
+const MQTTString *MQTTConnectMessage::clientID() {
+  return clientIDStr;
+}

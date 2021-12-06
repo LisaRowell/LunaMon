@@ -35,10 +35,14 @@ class MQTTBroker : WiFiManagerClient {
     MQTTClient clients[maxMQTTClients];
     bool clientValid[maxMQTTClients];
 
+    void checkForLostConnections();
+    void invalidateClient(MQTTClient *client);
     void serviceClients();
     void serviceWiFiClientWithData(WiFiClient &wifiClient);
     MQTTConnection *findExistingConnection(WiFiClient &wifiClient);
     MQTTConnection *newConnection(WiFiClient &wifiClient);
+    MQTTClient *findMatchingSession(const char *clientID);
+    MQTTClient *findAvailableSession();
     void refuseIncomingWiFiClient(WiFiClient &wifiClient);
     void terminateConnection(MQTTConnection *connection);
     void messageReceived(MQTTConnection *connection, MQTTMessage &message);

@@ -10,6 +10,9 @@ class MQTTString {
   public:
     uint16_t length() const;
     uint32_t size() const;
+    // Returns false if too long to copy. maxLength is max in source and
+    // does not include nil.
+    bool copyTo(char *cString, unsigned maxLength) const;
     void print() const;
 };
 

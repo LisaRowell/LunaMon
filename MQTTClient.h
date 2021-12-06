@@ -3,6 +3,10 @@
 
 #include <WiFiNINA.h>
 
+#include "MQTTConnection.h"
+#include "MQTTString.h"
+
+// TODO: rename to MQTTSession to match spec
 
 //
 // MQTTClient
@@ -14,18 +18,25 @@
 // without starting from scratch with the topics that they publish or subscribe
 // to.
 //
+
+const unsigned maxMQTTClientIDLength = 23;
+
+class MQTTConnection;
+
 class MQTTClient {
   private:
-    bool connectionValid;
-    // While the Arduino WiFiClient class maintains the remote TCP/IP address
-    // of the client, it seems to get moshed when the client disconnects,
-    // preventing us from using it in log messages. To get around this, we
-    // maintain our own copy.
-    IPAddress ipAddress;
-    uint16_t tcpPort;
-    WiFiClient connection;
+    bool cleanSession;
+    char clientID[maxMQTTClientIDLength + 1];
+    MQTTConnection *connection;
+
+    void unsubscribeAll();
 
   public:
+    bool isConnected() const;
+    bool matches(const char *clientID) const;
+    void begin(bool cleanSession, const char *clientID, MQTTConnection *connection);
+    void reconnect(bool newCleanSession, MQTTConnection *connection);
+    bool disconnect();
     void service();
 };
 
