@@ -2,8 +2,8 @@
 #define WIFI_MANAGER_H
 
 #include "WiFiManagerClient.h"
-#include "PassiveTimer.h"
-#include "TimeConstants.h"
+#include "Util/PassiveTimer.h"
+#include "Util/TimeConstants.h"
 
 class WiFiManager {
   private:

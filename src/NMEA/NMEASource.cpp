@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 #include "NMEASource.h"
-#include "CharacterTools.h"
+#include "Util/CharacterTools.h"
 #include "NMEALine.h"
 #include "NMEAMessageHandler.h"
 

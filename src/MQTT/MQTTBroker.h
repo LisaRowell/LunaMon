@@ -3,8 +3,8 @@
 
 #include <WiFiNINA.h>
 
-#include "WiFiManagerClient.h"
-#include "WiFiManager.h"
+#include "WiFiManager/WiFiManagerClient.h"
+#include "WiFiManager/WiFiManager.h"
 #include "MQTTConnection.h"
 #include "MQTTClient.h"
 #include "MQTTMessage.h"

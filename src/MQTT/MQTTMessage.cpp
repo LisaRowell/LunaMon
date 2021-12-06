@@ -2,7 +2,7 @@
 
 #include "MQTTMessage.h"
 #include "MQTTString.h"
-#include "Error.h"
+#include "Util/Error.h"
 
 MQTTMessage::MQTTMessage() : fixedHeader(NULL), length(0), fixedHdrSize(0), bytesAfterFixedHdr(0) {
 }

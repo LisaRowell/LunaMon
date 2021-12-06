@@ -5,7 +5,7 @@
 #include "DataModelElement.h"
 #include "DataModelUInt32Leaf.h"
 #include "Config.h"
-#include "Error.h"
+#include "Util/Error.h"
 
 // Up time of this controller in seconds
 DataModelUInt32Leaf controllerUpTime("upTime");

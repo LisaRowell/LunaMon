@@ -4,8 +4,8 @@
 #include "WiFiManager.h"
 #include "WiFiManagerClient.h"
 #include "Config.h"
-#include "PassiveTimer.h"
-#include "Error.h"
+#include "Util/PassiveTimer.h"
+#include "Util/Error.h"
 
 WiFiManager::WiFiManager() : connectionState(WIFI_CONNECTION_NEVER), numberClients(0) {
 

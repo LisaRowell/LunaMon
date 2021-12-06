@@ -1,14 +1,14 @@
 #include <Arduino.h>
 
 #include "MQTTBroker.h"
-#include "WiFiManager.h"
+#include "WiFiManager/WiFiManager.h"
 #include "MQTTConnection.h"
 #include "MQTTClient.h"
 #include "MQTTMessage.h"
 #include "MQTTConnectMessage.h"
 #include "MQTTConnectAckMessage.h"
 #include "MQTTDisconnectMessage.h"
-#include "Error.h"
+#include "Util/Error.h"
 
 MQTTBroker::MQTTBroker() : wifiIsConnected(false), wifiServer(portNumber) {
   unsigned clientPos;

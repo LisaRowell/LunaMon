@@ -1,13 +1,11 @@
 #include <Arduino.h>
 
-#include "NMEALine.h"
-#include "NMEAMessage.h"
-#include "NMEAMessageHandler.h"
-#include "NMEASource.h"
-#include "WiFiManager.h"
-#include "MQTTBroker.h"
-#include "DataModel.h"
-#include "TimeConstants.h"
+#include "NMEA/NMEAMessageHandler.h"
+#include "NMEA/NMEASource.h"
+#include "WiFiManager/WiFiManager.h"
+#include "MQTT/MQTTBroker.h"
+#include "DataModel/DataModel.h"
+#include "Util/TimeConstants.h"
 
 NMEAMessageHandler nmeaMessageHandler;
 NMEASource usbSerialNMEASource(Serial, nmeaMessageHandler);

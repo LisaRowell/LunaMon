@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 #include "Coordinate.h"
-#include "StringTools.h"
+#include "Util/StringTools.h"
 
 
 uint32_t Coordinate::tenthsSecondScaler() {

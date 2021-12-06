@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-#include "CharacterTools.h"
+#include "Util/CharacterTools.h"
 #include "NMEALine.h"
 
 
