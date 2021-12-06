@@ -3,7 +3,6 @@
 
 #include "DataModelNode.h"
 #include "DataModelUInt32Leaf.h"
-#include "DataModelClient.h"
 
 extern DataModelUInt32Leaf controllerUpTime;
 extern const DataModelNode controllerIDNode;
