@@ -98,7 +98,6 @@ void MQTTBroker::terminateConnection(MQTTConnection *connection) {
   for (connectionPos = 0; connectionPos < maxMQTTSessions; connectionPos++) {
     if (&connections[connectionPos] == connection) {
       connectionValid[connectionPos] = false;
-      // Need to add code to deal with a connected MQTT Session.
       return;
     }
   }
