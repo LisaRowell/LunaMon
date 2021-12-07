@@ -6,15 +6,13 @@
 #include "MQTTConnection.h"
 #include "MQTTString.h"
 
-// TODO: rename to MQTTSession to match spec
-
 //
 // MQTTClient
 //
 // This class maintains information on a MQTT Client per the definition of the
 // protocol. It's worth highlighting that in MQTT, a client's lifespan is not
 // necessarily one-to-one with the lifespan of the TCP/IP connection that
-// created it. This allows for clients with connection issues to reconnect
+// created it. This allows for sessions with connection issues to reconnect
 // without starting from scratch with the topics that they publish or subscribe
 // to.
 //
@@ -23,7 +21,7 @@ const unsigned maxMQTTClientIDLength = 23;
 
 class MQTTConnection;
 
-class MQTTClient {
+class MQTTSession {
   private:
     bool cleanSession;
     char clientID[maxMQTTClientIDLength + 1];

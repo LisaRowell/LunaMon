@@ -28,7 +28,7 @@ bool DataModelLeaf::subscribe(DataModelSubscriber *subscriber) {
     }
   }
 
-  // This shouldn't happen if max clients == max subscribers
+  // This shouldn't happen if max sessions == max subscribers
   return false;
 }
 

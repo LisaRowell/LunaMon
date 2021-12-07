@@ -6,7 +6,7 @@
 
 void MQTTConnection::begin(WiFiClient &wifiClient) {
   this->wifiClient = wifiClient;
-  mqttClient = NULL;
+  mqttSession = NULL;
 }
 
 bool MQTTConnection::matches(WiFiClient &wifiClient) {
@@ -163,16 +163,16 @@ bool MQTTConnection::write(const uint8_t *data, size_t size) {
   return wifiClient.write(data, size);
 }
 
-bool MQTTConnection::hasMQTTClient() {
-  return mqttClient != NULL;
+bool MQTTConnection::hasSession() {
+  return mqttSession != NULL;
 }
 
-void MQTTConnection::connectTo(MQTTClient *client) {
-  mqttClient = client;
+void MQTTConnection::connectTo(MQTTSession *session) {
+  mqttSession = session;
 }
 
-MQTTClient *MQTTConnection::client() {
-  return mqttClient;
+MQTTSession *MQTTConnection::session() {
+  return mqttSession;
 }
 
 void MQTTConnection::stop() {

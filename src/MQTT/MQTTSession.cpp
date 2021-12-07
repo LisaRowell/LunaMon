@@ -1,26 +1,26 @@
 #include <Arduino.h>
 
-#include "MQTTClient.h"
+#include "MQTTSession.h"
 
-bool MQTTClient::isConnected() const {
+bool MQTTSession::isConnected() const {
   return connection != NULL;
 }
 
-bool MQTTClient::matches(const char *clientID) const {
-  return strcmp(clientID, MQTTClient::clientID) == 0;
+bool MQTTSession::matches(const char *clientID) const {
+  return strcmp(clientID, MQTTSession::clientID) == 0;
 }
 
-void MQTTClient::begin(bool cleanSession, const char *clientID, MQTTConnection *connection) {
-  MQTTClient::cleanSession = cleanSession;
-  strcpy(MQTTClient::clientID, clientID);
-  MQTTClient::connection = connection;
+void MQTTSession::begin(bool cleanSession, const char *clientID, MQTTConnection *connection) {
+  MQTTSession::cleanSession = cleanSession;
+  strcpy(MQTTSession::clientID, clientID);
+  MQTTSession::connection = connection;
 
   Serial.print("Established new session for Client ID '");
   Serial.print(clientID);
   Serial.println("'");
 }
 
-void MQTTClient::reconnect(bool newCleanSession, MQTTConnection *connection) {
+void MQTTSession::reconnect(bool newCleanSession, MQTTConnection *connection) {
   // If the client reconnects with the Clean Session set, we need to clear out
   // the old subscriptions before we establish the connection. This typically
   // happens when a client that wanted us to maintain state across disconnects
@@ -30,16 +30,16 @@ void MQTTClient::reconnect(bool newCleanSession, MQTTConnection *connection) {
   }
 
   cleanSession = newCleanSession;
-  MQTTClient::connection = connection;
+  MQTTSession::connection = connection;
 }
 
-void MQTTClient::service() {
-  // Do things like timeout clients whose connection died and hasn't returned.
+void MQTTSession::service() {
+  // Do things like timeout sessions whose connection died and hasn't returned.
 }
 
 // Returns true if the client is to be retained in hopes of the connection being
 // reestablished.
-bool MQTTClient::disconnect() {
+bool MQTTSession::disconnect() {
   // Do house keeping like setting a timer to dismantle the client if it's not
   // reconnected in a timely fashion.
 
@@ -55,5 +55,5 @@ bool MQTTClient::disconnect() {
   }
 }
 
-void MQTTClient::unsubscribeAll() { 
+void MQTTSession::unsubscribeAll() { 
 }

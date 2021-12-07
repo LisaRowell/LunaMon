@@ -4,14 +4,13 @@
 #include <WiFiNINA.h>
 
 #include "MQTTMessage.h"
-#include "MQTTClient.h"
 
-class MQTTClient;
+class MQTTSession;
 
 class MQTTConnection {
   private:
     WiFiClient wifiClient;
-    MQTTClient *mqttClient;
+    MQTTSession *mqttSession;
 
     static const uint32_t maxIncomingMessageSize = 1024;
     uint8_t buffer[maxIncomingMessageSize];
@@ -34,11 +33,11 @@ class MQTTConnection {
     bool readMessageData(MQTTMessage &message, bool &errorTerminateConnection);
     void resetMessageBuffer();
     bool write(const uint8_t *data, size_t size);
-    bool hasMQTTClient();
-    void connectTo(MQTTClient *client);
+    bool hasSession();
+    void connectTo(MQTTSession *session);
     void stop();
     bool wasDisconnected();
-    MQTTClient *client();
+    MQTTSession *session();
 };
 
 #endif
