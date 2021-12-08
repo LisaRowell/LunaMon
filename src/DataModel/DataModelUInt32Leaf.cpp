@@ -6,7 +6,7 @@
 DataModelUInt32Leaf::DataModelUInt32Leaf(const char *name) : DataModelLeaf(name) {
 }
 
-void DataModelUInt32Leaf::set(uint32_t value) {
+void DataModelUInt32Leaf::publish(uint32_t value) {
   DataModelUInt32Leaf::value = value;
   updated();
 }

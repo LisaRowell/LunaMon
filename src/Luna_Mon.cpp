@@ -13,7 +13,7 @@ WiFiManager wifiManager;
 MQTTBroker mqttBroker;
 
 void setup() {
-  controllerUpTime.set(millis() / msInSecond);
+  controllerUpTime.publish(millis() / msInSecond);
 
   Serial.begin(9600);
 
@@ -32,6 +32,6 @@ void loop() {
 
   const uint32_t currentUpTime = millis() / msInSecond;
   if (currentUpTime != controllerUpTime.currentValue()) {
-    controllerUpTime.set(currentUpTime);
+    controllerUpTime.publish(currentUpTime);
   }
 }

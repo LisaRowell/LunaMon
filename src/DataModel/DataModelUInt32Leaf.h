@@ -9,7 +9,7 @@ class DataModelUInt32Leaf : public DataModelLeaf {
 
   public:
     DataModelUInt32Leaf(const char *name);
-    void set(uint32_t value);
+    void publish(uint32_t value);
     uint32_t currentValue();
 };
 
