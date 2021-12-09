@@ -1,6 +1,7 @@
 #include <Arduino.h>
 
 #include "MQTTSession.h"
+#include "Util/Logger.h"
 
 bool MQTTSession::isConnected() const {
   return connection != NULL;
@@ -15,9 +16,7 @@ void MQTTSession::begin(bool cleanSession, const char *clientID, MQTTConnection 
   strcpy(MQTTSession::clientID, clientID);
   MQTTSession::connection = connection;
 
-  Serial.print("Established new session for Client ID '");
-  Serial.print(clientID);
-  Serial.println("'");
+  logger << logDebug << "Established new session for Client ID '" << clientID << "'" << eol;
 }
 
 void MQTTSession::reconnect(bool newCleanSession, MQTTConnection *connection) {

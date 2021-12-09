@@ -5,7 +5,7 @@
 #include "NMEATalker.h"
 #include "NMEAMsgType.h"
 #include "NMEAGLLMessage.h"
-
+#include "Util/Logger.h"
 
 void NMEAMessage::setTalker(enum NMEATalker talker) {
   NMEAMessage::talker = talker;
@@ -14,11 +14,11 @@ void NMEAMessage::setTalker(enum NMEATalker talker) {
 NMEAMessage *parseNMEAMessage(NMEALine &nmeaLine) {
   String tag;
   if (!nmeaLine.extractWord(tag)) {
-    Serial.println("Missing NMEA message tag");
+    logger << logWarning << "NMEA message missing tag" << eol;
     return NULL;
   }
   if (tag.length() != 5) {
-    Serial.println("Bad NMEA tag");
+    logger << logWarning << "Bad NMEA tag" << eol;
     return NULL;
   }
 
@@ -39,9 +39,8 @@ NMEAMessage *parseNMEAMessage(NMEALine &nmeaLine) {
 
     case NMEA_MSG_TYPE_UNKNOWN:
     default:
-      printNMEATalker(talker);
-      Serial.print(" unknown message type ");
-      Serial.println(msgTypeStr);
+      logger << logWarning << "Unknown NMEA message type (" << msgTypeStr << ") from " << talker
+             << eol;
       return NULL;
   }
 

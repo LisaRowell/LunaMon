@@ -2,6 +2,7 @@
 
 #include "MQTTDisconnectMessage.h"
 #include "MQTTMessage.h"
+#include "Util/Logger.h"
 
 MQTTDisconnectMessage::MQTTDisconnectMessage(MQTTMessage const &message) : MQTTMessage(message) {
 }
@@ -11,14 +12,14 @@ MQTTDisconnectMessage::MQTTDisconnectMessage(MQTTMessage const &message) : MQTTM
 // get log messages for malformed packets. 
 bool MQTTDisconnectMessage::parse() {
   if (fixedHeaderFlags() != 0) {
-    Serial.println("Received MQTT CONNECT message with non-zero Fixed Header Flags.");
+    logger << logWarning << "Received MQTT CONNECT message with non-zero Fixed Header Flags."
+           << eol;
     return false;
   }
 
   if (bytesAfterFixedHdr) {
-    Serial.print("MQTT DISCONNECT packet with ");
-    Serial.print(bytesAfterFixedHdr);
-    Serial.println(" extra bytes");
+    logger << logWarning << "MQTT DISCONNECT packet with " << bytesAfterFixedHdr << " extra bytes"
+           << eol;
     return false;
   }
 

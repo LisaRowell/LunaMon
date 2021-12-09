@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 #include "NMEATalker.h"
-
+#include "Util/Error.h"
 
 enum NMEATalker parseNMEATalker(String &talkerCode) {
   if (talkerCode == "GP") {
@@ -11,13 +11,15 @@ enum NMEATalker parseNMEATalker(String &talkerCode) {
   }
 }
 
-void printNMEATalker(enum NMEATalker talker) {
-  switch (talker) {
+const char *nmeaTalkerName(enum NMEATalker talker) {
+    switch (talker) {
     case NMEA_TALKER_GPS:
-      Serial.print("GPS");
-      break;
+      return "GPS";
 
     case NMEA_TALKER_UNKNOWN:
-      Serial.print("Unknown");
+      return "Unknown";
+
+    default:
+      fatalError("Messed up NMEATalker enumeration found while getting name.");
   }
 }

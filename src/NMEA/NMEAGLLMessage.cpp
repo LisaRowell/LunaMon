@@ -10,80 +10,68 @@
 #include "NMEADataValid.h"
 #include "NMEAFAAModeIndicator.h"
 #include "Util/PlacementNew.h"
-
+#include "Util/Logger.h"
 
 bool NMEAGLLMessage::parse(NMEATalker talker, NMEALine &nmeaLine) {
   String latitudeStr;
   if (!nmeaLine.extractWord(latitudeStr)) {
-    printNMEATalker(talker);
-    Serial.println(" GLL message missing latitude");
+    logger << logWarning << talker << " GLL message missing latitude" << eol;
     return false;
   }
 
   String northOrSouthStr;
   if (!nmeaLine.extractWord(northOrSouthStr)) {
-    printNMEATalker(talker);
-    Serial.println(" GLL message missing N/S");
+    logger << logWarning << talker << " GLL message missing N/S" << eol;
     return false;
   }
 
   if (!latitude.set(latitudeStr, northOrSouthStr)) {
-    printNMEATalker(talker);
-    Serial.println(" GLL message with bad latitude");
+    logger << logWarning << talker << " GLL message with bad latitude" << eol;
     return false;
   }
 
   String longitudeStr;
   if (!nmeaLine.extractWord(longitudeStr)) {
-    printNMEATalker(talker);
-    Serial.println(" GLL message missing longitude");
+    logger << logWarning << talker << " GLL message missing longitude" << eol;
     return false;
   }
 
   String eastOrWestStr;
   if (!nmeaLine.extractWord(eastOrWestStr)) {
-    printNMEATalker(talker);
-    Serial.println(" GLL message missing E/W");
+    logger << logWarning << talker << " GLL message missing E/W" << eol;
     return false;
   }
 
   if (!longitude.set(longitudeStr, eastOrWestStr)) {
-    printNMEATalker(talker);
-    Serial.println(" GLL message with bad longitude");
+    logger << logWarning << talker << " GLL message with bad longitude" << eol;
     return false;
   }
 
   String timeStr;
   if (!nmeaLine.extractWord(timeStr)) {
-    printNMEATalker(talker);
-    Serial.println(" GLL message missing time");
+    logger << logWarning << talker << " GLL message missing time" << eol;
     return false;
   }
   if (!time.set(timeStr)) {
-    printNMEATalker(talker);
-    Serial.println(" GLL message with bad time");
+    logger << logWarning << talker << " GLL message with bad time" << eol;
     return false;
   }
 
   String dataValidStr;
   if (!nmeaLine.extractWord(dataValidStr)) {
-    printNMEATalker(talker);
-    Serial.println(" GLL message missing data valid field");
+    logger << logWarning << talker << " GLL message missing data valid field" << eol;
     return false;
   }
   if (!parseNMEADataValid(dataValidStr, dataValid)) {
-    printNMEATalker(talker);
-    Serial.println(" GLL message with bad data valid field");
+    logger << logWarning << talker << " GLL message with bad data valid field" << eol;
     return false;
   }
 
   String faaModeIndicatorStr;
   if (nmeaLine.extractWord(faaModeIndicatorStr)) {
     if (!parseNMEAFAAModeIndicator(faaModeIndicatorStr, faaModeIndicator)) {
-      printNMEATalker(talker);
-      Serial.print(" GLL message with bad FAA mode indicator '");
-      Serial.print(faaModeIndicatorStr);
-      Serial.println("'");
+      logger << logWarning << talker << " GLL message with bad FAA mode indicator '"
+             << faaModeIndicatorStr << "'" << eol;
       return false;
     }
   } else {

@@ -4,7 +4,7 @@
 #include "Util/CharacterTools.h"
 #include "NMEALine.h"
 #include "NMEAMessageHandler.h"
-
+#include "Util/Logger.h"
 
 NMEASource::NMEASource(Stream &stream, NMEAMessageHandler &messageHandler) :
               stream(stream), messageHandler(messageHandler) {
@@ -43,7 +43,7 @@ bool NMEASource::processBuffer() {
       // We had a carriage return without the associated line feed. Toss out any
       // characters that we had accumulated in the line and move on, processing
       // the buffer.
-      Serial.println("NMEA line with CR, but no LF. Ignoring.");
+      logger << logWarning << "NMEA line with CR, but no LF. Ignoring." << eol;
       inputLine.reset();
       carriageReturnFound = false;
     }
@@ -64,10 +64,10 @@ bool NMEASource::processBuffer() {
         bufferPos++;
         return true;
       } else {
-        // We had a carriage return without the associated line feed. Toss out any
-        // characters that we had accumulated in the line. If we still have
-        // characters in the buffer, recursively process those.
-        Serial.print("NMEA line with CR, but no LF. Ignoring.");
+        // We had a carriage return without the associated line feed. Toss out any characters that
+        // we had accumulated in the line. If we still have characters in the buffer, recursively
+        // process those.
+        logger << logWarning << "NMEA line with CR, but no LF. Ignoring." << eol;
         inputLine.reset();
         remaining--;
         bufferPos++;
@@ -99,7 +99,7 @@ bool NMEASource::readAvailableInput() {
     const unsigned readLength = min(available, maxNMEALineLength);
     remaining = stream.readBytes(buffer, readLength);
     if (readLength != remaining) {
-      Serial.println("Truncated serial read");
+      logger << logWarning << "Truncated NMEA serial read" << eol;
     }
     bufferPos = 0;
 

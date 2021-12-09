@@ -3,6 +3,7 @@
 
 #include "MQTTConnection.h"
 #include "MQTTMessage.h"
+#include "Util/Logger.h"
 
 void MQTTConnection::begin(WiFiClient &wifiClient) {
   this->wifiClient = wifiClient;
@@ -124,33 +125,24 @@ bool MQTTConnection::determineMessageLength() {
 }
 
 void MQTTConnection::logIllegalRemainingLength() {
-  Serial.print("Illegal MQTT message remaining length: ");
-  Serial.print(buffer[1], HEX);
+  logger << logError <<  "Illegal MQTT message remaining length: " << Hex << buffer[1];
   if (buffer[1] & 0x80) {
-    Serial.print(buffer[2], HEX);
+    logger << buffer[2];
     if (buffer[2] & 0x80) {
-      Serial.print(buffer[3], HEX);
+      logger << buffer[3];
       if (buffer[3] & 0x80) {
-        Serial.print(buffer[4], HEX);
+        logger << buffer[4];
       }
     }
   }
-  Serial.print(" Aborting connection ");
-  Serial.print(wifiClient.remoteIP());
-  Serial.print(":");
-  Serial.println(wifiClient.remotePort());
+  logger << " Aborting connection " << wifiClient.remoteIP() << ":" << wifiClient.remotePort()
+         << eol;
 }
 
 void MQTTConnection::logMessageSizeTooLarge() {
-  Serial.print("Message size ");
-  Serial.print(messageSize);
-  Serial.print(" from ");
-  Serial.print(wifiClient.remoteIP());
-  Serial.print(":");
-  Serial.print(wifiClient.remotePort());
-  Serial.print(" exceeds maximum allowable (");
-  Serial.print(maxIncomingMessageSize);
-  Serial.println("). Aborting connection.");
+  logger << logError << "Message size " << messageSize << " from " << wifiClient.remoteIP()
+         << ":" << wifiClient.remotePort() << " exceeds maximum allowable ("
+         << maxIncomingMessageSize << "). Aborting connection." << eol;
 }
 
 void MQTTConnection::readToBuffer(size_t readAmount) {
@@ -176,10 +168,9 @@ MQTTSession *MQTTConnection::session() {
 }
 
 void MQTTConnection::stop() {
-  Serial.print("Stopping client ");
-  Serial.print(wifiClient.remoteIP());
-  Serial.print(":");
-  Serial.println(wifiClient.remotePort());
+  logger << logDebug << "Stopping client " << wifiClient.remoteIP() << ":"
+         << wifiClient.remotePort() << eol;
+
   wifiClient.flush();
   wifiClient.stop();
 }

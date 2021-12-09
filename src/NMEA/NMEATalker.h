@@ -7,6 +7,6 @@ enum NMEATalker {
 };
 
 enum NMEATalker parseNMEATalker(String &talkerCode);
-void printNMEATalker(enum NMEATalker talker);
+const char *nmeaTalkerName(enum NMEATalker talker);
 
 #endif

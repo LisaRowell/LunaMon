@@ -1,6 +1,8 @@
 #ifndef MQTT_STRING_H
 #define MQTT_STRING_H
 
+class Logger;
+
 class MQTTString {
   private:
     uint8_t lengthMSB;
@@ -13,7 +15,8 @@ class MQTTString {
     // Returns false if too long to copy. maxLength is max in source and
     // does not include nil.
     bool copyTo(char *cString, unsigned maxLength) const;
-    void print() const;
+
+  friend Logger;
 };
 
 #endif

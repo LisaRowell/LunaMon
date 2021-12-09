@@ -26,13 +26,3 @@ bool MQTTString::copyTo(char *cString, unsigned maxLength) const {
 
   return true;
 }
-
-// This is on the shitty side, but it's only for debug messages
-// Delete later when log is implemented.
-void MQTTString::print() const {
-  uint16_t pos;
-  const uint16_t length = MQTTString::length();
-  for (pos = 0; pos < length; pos++) {
-    Serial.print(characterData[pos]);
-  }
-}

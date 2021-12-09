@@ -6,6 +6,7 @@
 #include "Config.h"
 #include "Util/PassiveTimer.h"
 #include "Util/Error.h"
+#include "Util/Logger.h"
 
 WiFiManager::WiFiManager() : connectionState(WIFI_CONNECTION_NEVER), numberClients(0) {
 
@@ -46,8 +47,9 @@ void WiFiManager::service() {
 }
 
 void WiFiManager::initiateConnection() {
-  Serial.print("Attempting to connect to WiFi network ");
-  Serial.println(wifiSSID);
+  logger << logDebug << "Attempting to connect to WiFi network "
+         << wifiSSID << eol;
+
   if (WiFi.begin(wifiSSID, wifiPassword) == WL_CONNECTED) {
     connectionEstablished();
   } else {
@@ -72,10 +74,9 @@ void WiFiManager::checkForConnectionCompleted() {
 
 void WiFiManager::connectionEstablished() {
   // Pigs in space.....
-  Serial.print("Connected to WiFi network ");
-  Serial.print(wifiSSID);
-  Serial.print(", IP Address ");
-  Serial.println(WiFi.localIP());
+  logger << logNotify << "Connected to WiFi network " << wifiSSID
+         << ", IP Address " << WiFi.localIP() << eol;
+
   connectionState = WIFI_CONNECTION_CONNECTED;
   notifyWiFiConnected();
 }
@@ -165,8 +166,7 @@ void WiFiManager::checkFirmwareVersion() {
     }
   }
 
-  Serial.print("Firmware version: ");
-  Serial.println(firmwareVersion);
+  logger << logDebug << "Firmware version: " << firmwareVersion << eol;
 }
 
 void WiFiManager::firmwareVersionError(const String firmwareVersion) {

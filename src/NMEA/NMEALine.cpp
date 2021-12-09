@@ -2,7 +2,7 @@
 
 #include "Util/CharacterTools.h"
 #include "NMEALine.h"
-
+#include "Util/Logger.h"
 
 NMEALine::NMEALine() {
   overflowed = false;
@@ -57,17 +57,16 @@ bool NMEALine::sanityCheck() {
   char msgStart;
 
   if (!extractChar(msgStart)) {
-    Serial.println("Empty message");
+    logger << logWarning << "Empty NMEA message" << eol;
     return false;
   }
   if (msgStart != '$') {
-    Serial.println("Missing leading '$'");
+    logger << logWarning << "NMEA message missing leading '$'" << eol;
     return false;
   }
 
   if (!checkParity()) {
-    Serial.println("NMEA line with bad parity");
-    Serial.println(buffer);
+    logger << logWarning << "NMEA line with bad parity: " << buffer << eol;
     return false;
   }
   stripParity();
@@ -132,10 +131,6 @@ void NMEALine::stripParity() {
 bool NMEALine::checkParity() {
   unsigned checksumPos = length - 3;
   if (buffer[checksumPos] != '*') {
-    Serial.print("Length ");
-    Serial.println(length);
-    Serial.println("Not *");
-    Serial.println(buffer[checksumPos]);
     return false;
   }
 
