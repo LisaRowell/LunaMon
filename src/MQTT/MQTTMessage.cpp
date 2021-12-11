@@ -61,7 +61,7 @@ const char *MQTTMessage::messageTypeStr() const {
 }
 
 uint8_t MQTTMessage::fixedHeaderFlags() const {
-    return (fixedHeader->typeAndFlags & MQTT_MSG_FLAGS_MASK) >> MQTT_MSG_TYPE_SHIFT;
+    return (fixedHeader->typeAndFlags & MQTT_MSG_FLAGS_MASK) >> MQTT_MSG_FLAGS_SHIFT;
 }
 
 uint32_t MQTTMessage::fixedHeaderSize() const {
@@ -83,7 +83,7 @@ bool MQTTMessage::parseString(MQTTString * &string, uint8_t *messagePos, uint32_
 
     string = (MQTTString *)messagePos;
     const uint32_t stringSize = string->size();
-    if (stringSize < bytesRemaining) {
+    if (stringSize > bytesRemaining) {
         return false;
     }
 

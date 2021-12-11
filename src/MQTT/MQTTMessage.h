@@ -11,7 +11,7 @@ struct MQTTFixedHeader {
 #define MQTT_MSG_TYPE_MASK 0xf0
 #define MQTT_MSG_TYPE_SHIFT 4
 #define MQTT_MSG_FLAGS_MASK 0x0f
-#define MQTT_MSG_FLAGS_SHIFT 4
+#define MQTT_MSG_FLAGS_SHIFT 0
 
 enum MQTTMessageType : uint8_t {
     MQTT_MSG_RESERVED1 = 0,
