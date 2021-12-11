@@ -11,8 +11,8 @@
 #define MQTT_CONNACK_REFUSED_NOT_AUTHORIZED       0x05
 
 struct MQTTConnectAckVariableHeader {
-  uint8_t flags;
-  uint8_t returnCode;
+    uint8_t flags;
+    uint8_t returnCode;
 };
 
 #define MQTT_CONNACK_SESSION_PRESENT_MASK 0x01

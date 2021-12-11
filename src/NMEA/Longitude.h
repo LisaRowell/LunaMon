@@ -4,17 +4,17 @@
 #include "Coordinate.h"
 
 enum EastOrWest {
-  EAST,
-  WEST
+    EAST,
+    WEST
 };
 
 class Longitude : public Coordinate {
-  private:
-    enum EastOrWest eastOrWest;
+    private:
+        enum EastOrWest eastOrWest;
 
-  public:
-    bool set(const String &string, const String &eastOrWestStr);
-    void print();
+    public:
+        bool set(const String &string, const String &eastOrWestStr);
+        void print();
 };
 
 #endif

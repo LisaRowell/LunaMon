@@ -4,9 +4,9 @@
 #include "MQTTMessage.h"
 
 class MQTTDisconnectMessage : MQTTMessage {
-  public:
-    MQTTDisconnectMessage(MQTTMessage const &message);
-    bool parse();
+    public:
+        MQTTDisconnectMessage(MQTTMessage const &message);
+        bool parse();
 };
 
 #endif

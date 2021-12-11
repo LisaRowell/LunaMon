@@ -5,13 +5,13 @@
 #include "MQTTString.h"
 
 struct MQTTConnectVariableHeader {
-  uint8_t protocolNameLengthMSB;
-  uint8_t protocolNameLengthLSB;
-  uint8_t protocolName[4];
-  uint8_t level;
-  uint8_t flags;
-  uint8_t keepAliveMSB;
-  uint8_t keepAliveLSB;
+    uint8_t protocolNameLengthMSB;
+    uint8_t protocolNameLengthLSB;
+    uint8_t protocolName[4];
+    uint8_t level;
+    uint8_t flags;
+    uint8_t keepAliveMSB;
+    uint8_t keepAliveLSB;
 };
 
 #define MQTT_PROTOCOL_LEVEL 4
@@ -30,26 +30,26 @@ struct MQTTConnectVariableHeader {
 #define MQTT_MAX_WILL_MESSAGE_LENGTH 255
 
 class MQTTConnectMessage : MQTTMessage {
-  private:
-    MQTTConnectVariableHeader *variableHeader;
-    MQTTString *clientIDStr;
-    MQTTString *willTopicStr;
-    MQTTString *willMessageStr;
-    MQTTString *userNameStr;
-    MQTTString *passwordStr;
+    private:
+        MQTTConnectVariableHeader *variableHeader;
+        MQTTString *clientIDStr;
+        MQTTString *willTopicStr;
+        MQTTString *willMessageStr;
+        MQTTString *userNameStr;
+        MQTTString *passwordStr;
 
-  public:
-    MQTTConnectMessage(MQTTMessage const &message);
-    bool parse();
-    uint8_t sanityCheck();
-    bool cleanSession();
-    bool hasWill();
-    uint8_t willQoS();
-    bool willRetain();
-    bool hasUserName();
-    bool hasPassword();
-    uint16_t keepAliveSec();
-    const MQTTString *clientID();
+    public:
+        MQTTConnectMessage(MQTTMessage const &message);
+        bool parse();
+        uint8_t sanityCheck();
+        bool cleanSession();
+        bool hasWill();
+        uint8_t willQoS();
+        bool willRetain();
+        bool hasUserName();
+        bool hasPassword();
+        uint16_t keepAliveSec();
+        const MQTTString *clientID();
 };
 
 #endif

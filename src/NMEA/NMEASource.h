@@ -4,25 +4,24 @@
 #include "NMEALine.h"
 #include "NMEAMessageHandler.h"
 
-
 class NMEASource {
-  private:
-    Stream &stream;
-    NMEAMessageHandler &messageHandler;
-    char buffer[maxNMEALineLength];
-    unsigned bufferPos;
-    unsigned remaining;
-    bool carriageReturnFound;
-    NMEALine inputLine;
+    private:
+        Stream &stream;
+        NMEAMessageHandler &messageHandler;
+        char buffer[maxNMEALineLength];
+        unsigned bufferPos;
+        unsigned remaining;
+        bool carriageReturnFound;
+        NMEALine inputLine;
 
-    bool scanForCarriageReturn(unsigned &carriageReturnPos);
-    bool readAvailableInput();
-    bool processBuffer();
-    void lineCompleted();
+        bool scanForCarriageReturn(unsigned &carriageReturnPos);
+        bool readAvailableInput();
+        bool processBuffer();
+        void lineCompleted();
 
-  public:
-    NMEASource(Stream &stream, NMEAMessageHandler &messageHandler);
-    void service();
+    public:
+        NMEASource(Stream &stream, NMEAMessageHandler &messageHandler);
+        void service();
 };
 
 #endif

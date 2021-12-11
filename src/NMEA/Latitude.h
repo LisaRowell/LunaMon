@@ -4,18 +4,18 @@
 #include "Coordinate.h"
 
 enum NorthOrSouth {
-  NORTH,
-  SOUTH
+    NORTH,
+    SOUTH
 };
 
 class Latitude : public Coordinate {
-  private:
-    enum NorthOrSouth northOrSouth;
+    private:
+        enum NorthOrSouth northOrSouth;
 
-  public:
+    public:
   
-    bool set(const String &string, const String &northOrSouthStr);
-    void print();
+        bool set(const String &string, const String &northOrSouthStr);
+        void print();
 };
 
 #endif

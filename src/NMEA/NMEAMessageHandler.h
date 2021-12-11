@@ -3,10 +3,9 @@
 
 #include "NMEALine.h"
 
-
 class NMEAMessageHandler {
-  public:
-    void processLine(NMEALine &msgLine);
+    public:
+        void processLine(NMEALine &msgLine);
 };
 
 #endif

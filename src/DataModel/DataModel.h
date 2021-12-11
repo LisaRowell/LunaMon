@@ -17,8 +17,8 @@ extern const DataModelNode dataModelTopNode;
 const unsigned maxDataModelClients = 2;
 
 class DataModel {
-  public:
-    DataModel();
+    public:
+        DataModel();
 };
 
 #endif

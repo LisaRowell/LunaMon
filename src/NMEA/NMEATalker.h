@@ -1,9 +1,9 @@
-#ifndef NMEATALKER_H
-#define NMEATALKER_H
+#ifndef NMEA_TALKER_H
+#define NMEA_TALKER_H
 
 enum NMEATalker {
-  NMEA_TALKER_UNKNOWN,
-  NMEA_TALKER_GPS
+    NMEA_TALKER_UNKNOWN,
+    NMEA_TALKER_GPS
 };
 
 enum NMEATalker parseNMEATalker(String &talkerCode);

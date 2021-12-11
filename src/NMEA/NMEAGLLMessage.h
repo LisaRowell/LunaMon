@@ -7,18 +7,17 @@
 #include "Time.h"
 #include "NMEAFAAModeIndicator.h"
 
-
 class NMEAGLLMessage : public NMEAMessage {
-  private:
-    Latitude latitude;
-    Longitude longitude;
-    Time time;
-    bool dataValid;
-    enum NMEAFAAModeIndicator faaModeIndicator;
+    private:
+        Latitude latitude;
+        Longitude longitude;
+        Time time;
+        bool dataValid;
+        enum NMEAFAAModeIndicator faaModeIndicator;
 
-  public:
-    bool parse(NMEATalker talker, NMEALine &nmeaLine);
-    void print() override;
+    public:
+        bool parse(NMEATalker talker, NMEALine &nmeaLine);
+        void print() override;
 };
 
 extern NMEAGLLMessage *parseNMEAGLLMessage(NMEATalker talker, NMEALine &nmeaLine);

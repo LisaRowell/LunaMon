@@ -6,11 +6,11 @@
 const unsigned maxDataModelSubscribers = 5;
 
 class DataModelElement {
-  private:
-    const char *name;
+    private:
+        const char *name;
 
-  public:
-    DataModelElement(const char *name);
+    public:
+        DataModelElement(const char *name);
 };
 
 #endif
