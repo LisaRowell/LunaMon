@@ -38,6 +38,8 @@ class MQTTConnection {
         void stop();
         bool wasDisconnected();
         MQTTSession *session();
+        IPAddress ipAddress();
+        uint16_t port();
 };
 
 #endif

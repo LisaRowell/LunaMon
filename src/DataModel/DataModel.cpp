@@ -3,27 +3,31 @@
 #include "DataModel.h"
 #include "DataModelNode.h"
 #include "DataModelElement.h"
+#include "DataModelRoot.h"
 #include "DataModelUInt32Leaf.h"
 #include "Config.h"
+#include "Util/Logger.h"
 #include "Util/Error.h"
 
 // Up time of this controller in seconds
 DataModelUInt32Leaf controllerUpTime("upTime");
 
-const DataModelElement controllerIDNodeChildren[] = { controllerUpTime, NULL };
-const DataModelNode controllerIDNode(controllerID, controllerIDNodeChildren);
+DataModelElement *controllerIDNodeChildren[] = { &controllerUpTime, NULL };
+DataModelNode controllerIDNode(controllerID, controllerIDNodeChildren);
 
-const DataModelElement controllersNodeChildren[] = { controllerIDNode, NULL };
-const DataModelNode controllersNode("controllers", controllersNodeChildren);
+DataModelElement *controllersNodeChildren[] = { &controllerIDNode, NULL };
+DataModelNode controllersNode("controllers", controllersNodeChildren);
 
-const DataModelElement electronicsNodeChildren[] = { controllersNode, NULL };
-const DataModelNode electronicsNode("electronics", electronicsNodeChildren);
+DataModelElement *electronicsNodeChildren[] = { &controllersNode, NULL };
+DataModelNode electronicsNode("electronics", electronicsNodeChildren);
 
-const DataModelElement vesselNodeChildren[] = { electronicsNode, NULL };
-const DataModelNode vesselNode(mmsi, vesselNodeChildren);
+DataModelElement *topNodeChildren[] = { &electronicsNode, NULL };
+DataModelRoot dataModelRoot(topNodeChildren);
 
-const DataModelElement topNodeChildren[] = { vesselNode, NULL };
-const DataModelNode dataModelTopNode("vessels", topNodeChildren);
+DataModel::DataModel() : root(dataModelRoot) {
+}
 
-DataModel::DataModel() {
+bool DataModel::subscribe(const char *topicFilter, DataModelSubscriber &subscriber,
+                          uint32_t cookie) {
+    return root.subscribe(topicFilter, subscriber, cookie);
 }

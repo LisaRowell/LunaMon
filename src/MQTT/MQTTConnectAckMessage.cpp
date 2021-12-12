@@ -1,10 +1,13 @@
+#include "MQTTConnectAckMessage.h"
+
 #include <Arduino.h>
 
-#include "MQTTConnectAckMessage.h"
-#include "MQTTMessage.h"
 #include "MQTTConnection.h"
+#include "MQTTMessage.h"
+#include "MQTTUtil.h"
 
-bool sendMQTTConnectAckMessage(MQTTConnection *connection, bool sessionPresent, uint8_t returnCode) {
+bool sendMQTTConnectAckMessage(MQTTConnection *connection, bool sessionPresent,
+                               uint8_t returnCode) {
     MQTTFixedHeader fixedHeader;
     MQTTConnectAckVariableHeader variableHeader;
 
@@ -13,7 +16,7 @@ bool sendMQTTConnectAckMessage(MQTTConnection *connection, bool sessionPresent, 
         return false;
     }
     const uint8_t remainingLength = sizeof(MQTTConnectAckVariableHeader);
-    if (!connection->write(&remainingLength, 1)) {
+    if (!mqttWriteRemainingLength(connection, remainingLength)) {
         return false;
     }
 

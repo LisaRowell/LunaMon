@@ -1,9 +1,9 @@
 #ifndef DATA_MODEL_UINT32_LEAF_H
 #define DATA_MODEL_UINT32_LEAF_H
 
-#include "DataModelLeaf.h"
+#include "DataModelRetainedValueLeaf.h"
 
-class DataModelUInt32Leaf : public DataModelLeaf {
+class DataModelUInt32Leaf : public DataModelRetainedValueLeaf {
     private:
         uint32_t value;
 

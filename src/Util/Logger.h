@@ -38,6 +38,7 @@ class Logger {
         Logger & operator << (uint8_t value);
         Logger & operator << (uint16_t value);
         Logger & operator << (uint32_t value);
+        Logger & operator << (unsigned value);
         Logger & operator << (int value);
         Logger & operator << (const IPAddress &addr);
         Logger & operator << (const MQTTString &string);

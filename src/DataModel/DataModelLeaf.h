@@ -5,16 +5,18 @@
 
 class DataModelLeaf : public DataModelElement {
     protected:
-        bool hasBeenSet;
         DataModelSubscriber *subscribers[maxDataModelSubscribers];
+        uint32_t cookies[maxDataModelSubscribers];
 
-        void updated();
+        bool addSubscriber(DataModelSubscriber &subscriber, uint32_t cookie);
+        virtual bool subscribe(DataModelSubscriber &subscriber, uint32_t cookie);
+        void unsubscribe(DataModelSubscriber *subscriber);
 
     public:
         DataModelLeaf(const char *name);
-        bool hasValue();
-        bool subscribe(DataModelSubscriber *subscriber);
-        void unsubscribe(DataModelSubscriber *subscriber);
+        virtual bool subscribeIfMatching(const char *topicFilter, DataModelSubscriber &subscriber,
+                                         uint32_t cookie) override;
+        virtual bool subscribeAll(DataModelSubscriber &subscriber, uint32_t cookie) override;
 };
 
 #endif

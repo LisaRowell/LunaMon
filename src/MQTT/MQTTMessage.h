@@ -42,7 +42,8 @@ class MQTTMessage {
 
         uint8_t fixedHeaderFlags() const;
         uint32_t fixedHeaderSize() const;
-        bool parseString(MQTTString * &string, uint8_t *messagePos, uint32_t &bytesRemaining);
+        bool parseString(MQTTString * &string, uint8_t * &messagePos, uint32_t &bytesRemaining);
+        void grabString(MQTTString * &string, uint8_t *&messagePos);
 
     public:
         MQTTMessage();

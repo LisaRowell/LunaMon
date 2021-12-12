@@ -1,15 +1,19 @@
+#include "MQTTBroker.h"
+
 #include <Arduino.h>
 
-#include "MQTTBroker.h"
-#include "WiFiManager/WiFiManager.h"
-#include "MQTTConnection.h"
-#include "MQTTSession.h"
-#include "MQTTMessage.h"
-#include "MQTTConnectMessage.h"
+#include "DataModel/DataModel.h"
 #include "MQTTConnectAckMessage.h"
+#include "MQTTConnectMessage.h"
+#include "MQTTConnection.h"
 #include "MQTTDisconnectMessage.h"
+#include "MQTTMessage.h"
+#include "MQTTSession.h"
+#include "MQTTSubscribeAckMessage.h"
+#include "MQTTSubscribeMessage.h"
 #include "Util/Error.h"
 #include "Util/Logger.h"
+#include "WiFiManager/WiFiManager.h"
 
 MQTTBroker::MQTTBroker() : wifiIsConnected(false), wifiServer(portNumber) {
     unsigned sessionPos;
@@ -18,9 +22,7 @@ MQTTBroker::MQTTBroker() : wifiIsConnected(false), wifiServer(portNumber) {
     }
 }
 
-void MQTTBroker::begin(WiFiManager &wifiManager) {
-    wifiManager.registerForNotifications(this);
-}
+void MQTTBroker::begin(WiFiManager &wifiManager) { wifiManager.registerForNotifications(this); }
 
 void MQTTBroker::service() {
     checkForLostConnections();
@@ -201,7 +203,12 @@ void MQTTBroker::messageReceived(MQTTConnection *connection, MQTTMessage &messag
             break;
 
         case MQTT_MSG_CONNACK:
+        case MQTT_MSG_SUBACK:
             serverOnlyMsgReceivedError(connection, message);
+            break;
+
+        case MQTT_MSG_SUBSCRIBE:
+            subscribeMessageReceived(connection, message);
             break;
 
         case MQTT_MSG_DISCONNECT:
@@ -222,7 +229,7 @@ void MQTTBroker::messageReceived(MQTTConnection *connection, MQTTMessage &messag
 }
 
 void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage &message) {
-    // Per the MQTT specification, we try a second CONNECT for a connection as a protocol error.
+    // Per the MQTT specification, we treat a second CONNECT for a connection as a protocol error.
     if (connection->hasSession()) {
         logger << logWarning << "Second MQTT CONNECT received for a connection." << eol;
         terminateConnection(connection);
@@ -263,8 +270,8 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
     const MQTTString *clientIDStr = connectMessage.clientID();
     char clientID[maxMQTTClientIDLength + 1];
     if (!clientIDStr->copyTo(clientID, maxMQTTClientIDLength)) {
-        logger << logWarning << "MQTT CONNECT message with too long of a Client ID:"
-               << *clientIDStr << eol;
+        logger << logWarning << "MQTT CONNECT message with too long of a Client ID:" << *clientIDStr
+               << eol;
         sendMQTTConnectAckMessage(connection, false, MQTT_CONNACK_REFUSED_IDENTIFIER_REJECTED);
         return;
     }
@@ -286,7 +293,7 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
         if (session) {
             session->begin(connectMessage.cleanSession(), clientID, connection);
             connection->connectTo(session);
-            logger << logDebug <<  "MQTT Client '" << clientID << "' connected with new Session"
+            logger << logDebug << "MQTT Client '" << clientID << "' connected with new Session"
                    << eol;
             sendMQTTConnectAckMessage(connection, false, MQTT_CONNACK_ACCEPTED);
         } else {
@@ -323,6 +330,69 @@ MQTTSession *MQTTBroker::findAvailableSession() {
     return NULL;
 }
 
+void MQTTBroker::subscribeMessageReceived(MQTTConnection *connection, MQTTMessage &message) {
+    logger << logDebug << "Processing Subscribe message" << eol;
+
+    if (!connection->hasSession()) {
+        logger << logWarning << "Received a Subscribe message from an unconnected Client ("
+               << connection->ipAddress() << connection->port() << "). Terminating connection."
+               << eol;
+        terminateConnection(connection);
+        return;
+    }
+    MQTTSession *session = connection->session();
+
+    MQTTSubscribeMessage subscribeMessage(message);
+    if (!subscribeMessage.parse()) {
+        logger << logWarning << "Bad subscribe message from Client '" << session->name()
+               << "'. Terminating connection." << eol;
+        terminateConnection(connection);
+        return;
+    }
+
+    // Loop through the topics, trying to subscribe to each and adding the result to the SUBACK
+    // message.
+    unsigned topicFilterCount = subscribeMessage.numTopicFilters();
+    uint8_t *subscribeResults = new uint8_t[topicFilterCount];
+    unsigned topicFilterIndex;
+    for (topicFilterIndex = 0; topicFilterIndex < topicFilterCount; topicFilterIndex++) {
+        MQTTString *topicFilterStr;
+        uint8_t maxQoS;
+        if (!subscribeMessage.getTopicFilter(topicFilterStr, maxQoS)) {
+            logger << logError << "MQTT SUBSCRIBE has a messed up number of topic filters" << eol;
+            break;
+        }
+
+        logger << logDebug << "MQTT Client '" << session->name() << "' wants to subscribe to '"
+               << *topicFilterStr << "' with max QoS " << maxQoS << eol;
+
+        char topicFilter[maxTopicFilterLength + 1];
+        if (!topicFilterStr->copyTo(topicFilter, maxTopicFilterLength)) {
+            logger << logWarning << "MQTT SUBSCRIBE message with too long of a Topic Filter '"
+                   << *topicFilterStr << "'" << eol;
+            subscribeResults[topicFilterIndex] = mqttSubscribeResult(false, 0);
+        } else {
+            if (dataModel.subscribe(topicFilter, *session, (uint32_t)maxQoS)) {
+                logger << logDebug << "Topic Filter '" << topicFilter << "' subscribed to by '"
+                       << session->name() << "'" << eol;
+                subscribeResults[topicFilterIndex] = mqttSubscribeResult(true, 0);
+            } else {
+                logger << logDebug << "Client '" << session->name()
+                       << "' failed to subscribe to Topic Filter '" << topicFilter << "'" << eol;
+                 subscribeResults[topicFilterIndex] = mqttSubscribeResult(false, 0);
+           }
+        }
+    }
+
+    logger << logDebug << "Sending SUBACK message with " << topicFilterCount
+           << " results to Client '" << session->name() << "'" << eol;
+    if (!sendMQTTSubscribeAckMessage(connection, subscribeMessage.packetID(), topicFilterCount,
+                                     subscribeResults)) {
+        logger << logError << "Failed to send SUBACK message to Client '" << session->name() << "'"
+               << eol;
+    }
+}
+
 void MQTTBroker::disconnectMessageReceived(MQTTConnection *connection, MQTTMessage &message) {
     MQTTDisconnectMessage disconnectMessage(message);
 
@@ -337,8 +407,10 @@ void MQTTBroker::disconnectMessageReceived(MQTTConnection *connection, MQTTMessa
     // Flag if we're getting a DISCONNECT for a connection that didn't actually get connected with a
     // session.
     if (!connection->hasSession()) {
-        logger << logError << "Received MQTT DISCONNECT message for a connection that wasn't "
-                              "connected to a session." << eol;
+        logger << logError
+               << "Received MQTT DISCONNECT message for a connection that wasn't connected to a "
+                  "session."
+               << eol;
         terminateConnection(connection);
         return;
     }

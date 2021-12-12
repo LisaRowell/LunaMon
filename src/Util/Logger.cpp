@@ -95,6 +95,25 @@ Logger & Logger::operator << (uint32_t value) {
     return *this;
 }
 
+Logger & Logger::operator << (unsigned value) {
+    if (lineLevel >= logLevel) {
+        switch (base) {
+            case Dec:
+                console.print(value);
+                break;
+
+            case Hex:
+                console.print(value, HEX);
+                break;
+
+            default:
+                fatalError("Messed up base in logger");
+        }
+    }
+
+    return *this;
+}
+
 Logger & Logger::operator << (int value) {
     if (lineLevel >= logLevel) {
         switch (base) {

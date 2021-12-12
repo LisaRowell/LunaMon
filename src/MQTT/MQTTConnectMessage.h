@@ -26,7 +26,6 @@ struct MQTTConnectVariableHeader {
 #define MQTT_CONNECT_FLAGS_USER_NAME_MASK     0x80
 
 // These two are up for debate.
-#define MQTT_MAX_TOPIC_LENGTH 255
 #define MQTT_MAX_WILL_MESSAGE_LENGTH 255
 
 class MQTTConnectMessage : MQTTMessage {

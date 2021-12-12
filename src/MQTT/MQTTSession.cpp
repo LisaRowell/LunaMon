@@ -54,3 +54,7 @@ bool MQTTSession::disconnect() {
 
 void MQTTSession::unsubscribeAll() { 
 }
+
+const char *MQTTSession::name() const {
+    return clientID;
+}

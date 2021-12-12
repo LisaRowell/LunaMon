@@ -11,6 +11,7 @@ NMEAMessageHandler nmeaMessageHandler;
 NMEASource usbSerialNMEASource(Serial, nmeaMessageHandler);
 WiFiManager wifiManager;
 MQTTBroker mqttBroker;
+DataModel dataModel;
 
 void setup() {
     controllerUpTime.publish(millis() / msInSecond);

@@ -76,7 +76,8 @@ uint32_t MQTTMessage::fixedHeaderSize() const {
     }
 }
 
-bool MQTTMessage::parseString(MQTTString * &string, uint8_t *messagePos, uint32_t &bytesRemaining) {
+bool MQTTMessage::parseString(MQTTString * &string, uint8_t * &messagePos,
+                              uint32_t &bytesRemaining) {
     if (bytesRemaining < sizeof(MQTTString)) {
         return false;
     }
@@ -91,4 +92,11 @@ bool MQTTMessage::parseString(MQTTString * &string, uint8_t *messagePos, uint32_
     bytesRemaining -= stringSize;
 
     return true;
+}
+
+void MQTTMessage::grabString(MQTTString * &string, uint8_t * &messagePos) {
+    string = (MQTTString *)messagePos;
+    const uint32_t stringSize = string->size();
+
+    messagePos += stringSize;
 }

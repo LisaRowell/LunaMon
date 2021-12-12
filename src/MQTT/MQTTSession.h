@@ -5,6 +5,7 @@
 
 #include "MQTTConnection.h"
 #include "MQTTString.h"
+#include "DataModel/DataModelSubscriber.h"
 
 //
 // MQTTSession
@@ -19,7 +20,7 @@ const unsigned maxMQTTClientIDLength = 23;
 
 class MQTTConnection;
 
-class MQTTSession {
+class MQTTSession : public DataModelSubscriber {
     private:
         bool cleanSession;
         char clientID[maxMQTTClientIDLength + 1];
@@ -34,6 +35,7 @@ class MQTTSession {
         void reconnect(bool newCleanSession, MQTTConnection *connection);
         bool disconnect();
         void service();
+        const char *name() const;
 };
 
 #endif

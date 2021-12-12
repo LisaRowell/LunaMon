@@ -6,10 +6,17 @@
 class DataModelNode : public DataModelElement {
     private:
         // Pointer to a static, null terminated array of children.
-        const DataModelElement *children;
+        DataModelElement **children;
+
+    protected:
+        bool subscribeChildrenIfMatching(const char *topicFilter, DataModelSubscriber &subscriber,
+                                         uint32_t cookie);
 
     public:
-        DataModelNode(const char *name, const DataModelElement *children);
+        DataModelNode(const char *name, DataModelElement **children);
+        virtual bool subscribeIfMatching(const char *topicFilter, DataModelSubscriber &subscriber,
+                                         uint32_t cookie) override;
+        virtual bool subscribeAll(DataModelSubscriber &subscriber, uint32_t cookie) override;
 };
 
 #endif

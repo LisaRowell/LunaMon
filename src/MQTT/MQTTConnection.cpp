@@ -176,3 +176,11 @@ bool MQTTConnection::wasDisconnected() {
     // flush or stop. 
     return !wifiClient.connected();
 }
+
+IPAddress MQTTConnection::ipAddress() {
+    return wifiClient.remoteIP();
+}
+
+uint16_t MQTTConnection::port() {
+    return wifiClient.remotePort();
+}
