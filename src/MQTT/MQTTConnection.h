@@ -12,6 +12,13 @@ class MQTTConnection {
         WiFiClient wifiClient;
         MQTTSession *mqttSession;
 
+        // We cache the client's IP address and TCP port here so that we can use it in debug
+        // messages for disconnected clients. This is required because of the roundabout way that
+        // we learn about connection termination from the WiFiNINA library. By the time we figure it
+        // out, the address and port information has already been smoshed.
+        IPAddress remoteIPAddress;
+        uint16_t remotePort;
+
         static const uint32_t maxIncomingMessageSize = 1024;
         uint8_t buffer[maxIncomingMessageSize];
         uint32_t bytesInBuffer;

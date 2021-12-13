@@ -8,6 +8,8 @@
 void MQTTConnection::begin(WiFiClient &wifiClient) {
     this->wifiClient = wifiClient;
     mqttSession = NULL;
+    remoteIPAddress = wifiClient.remoteIP();
+    remotePort = wifiClient.remotePort();
 }
 
 bool MQTTConnection::matches(WiFiClient &wifiClient) {
@@ -178,9 +180,9 @@ bool MQTTConnection::wasDisconnected() {
 }
 
 IPAddress MQTTConnection::ipAddress() {
-    return wifiClient.remoteIP();
+    return remoteIPAddress;
 }
 
 uint16_t MQTTConnection::port() {
-    return wifiClient.remotePort();
+    return remotePort;
 }
