@@ -44,7 +44,7 @@ const char *MQTTMessage::messageTypeStr() const {
         case MQTT_MSG_SUBACK:
             return "SUBACK";
         case MQTT_MSG_UNSUBSCRIBE:
-            return "SUBSCRIBE";
+            return "UNSUBSCRIBE";
         case MQTT_MSG_UNSUBACK:
             return "UNSUBACK";
         case MQTT_MSG_PINGREQ:
