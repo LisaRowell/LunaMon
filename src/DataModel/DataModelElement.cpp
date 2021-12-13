@@ -53,7 +53,9 @@ void DataModelElement::buildTopicName(char *topicNameBuffer) {
     // TODO: Make this more efficent!
     if (parent) {
         parent->buildTopicName(topicNameBuffer);
-        strcat(topicNameBuffer, "/");
+        if (topicNameBuffer[0] != 0) {
+            strcat(topicNameBuffer, "/");
+        }
         strcat(topicNameBuffer, name);
     } else {
         if (name) {
