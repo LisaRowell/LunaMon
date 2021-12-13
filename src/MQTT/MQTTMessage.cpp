@@ -48,7 +48,7 @@ const char *MQTTMessage::messageTypeStr() const {
         case MQTT_MSG_UNSUBACK:
             return "UNSUBACK";
         case MQTT_MSG_PINGREQ:
-            return "PINGEQ";
+            return "PINGREQ";
         case MQTT_MSG_PINGRESP:
             return "PINGRESP";
         case MQTT_MSG_DISCONNECT:
