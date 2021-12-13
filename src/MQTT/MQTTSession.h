@@ -36,6 +36,7 @@ class MQTTSession : public DataModelSubscriber {
         bool disconnect();
         void service();
         const char *name() const;
+        virtual void publish(const char *topic, const char *value, bool retainedValue) override;
 };
 
 #endif

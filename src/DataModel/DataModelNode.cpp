@@ -3,8 +3,9 @@
 #include "DataModelNode.h"
 #include "DataModelElement.h"
 
-DataModelNode::DataModelNode(const char *name, DataModelElement *children[])
-    : DataModelElement(name), children(children) {
+DataModelNode::DataModelNode(const char *name, DataModelElement *parent,
+                             DataModelElement *children[])
+    : DataModelElement(name, parent), children(children) {
 }
 
 bool DataModelNode::subscribeAll(DataModelSubscriber &subscriber, uint32_t cookie) {

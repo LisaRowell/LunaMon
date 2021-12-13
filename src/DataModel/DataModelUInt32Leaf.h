@@ -4,13 +4,14 @@
 #include "DataModelRetainedValueLeaf.h"
 
 class DataModelUInt32Leaf : public DataModelRetainedValueLeaf {
-    private:
+   private:
         uint32_t value;
 
     public:
-        DataModelUInt32Leaf(const char *name);
-        void publish(uint32_t value);
+        DataModelUInt32Leaf(const char *name, DataModelElement *parent);
+        void setValue(uint32_t value);
         uint32_t currentValue();
+        virtual void sendRetainedValue(DataModelSubscriber &subscriber) override;
 };
 
 #endif

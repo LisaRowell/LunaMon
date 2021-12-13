@@ -1,8 +1,10 @@
 #include <Arduino.h>
 
 #include "DataModelLeaf.h"
+#include "DataModel.h"
 
-DataModelLeaf::DataModelLeaf(const char *name) : DataModelElement(name) {
+DataModelLeaf::DataModelLeaf(const char *name, DataModelElement *parent)
+    : DataModelElement(name, parent) {
     unsigned subscriberPos;
     for (subscriberPos = 0; subscriberPos < maxDataModelSubscribers; subscriberPos++) {
         subscribers[subscriberPos] = NULL;
@@ -62,4 +64,23 @@ bool DataModelLeaf::subscribeIfMatching(const char *topicFilter, DataModelSubscr
 
 bool DataModelLeaf::subscribeAll(DataModelSubscriber &subscriber, uint32_t cookie) {
     return subscribe(subscriber, cookie);
+}
+
+void DataModelLeaf::publish(const char *value) {
+    unsigned subscriberIndex;
+    for (subscriberIndex = 0; subscriberIndex < maxDataModelSubscribers; subscriberIndex++) {
+        DataModelSubscriber *subscriber = subscribers[subscriberIndex];
+        if (subscriber != NULL) {
+            // This could be made more efficent by building a topic name outside of this loop
+            // instead of down in the publish routine...
+            publishToSubscriber(*subscriber, value, false);
+        }
+    }
+}
+
+void DataModelLeaf::publishToSubscriber(DataModelSubscriber &subscriber, const char *value,
+                                        bool retainedValue) {
+    char topic[maxTopicNameLength];
+    buildTopicName(topic);
+    subscriber.publish(topic, value, retainedValue);
 }

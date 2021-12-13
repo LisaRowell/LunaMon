@@ -1,6 +1,7 @@
 #include <Arduino.h>
 
 #include "MQTTSession.h"
+#include "MQTTPublishMessage.h"
 #include "Util/Logger.h"
 
 bool MQTTSession::isConnected() const {
@@ -57,4 +58,11 @@ void MQTTSession::unsubscribeAll() {
 
 const char *MQTTSession::name() const {
     return clientID;
+}
+
+void MQTTSession::publish(const char *topic, const char *value, bool retainedValue) {
+    logger << logDebug << "Publishing Topic '" << topic << "' to Client '" << clientID
+           << "' with value '" << value << "' and retain " << retainedValue << eol;
+    
+    sendMQTTPublishMessage(connection, topic, value, false, 0, retainedValue, 0);
 }

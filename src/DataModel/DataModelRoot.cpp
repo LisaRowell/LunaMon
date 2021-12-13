@@ -6,7 +6,7 @@
 #include "DataModelElement.h"
 #include "Util/Logger.h"
 
-DataModelRoot::DataModelRoot(DataModelElement **children) : DataModelNode(NULL, children) {
+DataModelRoot::DataModelRoot(DataModelElement **children) : DataModelNode(NULL, NULL, children) {
 }
 
 bool DataModelRoot::subscribe(const char *topicFilter, DataModelSubscriber &subscriber,

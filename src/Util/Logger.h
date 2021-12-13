@@ -40,6 +40,7 @@ class Logger {
         Logger & operator << (uint32_t value);
         Logger & operator << (unsigned value);
         Logger & operator << (int value);
+        Logger & operator << (bool value);
         Logger & operator << (const IPAddress &addr);
         Logger & operator << (const MQTTString &string);
         Logger & operator << (enum NMEATalker talker);

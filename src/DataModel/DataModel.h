@@ -13,12 +13,13 @@ extern DataModelNode controllersNode;
 
 extern DataModelNode electronicsNode;
 
-extern DataModelNode dataModelTopNode;
+extern DataModelRoot dataModelRoot;
 
 const unsigned maxDataModelClients = 2;
 
 // This is probably in need of consideration...
-const unsigned maxTopicFilterLength = 255;
+const unsigned maxTopicNameLength = 255;
+const unsigned maxTopicFilterLength = maxTopicNameLength;
 
 const char dataModelLevelSeparator = '/';
 const char dataModelMultiLevelWildcard = '#';

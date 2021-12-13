@@ -133,6 +133,18 @@ Logger & Logger::operator << (int value) {
     return *this;
 }
 
+Logger & Logger::operator << (bool value) {
+    if (lineLevel >= logLevel) {
+        if (value) {
+            console.print("true");
+        } else {
+            console.print("false");
+        }
+    }
+
+    return *this;
+}
+
 Logger & Logger::operator << (const IPAddress &addr) {
     if (lineLevel >= logLevel) {
         console.print(addr);

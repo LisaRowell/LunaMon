@@ -3,8 +3,8 @@
 #include "DataModelRetainedValueLeaf.h"
 #include "DataModelLeaf.h"
 
-DataModelRetainedValueLeaf::DataModelRetainedValueLeaf(const char *name)
-    : DataModelLeaf(name), hasBeenSet(false) {
+DataModelRetainedValueLeaf::DataModelRetainedValueLeaf(const char *name, DataModelElement *parent)
+    : DataModelLeaf(name, parent), hasBeenSet(false) {
 }
 
 bool DataModelRetainedValueLeaf::subscribe(DataModelSubscriber &subscriber, uint32_t cookie) {
@@ -12,6 +12,7 @@ bool DataModelRetainedValueLeaf::subscribe(DataModelSubscriber &subscriber, uint
         return false;
     }
 
+    sendRetainedValue(subscriber);
 
     return true;
 }
@@ -20,13 +21,6 @@ bool DataModelRetainedValueLeaf::hasValue() {
     return hasBeenSet;
 }
 
-bool DataModelRetainedValueLeaf::sendRetainedValue(DataModelSubscriber &subscriber) {
-    // TODO: Implement
-    return true;
-}
-
 void DataModelRetainedValueLeaf::updated() {
     hasBeenSet = true;
-
-    // We'll do notifications here.
 }

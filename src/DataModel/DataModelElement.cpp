@@ -4,7 +4,8 @@
 #include "DataModel.h"
 #include "Util/Logger.h"
 
-DataModelElement::DataModelElement(const char *name) : name(name) {
+DataModelElement::DataModelElement(const char *name, DataModelElement *parent)
+    : name(name), parent(parent) {
 }
 
 bool DataModelElement::isMultiLevelWildcard(const char *topicFilter) {
@@ -45,5 +46,20 @@ bool DataModelElement::topicFilterMatch(const char *topicFilter, unsigned &offse
         lastLevel = topicFilter[pos] == 0;
 
         return true;
+    }
+}
+
+void DataModelElement::buildTopicName(char *topicNameBuffer) {
+    // TODO: Make this more efficent!
+    if (parent) {
+        parent->buildTopicName(topicNameBuffer);
+        strcat(topicNameBuffer, "/");
+        strcat(topicNameBuffer, name);
+    } else {
+        if (name) {
+            strcpy(topicNameBuffer, name);
+        } else {
+            topicNameBuffer[0] = 0;
+        }
     }
 }

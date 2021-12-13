@@ -10,16 +10,16 @@
 #include "Util/Error.h"
 
 // Up time of this controller in seconds
-DataModelUInt32Leaf controllerUpTime("upTime");
+DataModelUInt32Leaf controllerUpTime("upTime", &controllerIDNode);
 
 DataModelElement *controllerIDNodeChildren[] = { &controllerUpTime, NULL };
-DataModelNode controllerIDNode(controllerID, controllerIDNodeChildren);
+DataModelNode controllerIDNode(controllerID, &controllersNode, controllerIDNodeChildren);
 
 DataModelElement *controllersNodeChildren[] = { &controllerIDNode, NULL };
-DataModelNode controllersNode("controllers", controllersNodeChildren);
+DataModelNode controllersNode("controllers", &electronicsNode, controllersNodeChildren);
 
 DataModelElement *electronicsNodeChildren[] = { &controllersNode, NULL };
-DataModelNode electronicsNode("electronics", electronicsNodeChildren);
+DataModelNode electronicsNode("electronics", &dataModelRoot, electronicsNodeChildren);
 
 DataModelElement *topNodeChildren[] = { &electronicsNode, NULL };
 DataModelRoot dataModelRoot(topNodeChildren);

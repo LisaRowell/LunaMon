@@ -14,7 +14,7 @@ MQTTBroker mqttBroker;
 DataModel dataModel;
 
 void setup() {
-    controllerUpTime.publish(millis() / msInSecond);
+    controllerUpTime.setValue(millis() / msInSecond);
 
     Serial.begin(9600);
 
@@ -33,6 +33,6 @@ void loop() {
 
     const uint32_t currentUpTime = millis() / msInSecond;
     if (currentUpTime != controllerUpTime.currentValue()) {
-        controllerUpTime.publish(currentUpTime);
+        controllerUpTime.setValue(currentUpTime);
     }
 }
