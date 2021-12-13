@@ -35,6 +35,7 @@ class MQTTBroker : WiFiManagerClient {
         bool sessionValid[maxMQTTSessions];
 
         void checkForLostConnections();
+        void cleanupLostConnection(MQTTConnection &connection);
         void invalidateSession(MQTTSession *session);
         void serviceSessions();
         void serviceWiFiClientWithData(WiFiClient &wifiClient);

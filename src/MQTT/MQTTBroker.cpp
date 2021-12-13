@@ -52,7 +52,10 @@ void MQTTBroker::serviceWiFiClientWithData(WiFiClient &wifiClient) {
         connection = newConnection(wifiClient);
         if (connection == NULL) {
             refuseIncomingWiFiClient(wifiClient);
+            return;
         }
+        logger << logDebug << "Established MQTT Connection from " << connection->ipAddress() << ":"
+               << connection->port() << eol;
     }
 
     // Since we're receiving messages over TCP, even if it's a small message we have no guarantee
@@ -152,13 +155,21 @@ void MQTTBroker::checkForLostConnections() {
         if (connectionValid[connectionIndex]) {
             MQTTConnection &connection = connections[connectionIndex];
             if (connection.wasDisconnected()) {
-                MQTTSession *session = connection.session();
-                bool retainConnection = session->disconnect();
-                if (!retainConnection) {
-                    invalidateSession(session);
-                }
+                cleanupLostConnection(connection);
                 connectionValid[connectionIndex] = false;
             }
+        }
+    }
+}
+
+void MQTTBroker::cleanupLostConnection(MQTTConnection &connection) {
+    logger << logDebug << "Lost TCP connection from " << connection.ipAddress() << ":"
+           << connection.port() << eol;
+    if (connection.hasSession()) {
+        MQTTSession *session = connection.session();
+        bool retainConnection = session->disconnect();
+        if (!retainConnection) {
+            invalidateSession(session);
         }
     }
 }
@@ -245,6 +256,8 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
     uint8_t errorCode;
     errorCode = connectMessage.sanityCheck();
     if (errorCode != MQTT_CONNACK_ACCEPTED) {
+        logger << logWarning << "Terminating connection due to failed CONNECT message sanity check"
+               << eol;
         sendMQTTConnectAckMessage(connection, false, errorCode);
         return;
     }
@@ -283,6 +296,8 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
                    << ") that already has an active Connection" << eol;
             sendMQTTConnectAckMessage(connection, false, MQTT_CONNACK_REFUSED_SERVER_UNAVAILABLE);
         } else {
+            logger << logDebug << "Attempting to re-establish the Session for Client '" << clientID
+                   << "'" << eol;
             const bool cleanSession = connectMessage.cleanSession();
             session->reconnect(cleanSession, connection);
             connection->connectTo(session);
@@ -291,6 +306,8 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
     } else {
         session = findAvailableSession();
         if (session) {
+            logger << logDebug << "Starting new MQTT Session for Client '" << clientID << "'"
+                   << eol;
             session->begin(connectMessage.cleanSession(), clientID, connection);
             connection->connectTo(session);
             logger << logDebug << "MQTT Client '" << clientID << "' connected with new Session"
