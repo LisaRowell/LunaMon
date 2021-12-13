@@ -391,6 +391,8 @@ void MQTTBroker::subscribeMessageReceived(MQTTConnection *connection, MQTTMessag
         logger << logError << "Failed to send SUBACK message to Client '" << session->name() << "'"
                << eol;
     }
+
+    free(subscribeResults);
 }
 
 void MQTTBroker::disconnectMessageReceived(MQTTConnection *connection, MQTTMessage &message) {
