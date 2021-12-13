@@ -63,3 +63,7 @@ void DataModelElement::buildTopicName(char *topicNameBuffer) {
         }
     }
 }
+
+const char *DataModelElement::elementName() const {
+    return name;
+}

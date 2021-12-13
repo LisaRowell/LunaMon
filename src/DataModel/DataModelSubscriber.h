@@ -4,6 +4,7 @@
 class DataModelSubscriber {
     public:
         virtual void publish(const char *topic, const char *value, bool retainedValue) = 0;
+        virtual const char *name() const = 0;
 };
 
 #endif

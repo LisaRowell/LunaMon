@@ -3,6 +3,7 @@
 #include "MQTTSession.h"
 #include "MQTTPublishMessage.h"
 #include "Util/Logger.h"
+#include "DataModel/DataModel.h"
 
 bool MQTTSession::isConnected() const {
     return connection != NULL;
@@ -53,7 +54,8 @@ bool MQTTSession::disconnect() {
     }
 }
 
-void MQTTSession::unsubscribeAll() { 
+void MQTTSession::unsubscribeAll() {
+    dataModel.unsubscribeAll(*this);
 }
 
 const char *MQTTSession::name() const {

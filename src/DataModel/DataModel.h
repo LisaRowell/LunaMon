@@ -32,6 +32,16 @@ class DataModel {
     public:
         DataModel();
         bool subscribe(const char *topicFilter, DataModelSubscriber &subscriber, uint32_t cookie);
+        // This method made need revisiting in the future. Currently we don't store references to
+        // what topics an MQTT Session is subscribed to, and the only way we can unsubscribe from
+        // all of its topics is to search the tree, finding and removing its subscriptions. Since
+        // we are running in an Arduino-esq, proto-threaded environment, this could lead to serial
+        // overruns if the tree grew dramatically in complexity. The alternative is to cache
+        // subscribed to topics at a Session level, but this is problematic because of the potential
+        // number of topics a client may be interested in and the limited dynamic memory of the
+        // Arduino syystems we target. At some poiint this should be metered to see how bad it is.
+        // Fortunately, NMEA 0183 is limited to fairly low bandwidths...
+        void unsubscribeAll(DataModelSubscriber &subscriber);
 };
 
 extern DataModel dataModel;

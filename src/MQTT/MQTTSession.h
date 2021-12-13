@@ -35,7 +35,7 @@ class MQTTSession : public DataModelSubscriber {
         void reconnect(bool newCleanSession, MQTTConnection *connection);
         bool disconnect();
         void service();
-        const char *name() const;
+        virtual const char *name() const override;
         virtual void publish(const char *topic, const char *value, bool retainedValue) override;
 };
 

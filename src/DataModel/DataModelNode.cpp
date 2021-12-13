@@ -55,3 +55,13 @@ bool DataModelNode::subscribeChildrenIfMatching(const char *topicFilter,
 
     return true;
 }
+
+void DataModelNode::unsubscribeAll(DataModelSubscriber &subscriber) {
+    //If we allowed intermediate nodes to hold values, we would need to do an unsubscribe here.
+
+    unsigned childIndex;
+    for (childIndex = 0; children[childIndex] != NULL; childIndex++) {
+        DataModelElement *child = *children + childIndex;
+        child->unsubscribeAll(subscriber);
+    }
+}

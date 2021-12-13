@@ -20,6 +20,7 @@ class DataModelLeaf : public DataModelElement {
         virtual bool subscribeIfMatching(const char *topicFilter, DataModelSubscriber &subscriber,
                                          uint32_t cookie) override;
         virtual bool subscribeAll(DataModelSubscriber &subscriber, uint32_t cookie) override;
+        virtual void unsubscribeAll(DataModelSubscriber &subscriber) override;
 };
 
 #endif

@@ -2,6 +2,7 @@
 
 #include "DataModelLeaf.h"
 #include "DataModel.h"
+#include "Util/Logger.h"
 
 DataModelLeaf::DataModelLeaf(const char *name, DataModelElement *parent)
     : DataModelElement(name, parent) {
@@ -83,4 +84,19 @@ void DataModelLeaf::publishToSubscriber(DataModelSubscriber &subscriber, const c
     char topic[maxTopicNameLength];
     buildTopicName(topic);
     subscriber.publish(topic, value, retainedValue);
+}
+
+void DataModelLeaf::unsubscribeAll(DataModelSubscriber &subscriber) {
+    unsigned subscriberIndex;
+    for (subscriberIndex = 0; subscriberIndex < maxDataModelSubscribers; subscriberIndex++) {
+        if (subscribers[subscriberIndex] == &subscriber) {
+            // We don't cache the full name of a topic, and instead store it in bits in the tree,
+            // so we don't log the full name. If we switch to storing the name, this debug could be
+            // made to be more specific
+            logger << logDebug << "Unsubscribing Client '" << subscriber.name()
+                   << "' from Topic ending in '" << elementName() << "'" << eol;
+
+            subscribers[subscriberIndex] = NULL;
+        }
+    }
 }
