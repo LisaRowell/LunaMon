@@ -24,7 +24,11 @@ Logger & Logger::operator << (const LogBase base) {
 
 Logger & Logger::operator << (const char *string) {
     if (lineLevel >= logLevel) {
-        console.print(string);
+        if (string != NULL) {
+            console.print(string);
+        } else {
+            console.print("(nil)");
+        }
     }
 
     return *this;
