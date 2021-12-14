@@ -13,6 +13,8 @@
 #include "MQTTSubscribeMessage.h"
 #include "MQTTUnsubscribeMessage.h"
 #include "MQTTUnsubscribeAckMessage.h"
+#include "MQTTPingRequestMessage.h"
+#include "MQTTPingResponseMessage.h"
 #include "Util/Error.h"
 #include "Util/Logger.h"
 #include "WiFiManager/WiFiManager.h"
@@ -228,6 +230,10 @@ void MQTTBroker::messageReceived(MQTTConnection *connection, MQTTMessage &messag
 
         case MQTT_MSG_UNSUBSCRIBE:
             unsubscribeMessageReceived(connection, message);
+            break;
+
+        case MQTT_MSG_PINGREQ:
+            pingRequestMessageReceived(connection, message);
             break;
 
         case MQTT_MSG_DISCONNECT:
@@ -471,6 +477,37 @@ void MQTTBroker::unsubscribeMessageReceived(MQTTConnection *connection, MQTTMess
     if (!sendMQTTUnsubscribeAckMessage(connection, unsubscribeMessage.packetId())) {
         logger << logError << "Failed to send UNSUBACK message to Client '" << session->name()
                << "'" << eol;
+    }
+}
+
+void MQTTBroker::pingRequestMessageReceived(MQTTConnection *connection, MQTTMessage &message) {
+    MQTTPingRequestMessage pingRequestMessage(message);
+
+    if (!pingRequestMessage.parse()) {
+        logger << logError << "Bad MQTT PINGREQ message. Terminating connection." << eol;
+        terminateConnection(connection);
+        return;
+    }
+
+    // Flag if we're getting a PINGREQ for a connection that didn't actually get connected with a
+    // session.
+    if (!connection->hasSession()) {
+        logger << logError
+               << "Received MQTT PINGREQ message for a connection that wasn't connected to a "
+                  "session."
+               << eol;
+        terminateConnection(connection);
+        return;
+    }
+
+    MQTTSession *session = connection->session();
+    // TODO: Update the Session's keepalive timer.
+
+    logger << logError << "Sending MQTT PINGRESP message to Client '" << session->name() << eol;
+
+    if (!sendMQTTPingResponseMessage(connection)) {
+        logger << logError << "Failed to sent MQTT PINGRESP message to "
+               << connection->ipAddress() << ":" << connection->port() << eol;
     }
 }
 
