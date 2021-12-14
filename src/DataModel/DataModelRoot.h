@@ -10,6 +10,7 @@ class DataModelRoot : public DataModelNode {
     public:
         DataModelRoot(DataModelElement **children);
         bool subscribe(const char *topicFilter, DataModelSubscriber &subscriber, uint32_t cookie);
+        void unsubscribe(const char *topicFilter, DataModelSubscriber &subscriber);
 };
 
 #endif

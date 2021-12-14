@@ -32,6 +32,10 @@ bool DataModel::subscribe(const char *topicFilter, DataModelSubscriber &subscrib
     return root.subscribe(topicFilter, subscriber, cookie);
 }
 
+void DataModel::unsubscribe(const char *topicFilter, DataModelSubscriber &subscriber) {
+    root.unsubscribe(topicFilter, subscriber);
+}
+
 void DataModel::unsubscribeAll(DataModelSubscriber &subscriber) {
     root.unsubscribeAll(subscriber);
 }

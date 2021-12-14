@@ -1,26 +1,28 @@
-#ifndef MQTT_SUBSCRIBE_MESSAGE_H
-#define MQTT_SUBSCRIBE_MESSAGE_H
+#ifndef MQTT_UNSUBSCRIBE_MESSAGE_H
+#define MQTT_UNSUBSCRIBE_MESSAGE_H
+
+#include <Arduino.h>
 
 #include "MQTTMessage.h"
 #include "MQTTString.h"
 
-struct MQTTSubscribeVariableHeader {
+struct MQTTUnsubscribeVariableHeader {
     uint8_t packetIdMSB;
     uint8_t packetIdLSB;
 };
 
-class MQTTSubscribeMessage : MQTTMessage {
+class MQTTUnsubscribeMessage : MQTTMessage {
     private:
-        MQTTSubscribeVariableHeader *variableHeader;
+        MQTTUnsubscribeVariableHeader *variableHeader;
         uint8_t *payloadStart;
         unsigned topicFilters;
         unsigned topicFiltersReturned;
         uint8_t *topicFiltersPos;
 
     public:
-        MQTTSubscribeMessage(MQTTMessage const &message);
+        MQTTUnsubscribeMessage(MQTTMessage const &message);
         bool parse();
-        bool getTopicFilter(MQTTString * &topicFilter, uint8_t &maxQoS);
+        bool getTopicFilter(MQTTString * &topicFilter);
         uint16_t packetId() const;
         unsigned numTopicFilters() const;
 };

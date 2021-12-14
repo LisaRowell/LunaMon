@@ -56,6 +56,35 @@ bool DataModelNode::subscribeChildrenIfMatching(const char *topicFilter,
     return true;
 }
 
+void DataModelNode::unsubscribeIfMatching(const char *topicFilter,
+                                          DataModelSubscriber &subscriber) {
+    if (isMultiLevelWildcard(topicFilter)) {
+        unsubscribeAll(subscriber);
+        return;
+    }
+
+    unsigned offsetToNextLevel;
+    bool lastLevel;
+    if (topicFilterMatch(topicFilter, offsetToNextLevel, lastLevel)) {
+        if (lastLevel) {
+            // If we had non-leaf elements hold values, we'd do something interesting here, but
+            // that's currently not a thing in the data model.
+        } else {
+            const char *newTopicFilter = topicFilter + offsetToNextLevel;
+            unsubscribeChildrenIfMatching(newTopicFilter, subscriber);
+        }
+    }
+}
+
+void DataModelNode::unsubscribeChildrenIfMatching(const char *topicFilter,
+                                                DataModelSubscriber &subscriber) {
+    unsigned childIndex;
+    for (childIndex = 0; children[childIndex] != NULL; childIndex++) {
+        DataModelElement *child = *children + childIndex;
+        child->unsubscribeIfMatching(topicFilter, subscriber);
+    }
+}
+
 void DataModelNode::unsubscribeAll(DataModelSubscriber &subscriber) {
     //If we allowed intermediate nodes to hold values, we would need to do an unsubscribe here.
 

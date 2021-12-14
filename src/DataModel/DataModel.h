@@ -32,6 +32,7 @@ class DataModel {
     public:
         DataModel();
         bool subscribe(const char *topicFilter, DataModelSubscriber &subscriber, uint32_t cookie);
+        void unsubscribe(const char *topicFilter, DataModelSubscriber &subscriber);
         // This method made need revisiting in the future. Currently we don't store references to
         // what topics an MQTT Session is subscribed to, and the only way we can unsubscribe from
         // all of its topics is to search the tree, finding and removing its subscriptions. Since

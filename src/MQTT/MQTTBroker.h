@@ -49,6 +49,7 @@ class MQTTBroker : WiFiManagerClient {
         void connectMessageReceived(MQTTConnection *connection, MQTTMessage &message);
         void reservedMsgReceivedError(MQTTConnection *connection, MQTTMessage &message);
         void subscribeMessageReceived(MQTTConnection *connection, MQTTMessage &message);
+        void unsubscribeMessageReceived(MQTTConnection *connection, MQTTMessage &message);
         void disconnectMessageReceived(MQTTConnection *connection, MQTTMessage &message);
         void serverOnlyMsgReceivedError(MQTTConnection *connection, MQTTMessage &message);
 

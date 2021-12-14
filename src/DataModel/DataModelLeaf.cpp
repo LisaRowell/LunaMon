@@ -26,11 +26,13 @@ bool DataModelLeaf::addSubscriber(DataModelSubscriber &subscriber, uint32_t cook
     return false;
 }
 
-void DataModelLeaf::unsubscribe(DataModelSubscriber *subscriber) {
+void DataModelLeaf::unsubscribe(DataModelSubscriber &subscriber) {
     unsigned subscriberPos;
     for (subscriberPos = 0; subscriberPos < maxDataModelSubscribers; subscriberPos++) {
-        if (subscribers[subscriberPos] == subscriber) {
+        if (subscribers[subscriberPos] == &subscriber) {
             subscribers[subscriberPos] = NULL;
+            logger << logDebug << "Client '" << subscriber.name()
+                   << "' unscribed from topic ending in '" << elementName() << "'" << eol;
             return;
         }
     }
@@ -84,6 +86,22 @@ void DataModelLeaf::publishToSubscriber(DataModelSubscriber &subscriber, const c
     char topic[maxTopicNameLength];
     buildTopicName(topic);
     subscriber.publish(topic, value, retainedValue);
+}
+
+void DataModelLeaf::unsubscribeIfMatching(const char *topicFilter,
+                                          DataModelSubscriber &subscriber) {
+    if (isMultiLevelWildcard(topicFilter)) {
+        unsubscribe(subscriber);
+        return;
+    }
+
+    unsigned offsetToNextLevel;
+    bool lastLevel;
+    if (topicFilterMatch(topicFilter, offsetToNextLevel, lastLevel)) {
+        if (lastLevel) {
+            unsubscribe(subscriber);
+        }
+    }
 }
 
 void DataModelLeaf::unsubscribeAll(DataModelSubscriber &subscriber) {

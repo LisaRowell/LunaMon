@@ -11,6 +11,8 @@
 #include "MQTTSession.h"
 #include "MQTTSubscribeAckMessage.h"
 #include "MQTTSubscribeMessage.h"
+#include "MQTTUnsubscribeMessage.h"
+#include "MQTTUnsubscribeAckMessage.h"
 #include "Util/Error.h"
 #include "Util/Logger.h"
 #include "WiFiManager/WiFiManager.h"
@@ -215,11 +217,17 @@ void MQTTBroker::messageReceived(MQTTConnection *connection, MQTTMessage &messag
 
         case MQTT_MSG_CONNACK:
         case MQTT_MSG_SUBACK:
+        case MQTT_MSG_UNSUBACK:
+        case MQTT_MSG_PINGRESP:
             serverOnlyMsgReceivedError(connection, message);
             break;
 
         case MQTT_MSG_SUBSCRIBE:
             subscribeMessageReceived(connection, message);
+            break;
+
+        case MQTT_MSG_UNSUBSCRIBE:
+            unsubscribeMessageReceived(connection, message);
             break;
 
         case MQTT_MSG_DISCONNECT:
@@ -231,6 +239,10 @@ void MQTTBroker::messageReceived(MQTTConnection *connection, MQTTMessage &messag
             reservedMsgReceivedError(connection, message);
             break;
 
+        case MQTT_MSG_PUBACK:
+        case MQTT_MSG_PUBREC:
+        case MQTT_MSG_PUBREL:
+        case MQTT_MSG_PUBCOMP:
         default:
             logger << logWarning << "Received unimplemented message type "
                    << message.messageTypeStr() << eol;
@@ -352,8 +364,8 @@ void MQTTBroker::subscribeMessageReceived(MQTTConnection *connection, MQTTMessag
 
     if (!connection->hasSession()) {
         logger << logWarning << "Received a Subscribe message from an unconnected Client ("
-               << connection->ipAddress() << connection->port() << "). Terminating connection."
-               << eol;
+               << connection->ipAddress() << ":" << connection->port()
+               << "). Terminating connection." << eol;
         terminateConnection(connection);
         return;
     }
@@ -403,13 +415,63 @@ void MQTTBroker::subscribeMessageReceived(MQTTConnection *connection, MQTTMessag
 
     logger << logDebug << "Sending SUBACK message with " << topicFilterCount
            << " results to Client '" << session->name() << "'" << eol;
-    if (!sendMQTTSubscribeAckMessage(connection, subscribeMessage.packetID(), topicFilterCount,
+    if (!sendMQTTSubscribeAckMessage(connection, subscribeMessage.packetId(), topicFilterCount,
                                      subscribeResults)) {
         logger << logError << "Failed to send SUBACK message to Client '" << session->name() << "'"
                << eol;
     }
 
     free(subscribeResults);
+}
+
+void MQTTBroker::unsubscribeMessageReceived(MQTTConnection *connection, MQTTMessage &message) {
+    logger << logDebug << "Processing Unsubscribe message" << eol;
+
+    if (!connection->hasSession()) {
+        logger << logWarning << "Received an unsubscribe message from an unconnected Client ("
+               << connection->ipAddress() << ":" << connection->port()
+               << "). Terminating connection." << eol;
+        terminateConnection(connection);
+        return;
+    }
+    MQTTSession *session = connection->session();
+
+    MQTTUnsubscribeMessage unsubscribeMessage(message);
+    if (!unsubscribeMessage.parse()) {
+        logger << logWarning << "Bad unsubscribe message from Client '" << session->name()
+               << "'. Terminating connection." << eol;
+        terminateConnection(connection);
+        return;
+    }
+
+    unsigned topicFilterCount = unsubscribeMessage.numTopicFilters();
+    unsigned topicFilterIndex;
+    for (topicFilterIndex = 0; topicFilterIndex < topicFilterCount; topicFilterIndex++) {
+        MQTTString *topicFilterStr;
+        if (!unsubscribeMessage.getTopicFilter(topicFilterStr)) {
+            logger << logError << "MQTT UNSUBSCRIBE has a messed up number of topic filters" << eol;
+            break;
+        }
+
+        logger << logDebug << "MQTT Client '" << session->name() << "' wants to unsubscribe from '"
+               << *topicFilterStr << "'" << eol;
+
+        char topicFilter[maxTopicFilterLength + 1];
+        if (!topicFilterStr->copyTo(topicFilter, maxTopicFilterLength)) {
+            logger << logWarning << "MQTT UNSUBSCRIBE message with too long of a Topic Filter '"
+                   << *topicFilterStr << "'" << eol;
+        } else {
+            dataModel.unsubscribe(topicFilter, *session);
+            logger << logDebug << "Topic Filter '" << topicFilter << "' unsubscribed from by '"
+                   << session->name() << "'" << eol;
+        }
+    }
+
+    logger << logDebug << "Sending UNSUBACK message to Client '" << session->name() << "'" << eol;
+    if (!sendMQTTUnsubscribeAckMessage(connection, unsubscribeMessage.packetId())) {
+        logger << logError << "Failed to send UNSUBACK message to Client '" << session->name()
+               << "'" << eol;
+    }
 }
 
 void MQTTBroker::disconnectMessageReceived(MQTTConnection *connection, MQTTMessage &message) {

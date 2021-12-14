@@ -23,6 +23,20 @@ bool DataModelRoot::subscribe(const char *topicFilter, DataModelSubscriber &subs
     return subscribeChildrenIfMatching(topicFilter, subscriber, cookie);
 }
 
+void DataModelRoot::unsubscribe(const char *topicFilter, DataModelSubscriber &subscriber) {
+    if (!checkTopicFilterValidity(topicFilter )) {
+        logger << logWarning << "Illegal Topic Filter '" << topicFilter
+               << "' in unsubscribe from Client '" << subscriber.name() << eol;
+        return;
+    }
+
+    if (isMultiLevelWildcard(topicFilter)) {
+        unsubscribeAll(subscriber);
+    } else {
+        unsubscribeChildrenIfMatching(topicFilter, subscriber);
+    }
+}
+
 bool DataModelRoot::checkTopicFilterValidity(const char *topicFilter) {
     if (topicFilter[0] == 0) {
         return false;

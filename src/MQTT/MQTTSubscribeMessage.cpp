@@ -17,7 +17,7 @@ bool MQTTSubscribeMessage::parse() {
 
     if (bytesAfterFixedHdr < sizeof(MQTTSubscribeVariableHeader)) {
         logger << logWarning
-               << "Received MQTT SUBSCTIBE message with a size too small for the Variable Header."
+               << "Received MQTT SUBSCRIBE message with a size too small for the Variable Header."
                << eol;
         return false;
     }
@@ -25,7 +25,7 @@ bool MQTTSubscribeMessage::parse() {
     variableHeader = (MQTTSubscribeVariableHeader *)variableHeaderStart;
     const uint32_t bytesAfterVariableHdr = bytesAfterFixedHdr - sizeof(MQTTSubscribeVariableHeader);
 
-    if (packetID() == 0) {
+    if (packetId() == 0) {
         logger << logWarning << "Received MQTT SUBSCRIBE message with zero Packet Indentifier."
                << eol;
         return false;
@@ -50,7 +50,7 @@ bool MQTTSubscribeMessage::parse() {
             return false;
         }
 
-        if (topicFilterStr->length() ==0) {
+        if (topicFilterStr->length() == 0) {
             logger << logWarning << "MQTT SUBSCRIBE message with zero length Topic Filter" << eol;
             return false;
         }
@@ -87,11 +87,12 @@ bool MQTTSubscribeMessage::getTopicFilter(MQTTString * &topicFilter, uint8_t &ma
     maxQoS = *topicFiltersPos++;
 
     topicFiltersReturned++;
+
     return true;
 }
 
-uint16_t MQTTSubscribeMessage::packetID() const {
-    return variableHeader->packetIDMSB * 256 + variableHeader->packetIDLSB;
+uint16_t MQTTSubscribeMessage::packetId() const {
+    return variableHeader->packetIdMSB * 256 + variableHeader->packetIdLSB;
 }
 
 unsigned MQTTSubscribeMessage::numTopicFilters() const {
