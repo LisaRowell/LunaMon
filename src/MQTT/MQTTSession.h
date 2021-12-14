@@ -6,6 +6,7 @@
 #include "MQTTConnection.h"
 #include "MQTTString.h"
 #include "DataModel/DataModelSubscriber.h"
+#include "Util/PassiveTimer.h"
 
 //
 // MQTTSession
@@ -18,23 +19,33 @@
 
 const unsigned maxMQTTClientIDLength = 23;
 
+// The time, in seconds that we wait before tearing down a Session that's lost it's Connection and
+// hasn't had a new one established.
+const uint16_t unconnectedSessionTearDownTime = 120;
+
 class MQTTConnection;
+class MQTTBroker;
 
 class MQTTSession : public DataModelSubscriber {
     private:
         bool cleanSession;
         char clientID[maxMQTTClientIDLength + 1];
         MQTTConnection *connection;
+        uint16_t keepAliveTime;
+        PassiveTimer keepAliveTimer;
+        PassiveTimer tearDownTimer;
 
         void unsubscribeAll();
 
     public:
         bool isConnected() const;
         bool matches(const char *clientID) const;
-        void begin(bool cleanSession, const char *clientID, MQTTConnection *connection);
-        void reconnect(bool newCleanSession, MQTTConnection *connection);
+        void begin(bool cleanSession, const char *clientID, MQTTConnection *connection,
+                   uint16_t keepAliveTime);
+        void reconnect(bool newCleanSession, MQTTConnection *connection, uint16_t keepAliveTime);
         bool disconnect();
-        void service();
+        void service(MQTTBroker *broker);
+        void resetKeepAliveTimer();
         virtual const char *name() const override;
         virtual void publish(const char *topic, const char *value, bool retainedValue) override;
 };

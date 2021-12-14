@@ -114,6 +114,16 @@ void MQTTBroker::terminateConnection(MQTTConnection *connection) {
     fatalError("Lost track of an MQTT connection");
 }
 
+void MQTTBroker::terminateSession(MQTTSession *session) {
+    if (session->isConnected()) {
+        logger << logError
+               << "Attempted to terminate a Session that had an active Connection. Programmer error"
+               << eol;
+    }
+
+    invalidateSession(session);
+}
+
 MQTTConnection *MQTTBroker::findExistingConnection(WiFiClient &wifiClient) {
     unsigned connectionIndex;
     for (connectionIndex = 0; connectionIndex < maxMQTTSessions; connectionIndex++) {
@@ -196,7 +206,7 @@ void MQTTBroker::serviceSessions() {
     for (sessionIndex = 0; sessionIndex < maxMQTTSessions; sessionIndex++) {
         if (sessionValid[sessionIndex]) {
             MQTTSession &session = sessions[sessionIndex];
-            session.service();
+            session.service(this);
         }
     }
 }
@@ -307,6 +317,8 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
         return;
     }
 
+    uint16_t keepAliveTime = connectMessage.keepAliveSec();
+
     MQTTSession *session = findMatchingSession(clientID);
     if (session) {
         if (session->isConnected()) {
@@ -317,7 +329,7 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
             logger << logDebug << "Attempting to re-establish the Session for Client '" << clientID
                    << "'" << eol;
             const bool cleanSession = connectMessage.cleanSession();
-            session->reconnect(cleanSession, connection);
+            session->reconnect(cleanSession, connection, keepAliveTime);
             connection->connectTo(session);
             sendMQTTConnectAckMessage(connection, !cleanSession, MQTT_CONNACK_ACCEPTED);
         }
@@ -326,7 +338,7 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
         if (session) {
             logger << logDebug << "Starting new MQTT Session for Client '" << clientID << "'"
                    << eol;
-            session->begin(connectMessage.cleanSession(), clientID, connection);
+            session->begin(connectMessage.cleanSession(), clientID, connection, keepAliveTime);
             connection->connectTo(session);
             logger << logDebug << "MQTT Client '" << clientID << "' connected with new Session"
                    << eol;
@@ -384,6 +396,8 @@ void MQTTBroker::subscribeMessageReceived(MQTTConnection *connection, MQTTMessag
         terminateConnection(connection);
         return;
     }
+
+    session->resetKeepAliveTimer();
 
     // Loop through the topics, trying to subscribe to each and adding the result to the SUBACK
     // message.
@@ -450,6 +464,8 @@ void MQTTBroker::unsubscribeMessageReceived(MQTTConnection *connection, MQTTMess
         return;
     }
 
+    session->resetKeepAliveTimer();
+
     unsigned topicFilterCount = unsubscribeMessage.numTopicFilters();
     unsigned topicFilterIndex;
     for (topicFilterIndex = 0; topicFilterIndex < topicFilterCount; topicFilterIndex++) {
@@ -501,7 +517,7 @@ void MQTTBroker::pingRequestMessageReceived(MQTTConnection *connection, MQTTMess
     }
 
     MQTTSession *session = connection->session();
-    // TODO: Update the Session's keepalive timer.
+    session->resetKeepAliveTimer();
 
     logger << logError << "Sending MQTT PINGRESP message to Client '" << session->name() << eol;
 

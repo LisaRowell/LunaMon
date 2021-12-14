@@ -44,7 +44,6 @@ class MQTTBroker : WiFiManagerClient {
         MQTTSession *findMatchingSession(const char *clientID);
         MQTTSession *findAvailableSession();
         void refuseIncomingWiFiClient(WiFiClient &wifiClient);
-        void terminateConnection(MQTTConnection *connection);
         void messageReceived(MQTTConnection *connection, MQTTMessage &message);
         void connectMessageReceived(MQTTConnection *connection, MQTTMessage &message);
         void reservedMsgReceivedError(MQTTConnection *connection, MQTTMessage &message);
@@ -58,6 +57,8 @@ class MQTTBroker : WiFiManagerClient {
         MQTTBroker();
         void begin(WiFiManager &wifiManager);
         void service();
+        void terminateConnection(MQTTConnection *connection);
+        void terminateSession(MQTTSession *session);
         void wifiConnected() override;
         void wifiDisconnected() override;
 };
