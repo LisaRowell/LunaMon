@@ -69,7 +69,7 @@ bool DataModelLeaf::subscribeAll(DataModelSubscriber &subscriber, uint32_t cooki
     return subscribe(subscriber, cookie);
 }
 
-void DataModelLeaf::publish(const char *value) {
+DataModelLeaf & DataModelLeaf::operator << (const char *value) {
     unsigned subscriberIndex;
     for (subscriberIndex = 0; subscriberIndex < maxDataModelSubscribers; subscriberIndex++) {
         DataModelSubscriber *subscriber = subscribers[subscriberIndex];
@@ -79,12 +79,16 @@ void DataModelLeaf::publish(const char *value) {
             publishToSubscriber(*subscriber, value, false);
         }
     }
+
+    return *this;
 }
 
-void DataModelLeaf::publish(uint32_t value) {
+DataModelLeaf & DataModelLeaf::operator << (const uint32_t value) {
     char valueStr[12];
     snprintf(valueStr, 12, "%lu", value);
-    publish(valueStr);
+    *this << valueStr;
+
+    return *this;
 }
 
 void DataModelLeaf::publishToSubscriber(DataModelSubscriber &subscriber, const char *value,

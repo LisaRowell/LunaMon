@@ -8,22 +8,25 @@ DataModelUInt32Leaf::DataModelUInt32Leaf(const char *name, DataModelElement *par
     : DataModelRetainedValueLeaf(name, parent) {
 }
 
-void DataModelUInt32Leaf::setValue(uint32_t value) {
+DataModelUInt32Leaf & DataModelUInt32Leaf::operator = (const uint32_t value) {
     this->value = value;
     updated();
-    publish(value);
+    *this << value;
+    return *this;
 }
 
-void DataModelUInt32Leaf::increment() {
+DataModelUInt32Leaf DataModelUInt32Leaf::operator ++ (int) {
     value++;
     updated();
-    publish(value);
+    *this << value;
+    return *this;
 }
 
-void DataModelUInt32Leaf::decrement() {
+DataModelUInt32Leaf DataModelUInt32Leaf::operator -- (int) {
     value--;
     updated();
-    publish(value);
+    *this << value;
+    return *this;
 }
 
 uint32_t DataModelUInt32Leaf::currentValue() {

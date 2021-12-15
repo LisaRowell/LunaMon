@@ -22,8 +22,8 @@ class DataModelLeaf : public DataModelElement {
         virtual void unsubscribeIfMatching(const char *topicFilter,
                                            DataModelSubscriber &subscriber) override;
         virtual void unsubscribeAll(DataModelSubscriber &subscriber) override;
-        void publish(const char *value);
-        void publish(uint32_t);
+        DataModelLeaf & operator << (const char *value);
+        DataModelLeaf & operator << (const uint32_t value);
 };
 
 #endif

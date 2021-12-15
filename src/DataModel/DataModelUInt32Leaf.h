@@ -9,9 +9,9 @@ class DataModelUInt32Leaf : public DataModelRetainedValueLeaf {
 
     public:
         DataModelUInt32Leaf(const char *name, DataModelElement *parent);
-        void setValue(uint32_t value);
-        void increment();
-        void decrement();
+        DataModelUInt32Leaf & operator = (const uint32_t value);
+        DataModelUInt32Leaf operator ++ (int);
+        DataModelUInt32Leaf operator -- (int);
         uint32_t currentValue();
         virtual void sendRetainedValue(DataModelSubscriber &subscriber) override;
 };

@@ -35,6 +35,6 @@ void loop() {
     uint32_t currentUpTime = millis() / msInSecond;
     if (currentUpTime != upTime) {
         upTime = currentUpTime;
-        controllerUpTime.publish(upTime);
+        controllerUpTime << upTime;
     }
 }
