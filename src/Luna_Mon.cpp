@@ -12,9 +12,10 @@ NMEASource usbSerialNMEASource(Serial, nmeaMessageHandler);
 WiFiManager wifiManager;
 MQTTBroker mqttBroker;
 DataModel dataModel;
+uint32_t upTime;
 
 void setup() {
-    controllerUpTime.setValue(millis() / msInSecond);
+    upTime = millis() / msInSecond;
 
     Serial.begin(9600);
 
@@ -31,8 +32,9 @@ void loop() {
     usbSerialNMEASource.service();
     mqttBroker.service();
 
-    const uint32_t currentUpTime = millis() / msInSecond;
-    if (currentUpTime != controllerUpTime.currentValue()) {
-        controllerUpTime.setValue(currentUpTime);
+    uint32_t currentUpTime = millis() / msInSecond;
+    if (currentUpTime != upTime) {
+        upTime = currentUpTime;
+        controllerUpTime.publish(upTime);
     }
 }

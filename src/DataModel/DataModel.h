@@ -11,7 +11,7 @@ extern DataModelUInt32Leaf mqttConnections;
 
 extern DataModelNode mqttNode;
 
-extern DataModelUInt32Leaf controllerUpTime;
+extern DataModelLeaf controllerUpTime;
 extern DataModelNode controllerIDNode;
 
 extern DataModelNode controllersNode;
