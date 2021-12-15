@@ -10,6 +10,8 @@ class DataModelUInt32Leaf : public DataModelRetainedValueLeaf {
     public:
         DataModelUInt32Leaf(const char *name, DataModelElement *parent);
         void setValue(uint32_t value);
+        void increment();
+        void decrement();
         uint32_t currentValue();
         virtual void sendRetainedValue(DataModelSubscriber &subscriber) override;
 };

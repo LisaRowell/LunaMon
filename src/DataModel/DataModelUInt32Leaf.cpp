@@ -9,12 +9,21 @@ DataModelUInt32Leaf::DataModelUInt32Leaf(const char *name, DataModelElement *par
 }
 
 void DataModelUInt32Leaf::setValue(uint32_t value) {
-    DataModelUInt32Leaf::value = value;
+    this->value = value;
     updated();
+    publish(value);
+}
 
-    char valueStr[12];
-    snprintf(valueStr, 12, "%lu", value);
-    publish(valueStr);
+void DataModelUInt32Leaf::increment() {
+    value++;
+    updated();
+    publish(value);
+}
+
+void DataModelUInt32Leaf::decrement() {
+    value--;
+    updated();
+    publish(value);
 }
 
 uint32_t DataModelUInt32Leaf::currentValue() {

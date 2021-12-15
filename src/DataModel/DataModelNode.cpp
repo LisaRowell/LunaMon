@@ -46,14 +46,15 @@ bool DataModelNode::subscribeChildrenIfMatching(const char *topicFilter,
                                                 DataModelSubscriber &subscriber,
                                                 uint32_t cookie) {
     unsigned childIndex;
+    bool atLeastOneMatch = false;
     for (childIndex = 0; children[childIndex] != NULL; childIndex++) {
-        DataModelElement *child = *children + childIndex;
-        if (!child->subscribeIfMatching(topicFilter, subscriber, cookie)) {
-            return false;
+        DataModelElement *child = children[childIndex];
+        if (child->subscribeIfMatching(topicFilter, subscriber, cookie)) {
+            atLeastOneMatch = true;
         }
     }
 
-    return true;
+    return atLeastOneMatch;
 }
 
 void DataModelNode::unsubscribeIfMatching(const char *topicFilter,
@@ -80,7 +81,7 @@ void DataModelNode::unsubscribeChildrenIfMatching(const char *topicFilter,
                                                 DataModelSubscriber &subscriber) {
     unsigned childIndex;
     for (childIndex = 0; children[childIndex] != NULL; childIndex++) {
-        DataModelElement *child = *children + childIndex;
+        DataModelElement *child = children[childIndex];
         child->unsubscribeIfMatching(topicFilter, subscriber);
     }
 }
@@ -90,7 +91,7 @@ void DataModelNode::unsubscribeAll(DataModelSubscriber &subscriber) {
 
     unsigned childIndex;
     for (childIndex = 0; children[childIndex] != NULL; childIndex++) {
-        DataModelElement *child = *children + childIndex;
+        DataModelElement *child = children[childIndex];
         child->unsubscribeAll(subscriber);
     }
 }

@@ -11,7 +11,6 @@ class DataModelLeaf : public DataModelElement {
         bool addSubscriber(DataModelSubscriber &subscriber, uint32_t cookie);
         virtual bool subscribe(DataModelSubscriber &subscriber, uint32_t cookie);
         void unsubscribe(DataModelSubscriber &subscriber);
-        void publish(const char *value);
         void publishToSubscriber(DataModelSubscriber &subscriber, const char *value,
                                  bool retainedValue);
 
@@ -23,6 +22,8 @@ class DataModelLeaf : public DataModelElement {
         virtual void unsubscribeIfMatching(const char *topicFilter,
                                            DataModelSubscriber &subscriber) override;
         virtual void unsubscribeAll(DataModelSubscriber &subscriber) override;
+        void publish(const char *value);
+        void publish(uint32_t);
 };
 
 #endif

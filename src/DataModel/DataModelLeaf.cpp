@@ -81,6 +81,12 @@ void DataModelLeaf::publish(const char *value) {
     }
 }
 
+void DataModelLeaf::publish(uint32_t value) {
+    char valueStr[12];
+    snprintf(valueStr, 12, "%lu", value);
+    publish(valueStr);
+}
+
 void DataModelLeaf::publishToSubscriber(DataModelSubscriber &subscriber, const char *value,
                                         bool retainedValue) {
     char topic[maxTopicNameLength];

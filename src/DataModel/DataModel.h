@@ -6,6 +6,11 @@
 #include "DataModelUInt32Leaf.h"
 #include "DataModelSubscriber.h"
 
+extern DataModelUInt32Leaf mqttSessions;
+extern DataModelUInt32Leaf mqttConnections;
+
+extern DataModelNode mqttNode;
+
 extern DataModelUInt32Leaf controllerUpTime;
 extern DataModelNode controllerIDNode;
 

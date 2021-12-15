@@ -20,13 +20,23 @@
 #include "WiFiManager/WiFiManager.h"
 
 MQTTBroker::MQTTBroker() : wifiIsConnected(false), wifiServer(portNumber) {
+    unsigned connectionIndex;
+    for (connectionIndex = 0; connectionIndex < maxMQTTSessions; connectionIndex++) {
+        connectionValid[connectionIndex] = false;
+    }
+
     unsigned sessionPos;
     for (sessionPos = 0; sessionPos < maxMQTTSessions; sessionPos++) {
         sessionValid[sessionPos] = false;
     }
+
+    mqttConnections.setValue(0);
+    mqttSessions.setValue(0);
 }
 
-void MQTTBroker::begin(WiFiManager &wifiManager) { wifiManager.registerForNotifications(this); }
+void MQTTBroker::begin(WiFiManager &wifiManager) {
+    wifiManager.registerForNotifications(this);
+}
 
 void MQTTBroker::service() {
     checkForLostConnections();
@@ -94,6 +104,7 @@ void MQTTBroker::terminateConnection(MQTTConnection *connection) {
                 if (sessionValid[sessionPos] && &sessions[sessionPos] == session) {
                     sessionFound = true;
                     sessionValid[sessionPos] = false;
+                    mqttSessions.decrement();
                 }
             }
 
@@ -107,6 +118,7 @@ void MQTTBroker::terminateConnection(MQTTConnection *connection) {
     for (connectionPos = 0; connectionPos < maxMQTTSessions; connectionPos++) {
         if (&connections[connectionPos] == connection) {
             connectionValid[connectionPos] = false;
+            mqttConnections.decrement();
             return;
         }
     }
@@ -145,6 +157,7 @@ MQTTConnection *MQTTBroker::newConnection(WiFiClient &wifiClient) {
             MQTTConnection *connection = &connections[connectionIndex];
             connection->begin(wifiClient);
             connectionValid[connectionIndex] = true;
+            mqttConnections.increment();
             return connection;
         }
     }
@@ -171,6 +184,7 @@ void MQTTBroker::checkForLostConnections() {
             if (connection.wasDisconnected()) {
                 cleanupLostConnection(connection);
                 connectionValid[connectionIndex] = false;
+                mqttConnections.decrement();
             }
         }
     }
@@ -193,6 +207,7 @@ void MQTTBroker::invalidateSession(MQTTSession *session) {
     for (sessionIndex = 0; sessionIndex < maxMQTTSessions; sessionIndex++) {
         if (sessionValid[sessionIndex] && &sessions[sessionIndex] == session) {
             sessionValid[sessionIndex] = false;
+            mqttSessions.decrement();
             return;
         }
     }
@@ -370,6 +385,7 @@ MQTTSession *MQTTBroker::findAvailableSession() {
     for (sessionIndex = 0; sessionIndex < maxMQTTSessions; sessionIndex++) {
         if (!sessionValid[sessionIndex]) {
             sessionValid[sessionIndex] = true;
+            mqttSessions.increment();
             return &sessions[sessionIndex];
         }
     }

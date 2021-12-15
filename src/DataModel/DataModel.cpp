@@ -9,10 +9,16 @@
 #include "Util/Logger.h"
 #include "Util/Error.h"
 
+DataModelUInt32Leaf mqttSessions("sessions", &controllerIDNode);
+DataModelUInt32Leaf mqttConnections("connections", &controllerIDNode);
+
+DataModelElement *mqttNodeChildren[] = { &mqttSessions, &mqttConnections, NULL};
+DataModelNode mqttNode("MQTT", &controllerIDNode, mqttNodeChildren);
+
 // Up time of this controller in seconds
 DataModelUInt32Leaf controllerUpTime("upTime", &controllerIDNode);
 
-DataModelElement *controllerIDNodeChildren[] = { &controllerUpTime, NULL };
+DataModelElement *controllerIDNodeChildren[] = { &controllerUpTime, &mqttNode, NULL };
 DataModelNode controllerIDNode(controllerID, &controllersNode, controllerIDNodeChildren);
 
 DataModelElement *controllersNodeChildren[] = { &controllerIDNode, NULL };
