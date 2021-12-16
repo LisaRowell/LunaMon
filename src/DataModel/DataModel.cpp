@@ -16,7 +16,7 @@ DataModelElement *mqttNodeChildren[] = { &mqttSessions, &mqttConnections, NULL};
 DataModelNode mqttNode("MQTT", &controllerIDNode, mqttNodeChildren);
 
 // Up time of this controller in seconds
-DataModelLeaf controllerUpTime("upTime", &controllerIDNode);
+DataModelUInt32Leaf controllerUpTime("upTime", &controllerIDNode);
 
 DataModelElement *controllerIDNodeChildren[] = { &controllerUpTime, &mqttNode, NULL };
 DataModelNode controllerIDNode(controllerID, &controllersNode, controllerIDNodeChildren);

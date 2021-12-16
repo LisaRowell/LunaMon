@@ -29,9 +29,10 @@ DataModelUInt32Leaf DataModelUInt32Leaf::operator -- (int) {
     return *this;
 }
 
-uint32_t DataModelUInt32Leaf::currentValue() {
+DataModelUInt32Leaf::operator uint32_t() const {
     return value;
 }
+
 
 void DataModelUInt32Leaf::sendRetainedValue(DataModelSubscriber &subscriber) {
     if (hasValue()) {
