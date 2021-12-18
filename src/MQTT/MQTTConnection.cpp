@@ -3,6 +3,10 @@
 
 #include "MQTTConnection.h"
 #include "MQTTMessage.h"
+
+#include "DataModel/DataModel.h"
+
+#include "Util/IPAddressTools.h"
 #include "Util/Logger.h"
 
 void MQTTConnection::begin(WiFiClient &wifiClient) {
@@ -185,4 +189,22 @@ IPAddress MQTTConnection::ipAddress() {
 
 uint16_t MQTTConnection::port() {
     return remotePort;
+}
+
+void MQTTConnection::updateConnectionDebug(DataModelStringLeaf *debug) {
+    char connectionIPAddressStr[maxIPAddressTextLength];
+    ipAddressToStr(connectionIPAddressStr, remoteIPAddress);
+
+    char connectionDebug[maxConnectionDescriptionLength];
+    if (hasSession()) {
+        snprintf(connectionDebug, maxConnectionDescriptionLength, "%s:%u (%s)",
+                 connectionIPAddressStr, remotePort, mqttSession->name());
+    } else {
+        snprintf(connectionDebug, maxConnectionDescriptionLength, "%s:%u", connectionIPAddressStr,
+                 remotePort);
+    }
+
+    if (strcmp(connectionDebug, *debug) != 0) {
+        *debug = connectionDebug;
+    }
 }

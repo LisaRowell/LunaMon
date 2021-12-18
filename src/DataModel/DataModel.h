@@ -1,13 +1,33 @@
 #ifndef DATA_MODEL_H
 #define DATA_MODEL_H
 
+#include <Arduino.h>
+
 #include "DataModelNode.h"
 #include "DataModelRoot.h"
 #include "DataModelUInt32Leaf.h"
+#include "DataModelStringLeaf.h"
 #include "DataModelSubscriber.h"
 
-extern DataModelUInt32Leaf mqttSessions;
-extern DataModelUInt32Leaf mqttConnections;
+#include "MQTT/MQTTSession.h"
+
+#include "Util/IPAddressTools.h"
+
+const size_t maxTCPPortTextLength = 5;
+const size_t maxConnectionDescriptionLength =
+    maxIPAddressTextLength + 1 + maxTCPPortTextLength + 2 + maxMQTTClientIDLength + 1 + 1;
+
+const size_t maxSessionDescriptionLength =
+    maxMQTTClientIDLength + 2 + maxIPAddressTextLength + 1 + maxTCPPortTextLength + 1 + 1;
+
+extern DataModelStringLeaf *mqttSessionDebugs[];
+extern DataModelNode mqttSessionsNode;
+
+extern DataModelStringLeaf *mqttConnectionDebugs[];
+extern DataModelNode mqttConnectionsNode;
+
+extern DataModelUInt32Leaf mqttSessionCount;
+extern DataModelUInt32Leaf mqttConnectionCount;
 
 extern DataModelNode mqttNode;
 

@@ -12,6 +12,7 @@ DataModelUInt32Leaf & DataModelUInt32Leaf::operator = (const uint32_t value) {
     this->value = value;
     updated();
     *this << value;
+
     return *this;
 }
 

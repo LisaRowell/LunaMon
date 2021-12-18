@@ -8,4 +8,6 @@ extern bool extractUInt8FromString(const String &string, unsigned start, unsigne
 extern bool extractUInt32FractionFromDecimalString(const String &string, unsigned decimalStart,
                                                    uint32_t &numerator, uint32_t &denominator);
 
+extern bool isEmptyString(const char *string);
+
 #endif

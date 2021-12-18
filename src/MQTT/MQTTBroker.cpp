@@ -15,11 +15,15 @@
 #include "MQTTUnsubscribeAckMessage.h"
 #include "MQTTPingRequestMessage.h"
 #include "MQTTPingResponseMessage.h"
+
+#include "Util/StringTools.h"
 #include "Util/Error.h"
 #include "Util/Logger.h"
+
 #include "WiFiManager/WiFiManager.h"
 
-MQTTBroker::MQTTBroker() : wifiIsConnected(false), wifiServer(portNumber) {
+MQTTBroker::MQTTBroker()
+        : wifiIsConnected(false), wifiServer(portNumber), dataModelDebugNeedsUpdating(false) {
     unsigned connectionIndex;
     for (connectionIndex = 0; connectionIndex < maxMQTTSessions; connectionIndex++) {
         connectionValid[connectionIndex] = false;
@@ -30,8 +34,7 @@ MQTTBroker::MQTTBroker() : wifiIsConnected(false), wifiServer(portNumber) {
         sessionValid[sessionPos] = false;
     }
 
-    mqttConnections = 0;
-    mqttSessions = 0;
+    dataModelDebugNeedsUpdating = true;
 }
 
 void MQTTBroker::begin(WiFiManager &wifiManager) {
@@ -41,6 +44,9 @@ void MQTTBroker::begin(WiFiManager &wifiManager) {
 void MQTTBroker::service() {
     checkForLostConnections();
     serviceSessions();
+    if (dataModelDebugNeedsUpdating) {
+        updateDataModelDebugs();
+    }
 
     if (wifiIsConnected) {
         bool sessionWasAvailable;
@@ -104,7 +110,7 @@ void MQTTBroker::terminateConnection(MQTTConnection *connection) {
                 if (sessionValid[sessionPos] && &sessions[sessionPos] == session) {
                     sessionFound = true;
                     sessionValid[sessionPos] = false;
-                    mqttSessions--;
+                    dataModelDebugNeedsUpdating = true;
                 }
             }
 
@@ -118,7 +124,7 @@ void MQTTBroker::terminateConnection(MQTTConnection *connection) {
     for (connectionPos = 0; connectionPos < maxMQTTSessions; connectionPos++) {
         if (&connections[connectionPos] == connection) {
             connectionValid[connectionPos] = false;
-            mqttConnections--;
+            dataModelDebugNeedsUpdating = true;
             return;
         }
     }
@@ -157,7 +163,7 @@ MQTTConnection *MQTTBroker::newConnection(WiFiClient &wifiClient) {
             MQTTConnection *connection = &connections[connectionIndex];
             connection->begin(wifiClient);
             connectionValid[connectionIndex] = true;
-            mqttConnections++;
+            dataModelDebugNeedsUpdating = true;
             return connection;
         }
     }
@@ -184,7 +190,7 @@ void MQTTBroker::checkForLostConnections() {
             if (connection.wasDisconnected()) {
                 cleanupLostConnection(connection);
                 connectionValid[connectionIndex] = false;
-                mqttConnections--;
+                dataModelDebugNeedsUpdating = true;
             }
         }
     }
@@ -207,7 +213,7 @@ void MQTTBroker::invalidateSession(MQTTSession *session) {
     for (sessionIndex = 0; sessionIndex < maxMQTTSessions; sessionIndex++) {
         if (sessionValid[sessionIndex] && &sessions[sessionIndex] == session) {
             sessionValid[sessionIndex] = false;
-            mqttSessions--;
+            dataModelDebugNeedsUpdating = true;
             return;
         }
     }
@@ -332,6 +338,17 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
         return;
     }
 
+    // It's less than helpful to have a client connecting without providing a Client ID, though it
+    // is allowed by the spec iff the clean session flag is set. We give such connections a name
+    // based on their IP address and TCP port so that we can better debug things. It's best to
+    // configure the offending application and have it provide sonmething useful...
+    if (isEmptyString(clientID)) {
+        char connectionIPAddressStr[maxIPAddressTextLength];
+        ipAddressToStr(connectionIPAddressStr, connection->ipAddress());
+        snprintf(clientID, maxMQTTClientIDLength, "%s:%u", connectionIPAddressStr,
+                 connection->port());
+    }
+
     uint16_t keepAliveTime = connectMessage.keepAliveSec();
 
     MQTTSession *session = findMatchingSession(clientID);
@@ -347,6 +364,7 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
             session->reconnect(cleanSession, connection, keepAliveTime);
             connection->connectTo(session);
             sendMQTTConnectAckMessage(connection, !cleanSession, MQTT_CONNACK_ACCEPTED);
+            dataModelDebugNeedsUpdating = true;
         }
     } else {
         session = findAvailableSession();
@@ -358,6 +376,7 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
             logger << logDebug << "MQTT Client '" << clientID << "' connected with new Session"
                    << eol;
             sendMQTTConnectAckMessage(connection, false, MQTT_CONNACK_ACCEPTED);
+            dataModelDebugNeedsUpdating = true;
         } else {
             logger << logWarning << "MQTT CONNECT with Sessions full. Client ID " << clientID
                    << " refused." << eol;
@@ -385,7 +404,7 @@ MQTTSession *MQTTBroker::findAvailableSession() {
     for (sessionIndex = 0; sessionIndex < maxMQTTSessions; sessionIndex++) {
         if (!sessionValid[sessionIndex]) {
             sessionValid[sessionIndex] = true;
-            mqttSessions++;
+            dataModelDebugNeedsUpdating = true;
             return &sessions[sessionIndex];
         }
     }
@@ -579,4 +598,61 @@ void MQTTBroker::serverOnlyMsgReceivedError(MQTTConnection *connection, MQTTMess
     logger << logError << "Received server->client only message " << message.messageTypeStr()
            << ". Terminating connection" << eol;
     terminateConnection(connection);
+}
+
+void MQTTBroker::updateDataModelDebugs() {
+    updateConnectionDebugs();
+    updateSessionDebugs();
+}
+
+void MQTTBroker::updateConnectionDebugs() {
+    uint32_t connectionCount = 0;
+    unsigned connectionDebugPos = 0;
+    unsigned connectionIndex;
+    for (connectionIndex = 0; connectionIndex < maxMQTTSessions; connectionIndex++) {
+        if (connectionValid[connectionIndex]) {
+            connectionCount++;
+
+            MQTTConnection &connection = connections[connectionIndex];
+            DataModelStringLeaf *connectionDebug = mqttConnectionDebugs[connectionDebugPos];
+            connection.updateConnectionDebug(connectionDebug);
+            connectionDebugPos++;
+        }
+    }
+    for (; connectionDebugPos < maxMQTTSessions; connectionDebugPos++) {
+        DataModelStringLeaf *emptyConnectionDebug = mqttConnectionDebugs[connectionDebugPos];
+        if (!emptyConnectionDebug->isEmptyStr()) {
+            *emptyConnectionDebug = "";
+        }
+    }
+    if (connectionCount != mqttConnectionCount) {
+        mqttConnectionCount = connectionCount;
+    }
+}
+
+void MQTTBroker::updateSessionDebugs() {
+    uint32_t sessionCount = 0;
+    unsigned sessionDebugPos = 0;
+    unsigned sessionIndex;
+    for (sessionIndex = 0; sessionIndex < maxMQTTSessions; sessionIndex++) {
+        if (sessionValid[sessionIndex]) {
+            sessionCount++;
+
+            MQTTSession &session = sessions[sessionIndex];
+            DataModelStringLeaf *sessionDebug = mqttSessionDebugs[sessionDebugPos];
+            session.updateSessionDebug(sessionDebug);
+            sessionDebugPos++;
+        }
+    }
+    for (; sessionDebugPos < maxMQTTSessions; sessionDebugPos++) {
+        DataModelStringLeaf *emptySessionDebug = mqttSessionDebugs[sessionDebugPos];
+        if (!emptySessionDebug->isEmptyStr()) {
+            *emptySessionDebug = "";
+        }
+    }
+    if (sessionCount != mqttSessionCount) {
+        mqttSessionCount = sessionCount;
+    }
+
+    dataModelDebugNeedsUpdating = false;
 }

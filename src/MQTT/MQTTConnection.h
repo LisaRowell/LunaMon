@@ -5,6 +5,8 @@
 
 #include "MQTTMessage.h"
 
+#include "DataModel/DataModelStringLeaf.h"
+
 class MQTTSession;
 
 class MQTTConnection {
@@ -47,6 +49,7 @@ class MQTTConnection {
         MQTTSession *session();
         IPAddress ipAddress();
         uint16_t port();
+        void updateConnectionDebug(DataModelStringLeaf *debug);
 };
 
 #endif

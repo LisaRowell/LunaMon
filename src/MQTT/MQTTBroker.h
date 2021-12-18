@@ -34,6 +34,11 @@ class MQTTBroker : WiFiManagerClient {
         MQTTSession sessions[maxMQTTSessions];
         bool sessionValid[maxMQTTSessions];
 
+        // Instead of being meticulous about updating the DataModel connections and sessions debug
+        // strings with changes as they happen, we just set a flag and deal with doing the update
+        // in the service routine.
+        bool dataModelDebugNeedsUpdating;
+
         void checkForLostConnections();
         void cleanupLostConnection(MQTTConnection &connection);
         void invalidateSession(MQTTSession *session);
@@ -52,6 +57,9 @@ class MQTTBroker : WiFiManagerClient {
         void pingRequestMessageReceived(MQTTConnection *connection, MQTTMessage &message);
         void disconnectMessageReceived(MQTTConnection *connection, MQTTMessage &message);
         void serverOnlyMsgReceivedError(MQTTConnection *connection, MQTTMessage &message);
+        void updateDataModelDebugs();
+        void updateConnectionDebugs();
+        void updateSessionDebugs();
 
     public:
         MQTTBroker();

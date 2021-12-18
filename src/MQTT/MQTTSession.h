@@ -5,7 +5,9 @@
 
 #include "MQTTConnection.h"
 #include "MQTTString.h"
+
 #include "DataModel/DataModelSubscriber.h"
+
 #include "Util/PassiveTimer.h"
 
 //
@@ -48,6 +50,7 @@ class MQTTSession : public DataModelSubscriber {
         void resetKeepAliveTimer();
         virtual const char *name() const override;
         virtual void publish(const char *topic, const char *value, bool retainedValue) override;
+        void updateSessionDebug(DataModelStringLeaf *debug);
 };
 
 #endif

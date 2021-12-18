@@ -17,7 +17,7 @@ bool DataModelRetainedValueLeaf::subscribe(DataModelSubscriber &subscriber, uint
     return true;
 }
 
-bool DataModelRetainedValueLeaf::hasValue() {
+bool DataModelRetainedValueLeaf::hasValue() const {
     return hasBeenSet;
 }
 

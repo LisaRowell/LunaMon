@@ -58,3 +58,7 @@ bool extractUInt32FractionFromDecimalString(const String &string, unsigned decim
 
     return true;
 }
+
+bool isEmptyString(const char *string) {
+    return *string == 0;
+}

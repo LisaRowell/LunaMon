@@ -97,3 +97,20 @@ void MQTTSession::publish(const char *topic, const char *value, bool retainedVal
     
     sendMQTTPublishMessage(connection, topic, value, false, 0, retainedValue, 0);
 }
+
+void MQTTSession::updateSessionDebug(DataModelStringLeaf *debug) {
+    char sessionDebug[maxSessionDescriptionLength];
+    if (connection) {
+        char connectionIPAddressStr[maxIPAddressTextLength];
+        ipAddressToStr(connectionIPAddressStr, connection->ipAddress());
+
+        snprintf(sessionDebug, maxSessionDescriptionLength, "%s (%s:%u)",
+                 clientID, connectionIPAddressStr, connection->port());
+    } else {
+        snprintf(sessionDebug, maxSessionDescriptionLength, "%s", clientID);
+    }
+
+    if (strcmp(sessionDebug, *debug) != 0) {
+        *debug = sessionDebug;
+    }
+}
