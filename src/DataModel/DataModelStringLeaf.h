@@ -12,7 +12,7 @@ class DataModelStringLeaf : public DataModelRetainedValueLeaf {
 
     public:
         DataModelStringLeaf(const char *name, DataModelElement *parent, size_t length);
-        DataModelStringLeaf & operator = (const char *string);
+        DataModelStringLeaf & operator = (const char *newString);
         operator const char * () const;
         virtual void sendRetainedValue(DataModelSubscriber &subscriber) override;
         bool isEmptyStr() const;

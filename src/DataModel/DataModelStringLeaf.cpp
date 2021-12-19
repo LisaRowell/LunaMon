@@ -12,10 +12,15 @@ DataModelStringLeaf::DataModelStringLeaf(const char *name, DataModelElement *par
     string[0] = 0;
 }
 
-DataModelStringLeaf & DataModelStringLeaf::operator = (const char *string) {
-    strncpy(this->string, string, maxLength);
+DataModelStringLeaf & DataModelStringLeaf::operator = (const char *newString) {
+    unsigned strPos;
+    for (strPos = 0; strPos < maxLength - 1 && newString[strPos] != 0; strPos++) {
+        string[strPos]  = newString[strPos];
+    }
+    this->string[strPos] = 0;
+
     updated();
-    *this << string;
+    *this << newString;
 
     return *this;
 }
