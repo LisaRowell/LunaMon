@@ -413,8 +413,6 @@ MQTTSession *MQTTBroker::findAvailableSession() {
 }
 
 void MQTTBroker::subscribeMessageReceived(MQTTConnection *connection, MQTTMessage &message) {
-    logger << logDebug << "Processing Subscribe message" << eol;
-
     if (!connection->hasSession()) {
         logger << logWarning << "Received a Subscribe message from an unconnected Client ("
                << connection->ipAddress() << ":" << connection->port()
@@ -480,8 +478,6 @@ void MQTTBroker::subscribeMessageReceived(MQTTConnection *connection, MQTTMessag
 }
 
 void MQTTBroker::unsubscribeMessageReceived(MQTTConnection *connection, MQTTMessage &message) {
-    logger << logDebug << "Processing Unsubscribe message" << eol;
-
     if (!connection->hasSession()) {
         logger << logWarning << "Received an unsubscribe message from an unconnected Client ("
                << connection->ipAddress() << ":" << connection->port()
