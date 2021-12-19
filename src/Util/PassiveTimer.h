@@ -10,6 +10,7 @@ class PassiveTimer {
         void setMilliSeconds(uint32_t milliSeconds);
         void setSeconds(uint32_t seconds);
         bool expired();
+        uint32_t timeInMilliSeconds();
 };
 
 #endif

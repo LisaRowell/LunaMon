@@ -35,3 +35,7 @@ bool PassiveTimer::expired() {
         return time >= endTime;
     }
 }
+
+uint32_t PassiveTimer::timeInMilliSeconds() {
+    return endTime;
+}
