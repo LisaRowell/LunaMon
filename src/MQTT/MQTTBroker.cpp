@@ -554,7 +554,7 @@ void MQTTBroker::pingRequestMessageReceived(MQTTConnection *connection, MQTTMess
     MQTTSession *session = connection->session();
     session->resetKeepAliveTimer();
 
-    logger << logError << "Sending MQTT PINGRESP message to Client '" << session->name() << eol;
+    logger << logDebug << "Sending MQTT PINGRESP message to Client '" << session->name() << eol;
 
     if (!sendMQTTPingResponseMessage(connection)) {
         logger << logError << "Failed to sent MQTT PINGRESP message to "
