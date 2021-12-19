@@ -4,7 +4,10 @@
 #include <Arduino.h>
 
 #include "MQTT/MQTTString.h"
+
 #include "NMEA/NMEATalker.h"
+
+#include "DataModel/DataModel.h"
 
 enum LogLevel {
     logNone,
@@ -28,6 +31,17 @@ class Logger {
         LogLevel lineLevel;
         LogBase base;
         Stream &console;
+        uint8_t errorsSetInDataModel;
+        char errorLine[maxErrorLength];
+        unsigned errorLinePos;
+        // Flag used to make sure that we don't try to set an error in the DataModel that occured
+        // while trying to set an error in the DataModel.
+        bool inLogger;
+
+        void logString(const char *string);
+        void logCharacter(char character);
+        void addErrorLineToDebugs();
+        void scrollUpDebugs();
 
     public:
         Logger(LogLevel level, Stream &console);

@@ -7,11 +7,13 @@
 Logger logger(logDebug, Serial);
 
 Logger::Logger(LogLevel level, Stream &console)
-    : logLevel(level), base(Dec), console(console) {
+    : logLevel(level), lineLevel(logError), base(Dec), console(console), errorsSetInDataModel(0),
+      errorLinePos(0), inLogger(false) {
+    errorLine[0] = 0;
 }
 
 Logger & Logger::operator << (const LogLevel level) {
-    logLevel = lineLevel;
+    lineLevel = level;
 
     return *this;
 }
@@ -25,9 +27,9 @@ Logger & Logger::operator << (const LogBase base) {
 Logger & Logger::operator << (const char *string) {
     if (lineLevel >= logLevel) {
         if (string != NULL) {
-            console.print(string);
+            logString(string);
         } else {
-            console.print("(nil)");
+            logString("(nil)");
         }
     }
 
@@ -36,7 +38,7 @@ Logger & Logger::operator << (const char *string) {
 
 Logger & Logger::operator << (const String &string) {
     if (lineLevel >= logLevel) {
-       console.print(string);
+       logString(string.c_str());
     }
 
     return *this;
@@ -46,11 +48,15 @@ Logger & Logger::operator << (uint8_t value) {
     if (lineLevel >= logLevel) {
         switch (base) {
             case Dec:
-                console.print(value);
+                char decimalStr[4];
+                snprintf(decimalStr, 4, "%u", value);
+                logString(decimalStr);
                 break;
 
             case Hex:
-                console.print(value, HEX);
+                char hexStr[5];
+                snprintf(hexStr, 5, "0x%0x", value);
+                logString(hexStr);
                 break;
 
             default:
@@ -65,11 +71,15 @@ Logger & Logger::operator << (uint16_t value) {
     if (lineLevel >= logLevel) {
         switch (base) {
             case Dec:
-                console.print(value);
+                char decimalStr[6];
+                snprintf(decimalStr, 6, "%u", value);
+                logString(decimalStr);
                 break;
 
             case Hex:
-                console.print(value, HEX);
+                char hexStr[7];
+                snprintf(hexStr, 7, "0x%0x", value);
+                logString(hexStr);
                 break;
 
             default:
@@ -84,11 +94,15 @@ Logger & Logger::operator << (uint32_t value) {
     if (lineLevel >= logLevel) {
         switch (base) {
             case Dec:
-                console.print(value);
+                char decimalStr[11];
+                snprintf(decimalStr, 11, "%lu", value);
+                logString(decimalStr);
                 break;
 
             case Hex:
-                console.print(value, HEX);
+                char hexStr[11];
+                snprintf(hexStr, 11, "0x%0lx", value);
+                logString(hexStr);
                 break;
 
             default:
@@ -103,11 +117,15 @@ Logger & Logger::operator << (unsigned value) {
     if (lineLevel >= logLevel) {
         switch (base) {
             case Dec:
-                console.print(value);
+                char decimalStr[11];
+                snprintf(decimalStr, 11, "%u", value);
+                logString(decimalStr);
                 break;
 
             case Hex:
-                console.print(value, HEX);
+                char hexStr[11];
+                snprintf(hexStr, 11, "0x%0x", value);
+                logString(hexStr);
                 break;
 
             default:
@@ -122,11 +140,15 @@ Logger & Logger::operator << (int value) {
     if (lineLevel >= logLevel) {
         switch (base) {
             case Dec:
-                console.print(value);
+                char decimalStr[12];
+                snprintf(decimalStr, 12, "%d", value);
+                logString(decimalStr);
                 break;
 
             case Hex:
-                console.print(value, HEX);
+                char hexStr[11];
+                snprintf(hexStr, 11, "0x%0x", value);
+                logString(hexStr);
                 break;
 
             default:
@@ -140,9 +162,9 @@ Logger & Logger::operator << (int value) {
 Logger & Logger::operator << (bool value) {
     if (lineLevel >= logLevel) {
         if (value) {
-            console.print("true");
+            logString("true");
         } else {
-            console.print("false");
+            logString("false");
         }
     }
 
@@ -151,7 +173,9 @@ Logger & Logger::operator << (bool value) {
 
 Logger & Logger::operator << (const IPAddress &addr) {
     if (lineLevel >= logLevel) {
-        console.print(addr);
+        char ipAddressStr[maxIPAddressTextLength];
+        ipAddressToStr(ipAddressStr, addr);
+        logString(ipAddressStr);
     }
 
     return *this;
@@ -163,7 +187,7 @@ Logger & Logger::operator << (const MQTTString &string) {
 
         unsigned pos;
         for (pos = 0; pos < length; pos++) {
-            console.print(string.characterData[pos]);
+            logCharacter(string.characterData[pos]);
         }
     }
 
@@ -172,7 +196,7 @@ Logger & Logger::operator << (const MQTTString &string) {
 
 Logger & Logger::operator << (enum NMEATalker talker) {
     if (lineLevel >= logLevel) {
-        console.print(nmeaTalkerName(talker));
+        logString(nmeaTalkerName(talker));
     }
 
     return *this;
@@ -183,7 +207,66 @@ Logger & Logger::operator << (const EndOfLine &eol) {
  
     if (lineLevel >= logLevel) {
         console.println();
+
+        if (lineLevel >= logWarning) {
+            addErrorLineToDebugs();
+        }
+    }
+
+    if (!inLogger) {
+        errorLine[0] = 0;
+        errorLinePos = 0;
     }
 
     return *this;
+}
+
+void Logger::logString(const char *string) {
+    console.print(string);
+
+    if (lineLevel >= logWarning && !inLogger) {
+        unsigned strPos;
+        for (strPos = 0;
+             errorLinePos < maxErrorLength - 1 && string[strPos];
+             strPos++, errorLinePos++) {
+            errorLine[errorLinePos] = string[strPos];
+        }
+        errorLine[errorLinePos] = 0;
+    }
+}
+
+void Logger::logCharacter(char character) {
+    console.print(character);
+
+    if (lineLevel >= logWarning && !inLogger) {
+        errorLine[errorLinePos] = character;
+        errorLinePos++;
+        errorLine[errorLinePos] = 0;
+    }
+}
+
+void Logger::addErrorLineToDebugs() {
+    if (!inLogger) {
+        inLogger = true;
+
+        if (errorsSetInDataModel == errorDebugSlots) {
+            scrollUpDebugs();
+        }
+
+        DataModelStringLeaf *errorDebug = errorDebugs[errorsSetInDataModel];
+        *errorDebug = errorLine;
+        errorsSetInDataModel++;
+
+        inLogger = false;
+    }
+}
+
+void Logger::scrollUpDebugs() {
+    unsigned slot;
+    for (slot = 0; slot < errorDebugSlots - 1; slot++) {
+        DataModelStringLeaf *toErrorDebug = errorDebugs[slot];
+        DataModelStringLeaf *fromErrorDebug = errorDebugs[slot + 1];
+        *toErrorDebug = *fromErrorDebug;
+    }
+    errorsSetInDataModel--;
 }

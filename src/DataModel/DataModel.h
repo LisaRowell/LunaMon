@@ -31,6 +31,11 @@ extern DataModelUInt32Leaf mqttConnectionCount;
 
 extern DataModelNode mqttNode;
 
+const size_t maxErrorLength = 80;
+const unsigned errorDebugSlots = 5;
+extern DataModelStringLeaf *errorDebugs[];
+extern DataModelNode errorsNode;
+
 extern DataModelUInt32Leaf controllerUpTime;
 extern DataModelNode controllerIDNode;
 

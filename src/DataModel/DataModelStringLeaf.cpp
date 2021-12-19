@@ -25,6 +25,19 @@ DataModelStringLeaf & DataModelStringLeaf::operator = (const char *newString) {
     return *this;
 }
 
+DataModelStringLeaf & DataModelStringLeaf::operator = (const DataModelStringLeaf &otherLeaf) {
+    unsigned strPos;
+    for (strPos = 0; strPos < maxLength - 1 && otherLeaf.string[strPos] != 0; strPos++) {
+        string[strPos]  = otherLeaf.string[strPos];
+    }
+    this->string[strPos] = 0;
+
+    updated();
+    *this << string;
+
+    return *this;
+}
+
 DataModelStringLeaf::operator const char * () const {
     return string;
 }

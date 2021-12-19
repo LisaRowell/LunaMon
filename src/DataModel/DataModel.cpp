@@ -71,10 +71,39 @@ DataModelElement *mqttNodeChildren[] = {
 };
 DataModelNode mqttNode("MQTT", &controllerIDNode, mqttNodeChildren);
 
+DataModelStringLeaf error1("1", &errorsNode, maxErrorLength);
+DataModelStringLeaf error2("2", &errorsNode, maxErrorLength);
+DataModelStringLeaf error3("3", &errorsNode, maxErrorLength);
+DataModelStringLeaf error4("4", &errorsNode, maxErrorLength);
+DataModelStringLeaf error5("5", &errorsNode, maxErrorLength);
+
+DataModelStringLeaf *errorDebugs[errorDebugSlots] = {
+    &error1,
+    &error2,
+    &error3,
+    &error4,
+    &error5
+};
+
+DataModelElement *errorsNodeChildren[] = {
+    &error1,
+    &error2,
+    &error3,
+    &error4,
+    &error5,
+    NULL
+};
+DataModelNode errorsNode("errors", &controllerIDNode, errorsNodeChildren);
+
 // Up time of this controller in seconds
 DataModelUInt32Leaf controllerUpTime("upTime", &controllerIDNode);
 
-DataModelElement *controllerIDNodeChildren[] = { &controllerUpTime, &mqttNode, NULL };
+DataModelElement *controllerIDNodeChildren[] = {
+    &controllerUpTime,
+    &errorsNode,
+    &mqttNode,
+    NULL
+};
 DataModelNode controllerIDNode(controllerID, &controllersNode, controllerIDNodeChildren);
 
 DataModelElement *controllersNodeChildren[] = { &controllerIDNode, NULL };
