@@ -83,7 +83,7 @@ DataModelLeaf & DataModelLeaf::operator << (const char *value) {
     return *this;
 }
 
-DataModelLeaf & DataModelLeaf::operator << (const uint32_t value) {
+DataModelLeaf & DataModelLeaf::operator << (uint32_t value) {
     char valueStr[12];
     snprintf(valueStr, 12, "%lu", value);
     *this << valueStr;

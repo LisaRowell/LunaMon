@@ -23,7 +23,7 @@ class DataModelLeaf : public DataModelElement {
                                            DataModelSubscriber &subscriber) override;
         virtual void unsubscribeAll(DataModelSubscriber &subscriber) override;
         DataModelLeaf & operator << (const char *value);
-        DataModelLeaf & operator << (const uint32_t value);
+        DataModelLeaf & operator << (uint32_t value);
 };
 
 #endif
