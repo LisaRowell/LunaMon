@@ -1,13 +1,13 @@
 #include <Arduino.h>
 
 #include "NMEASource.h"
-#include "Util/CharacterTools.h"
 #include "NMEALine.h"
-#include "NMEAMessageHandler.h"
+#include "NMEAMessage.h"
+
+#include "Util/CharacterTools.h"
 #include "Util/Logger.h"
 
-NMEASource::NMEASource(Stream &stream, NMEAMessageHandler &messageHandler) :
-              stream(stream), messageHandler(messageHandler) {
+NMEASource::NMEASource(Stream &stream) : stream(stream) {
     bufferPos = 0;
     remaining = 0;
     carriageReturnFound = false;
@@ -117,7 +117,7 @@ void NMEASource::lineCompleted() {
     if (!inputLine.sanityCheck()) {
         // Errors are logged by the sanity check.
     } else {
-        messageHandler.processLine(inputLine);
+        parseNMEAMessage(inputLine);
     }
 
     inputLine.reset();

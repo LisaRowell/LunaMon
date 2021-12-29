@@ -2,12 +2,10 @@
 #define NMEA_SOURCE_H
 
 #include "NMEALine.h"
-#include "NMEAMessageHandler.h"
 
 class NMEASource {
     private:
         Stream &stream;
-        NMEAMessageHandler &messageHandler;
         char buffer[maxNMEALineLength];
         unsigned bufferPos;
         unsigned remaining;
@@ -20,7 +18,7 @@ class NMEASource {
         void lineCompleted();
 
     public:
-        NMEASource(Stream &stream, NMEAMessageHandler &messageHandler);
+        NMEASource(Stream &stream);
         void service();
 };
 
