@@ -1,12 +1,18 @@
 #ifndef NMEA_TALKER_H
 #define NMEA_TALKER_H
 
-enum NMEATalker {
-    NMEA_TALKER_UNKNOWN,
-    NMEA_TALKER_GPS
-};
+class NMEATalker {
+    private:
+        enum Talker {
+        NMEA_TALKER_UNKNOWN,
+        NMEA_TALKER_GPS
+    };
 
-enum NMEATalker parseNMEATalker(String &talkerCode);
-const char *nmeaTalkerName(enum NMEATalker talker);
+    enum Talker talker;
+
+    public:
+        NMEATalker(String &talkerCode);
+        const char *name() const;
+};
 
 #endif

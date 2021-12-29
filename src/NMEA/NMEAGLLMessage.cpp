@@ -92,7 +92,7 @@ void parseNMEAGLLMessage(NMEATalker talker, NMEALine &nmeaLine) {
     dataValid.publish(positionDataValid);
     faaModeIndicator.publish(positionFAAModeindicator);
 
-    Serial.print(nmeaTalkerName(talker));
+    Serial.print(talker.name());
     Serial.print(" GLL: ");
     latitude.print();
     Serial.print(" ");

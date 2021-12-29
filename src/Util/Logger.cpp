@@ -194,9 +194,9 @@ Logger & Logger::operator << (const MQTTString &string) {
     return *this;
 }
 
-Logger & Logger::operator << (enum NMEATalker talker) {
+Logger & Logger::operator << (const NMEATalker &talker) {
     if (lineLevel >= logLevel) {
-        logString(nmeaTalkerName(talker));
+        logString(talker.name());
     }
 
     return *this;

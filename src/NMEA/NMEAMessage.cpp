@@ -19,7 +19,7 @@ void parseNMEAMessage(NMEALine &nmeaLine) {
     }
 
     String talkerCode = tag.substring(0, 2);
-    enum NMEATalker talker = parseNMEATalker(talkerCode);
+    NMEATalker talker(talkerCode);
 
     String msgTypeStr = tag.substring(2, 5);
     enum NMEAMsgType msgType = parseNMEAMsgType(msgTypeStr);

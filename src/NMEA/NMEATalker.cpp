@@ -3,15 +3,15 @@
 #include "NMEATalker.h"
 #include "Util/Error.h"
 
-enum NMEATalker parseNMEATalker(String &talkerCode) {
+NMEATalker::NMEATalker (String &talkerCode) {
     if (talkerCode == "GP") {
-        return NMEA_TALKER_GPS;
+        talker = NMEA_TALKER_GPS;
     } else {
-        return NMEA_TALKER_UNKNOWN;
+        talker = NMEA_TALKER_UNKNOWN;
     }
 }
 
-const char *nmeaTalkerName(enum NMEATalker talker) {
+const char *NMEATalker::name() const {
     switch (talker) {
         case NMEA_TALKER_GPS:
         return "GPS";

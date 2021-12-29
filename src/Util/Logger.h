@@ -57,7 +57,7 @@ class Logger {
         Logger & operator << (bool value);
         Logger & operator << (const IPAddress &addr);
         Logger & operator << (const MQTTString &string);
-        Logger & operator << (enum NMEATalker talker);
+        Logger & operator << (const NMEATalker &talker);
         Logger & operator << (const EndOfLine &eol);
 };
 
