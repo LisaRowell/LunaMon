@@ -15,6 +15,7 @@ class Longitude : public Coordinate {
     public:
         bool set(const String &string, const String &eastOrWestStr);
         void print();
+        void publish(DataModelLeaf &leaf);
 };
 
 #endif

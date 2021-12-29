@@ -1,7 +1,17 @@
-#ifndef NMEADATAVALID_H
-#define NMEADATAVALID_H
+#ifndef NMEA_DATA_VALID_H
+#define NMEA_DATA_VALID_H
 
-bool parseNMEADataValid(String &validStr, bool &valid);
-void printNMEADataValid(bool dataValid);
+#include "DataModel/DataModelLeaf.h"
+
+class NMEADataValid {
+    private:
+        bool valid;
+
+    public:
+        NMEADataValid();
+        bool set(String &validStr);
+        void print();
+        void publish(DataModelLeaf &leaf);
+};
 
 #endif

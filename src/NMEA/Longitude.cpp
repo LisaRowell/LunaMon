@@ -29,8 +29,6 @@ bool Longitude::set(const String &string, const String &eastOrWestStr) {
 void Longitude::print() {
     Coordinate::print();
 
-    Serial.print(" ");
-
     switch (eastOrWest) {
         case EAST:
             Serial.print("E");
@@ -38,5 +36,16 @@ void Longitude::print() {
 
         case WEST:
             Serial.print("W");
+    }
+}
+
+void Longitude::publish(DataModelLeaf &leaf) {
+    switch (eastOrWest) {
+        case EAST:
+            Coordinate::publish(leaf, true);
+            break;
+
+        case WEST:
+            Coordinate::publish(leaf, false);
     }
 }

@@ -43,6 +43,16 @@ extern DataModelNode controllersNode;
 
 extern DataModelNode electronicsNode;
 
+extern DataModelLeaf positionLatitude;
+extern DataModelLeaf positionLongitude;
+extern DataModelLeaf positionTime;
+extern DataModelLeaf positionDataValid;
+extern DataModelLeaf positionFAAModeindicator;
+
+extern DataModelNode positionNode;
+
+extern DataModelNode navigationNode;
+
 extern DataModelRoot dataModelRoot;
 
 const unsigned maxDataModelClients = 2;

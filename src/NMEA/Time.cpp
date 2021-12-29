@@ -1,6 +1,9 @@
 #include <Arduino.h>
 
 #include "Time.h"
+
+#include "DataModel/DataModelLeaf.h"
+
 #include "Util/StringTools.h"
 
 bool Time::set(const String &timeStr) {
@@ -50,13 +53,37 @@ void Time::print() {
     Serial.print(seconds / 10);
     Serial.print(seconds % 10);
 
-    if (secondPrecision) {
-        Serial.print(".");
-        String secondDigits(secondFraction);
-        unsigned leadingZeros = secondPrecision - secondDigits.length();
+    char secondFractionStr[12];
+    buildSecondsFactionString(secondFractionStr);
+    Serial.print(secondFractionStr);
+}
+
+void Time::publish(DataModelLeaf &leaf) {
+    char secondFractionStr[12];
+    buildSecondsFactionString(secondFractionStr);
+
+    char timeStr[40];
+    snprintf(timeStr, 40, "%02u:%02u:%02u%s", hours, minutes, seconds, secondFractionStr);
+
+    leaf << timeStr;
+}
+
+void Time::buildSecondsFactionString(char *string) {
+    if (secondPrecision > 0) {
+        *string = '.';
+        string++;
+
+        char fractionDigits[11];
+        sprintf(fractionDigits, "%lu", secondFraction);
+
+        unsigned leadingZeros = secondPrecision - strlen(fractionDigits);
         while (leadingZeros--) {
-            Serial.print("0");
+            *string = '0';
+            string++;
         }
-        Serial.print(secondFraction);
+
+        strcpy(string, fractionDigits);
+    } else {
+        *string = 0;
     }
 }

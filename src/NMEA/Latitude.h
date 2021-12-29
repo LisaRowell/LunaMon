@@ -3,6 +3,8 @@
 
 #include "Coordinate.h"
 
+#include "DataModel/DataModelLeaf.h"
+
 enum NorthOrSouth {
     NORTH,
     SOUTH
@@ -13,9 +15,9 @@ class Latitude : public Coordinate {
         enum NorthOrSouth northOrSouth;
 
     public:
-  
         bool set(const String &string, const String &northOrSouthStr);
         void print();
+        void publish(DataModelLeaf &leaf);
 };
 
 #endif

@@ -112,7 +112,26 @@ DataModelNode controllersNode("controllers", &electronicsNode, controllersNodeCh
 DataModelElement *electronicsNodeChildren[] = { &controllersNode, NULL };
 DataModelNode electronicsNode("electronics", &dataModelRoot, electronicsNodeChildren);
 
-DataModelElement *topNodeChildren[] = { &electronicsNode, NULL };
+DataModelLeaf positionLatitude("latitude", &positionNode);
+DataModelLeaf positionLongitude("longitude", &positionNode);
+DataModelLeaf positionTime("time", &positionNode);
+DataModelLeaf positionDataValid("dataValid", &positionNode);
+DataModelLeaf positionFAAModeindicator("faaModeIndicator", &positionNode);
+
+DataModelElement *positionNodeChildren[] = {
+    &positionLatitude,
+    &positionLongitude,
+    &positionTime,
+    &positionDataValid,
+    &positionFAAModeindicator,
+    NULL
+};
+DataModelNode positionNode("position", &navigationNode, positionNodeChildren);
+
+DataModelElement *navigationNodeChildren[] = { &positionNode, NULL };
+DataModelNode navigationNode("navigation", &dataModelRoot, navigationNodeChildren);
+
+DataModelElement *topNodeChildren[] = { &electronicsNode, &navigationNode, NULL };
 DataModelRoot dataModelRoot(topNodeChildren);
 
 DataModel::DataModel() : root(dataModelRoot) {

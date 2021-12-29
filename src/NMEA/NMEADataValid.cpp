@@ -2,7 +2,12 @@
 
 #include "NMEADataValid.h"
 
-bool parseNMEADataValid(String &validStr, bool &valid) {
+#include "DataModel/DataModelLeaf.h"
+
+NMEADataValid::NMEADataValid() : valid(false) {
+}
+
+bool NMEADataValid::set(String &validStr) {
     if (validStr == "A") {
         valid = true;
         return true;
@@ -14,10 +19,18 @@ bool parseNMEADataValid(String &validStr, bool &valid) {
     }
 }
 
-void printNMEADataValid(bool dataValid) {
-    if (dataValid) {
+void NMEADataValid::print() {
+    if (valid) {
         Serial.print("Valid");
     } else {
         Serial.print("Invalid");
+    }
+}
+
+void NMEADataValid::publish(DataModelLeaf &leaf) {
+    if (valid) {
+        leaf << "1";
+    } else {
+        leaf << "0";
     }
 }

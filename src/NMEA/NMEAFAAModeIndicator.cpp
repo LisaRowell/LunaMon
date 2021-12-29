@@ -2,9 +2,14 @@
 
 #include "NMEAFAAModeIndicator.h"
 
-bool parseNMEAFAAModeIndicator(String &faaModeStr, enum NMEAFAAModeIndicator &faaModeIndicator) {
+#include "DataModel/DataModelLeaf.h"
+
+NMEAFAAModeIndicator::NMEAFAAModeIndicator() : faaMode(FAA_MODE_NONE) {
+}
+
+bool NMEAFAAModeIndicator::set(String &faaModeStr) {
     if (faaModeStr.length() == 0) {
-        faaModeIndicator = FAA_MODE_NONE;
+        faaMode = FAA_MODE_NONE;
         return true;
     }
 
@@ -15,39 +20,47 @@ bool parseNMEAFAAModeIndicator(String &faaModeStr, enum NMEAFAAModeIndicator &fa
     char faaModeChar = faaModeStr.charAt(0);
     switch (faaModeChar) {
         case 'A':
-            faaModeIndicator = FAA_MODE_AUTONOMOUS;
+            faaMode = FAA_MODE_AUTONOMOUS;
+            return true;
+
+        case 'C':
+            faaMode = FAA_MODE_CAUTION;
             return true;
 
         case 'D':
-            faaModeIndicator = FAA_MODE_DIFFERENTIAL;
+            faaMode = FAA_MODE_DIFFERENTIAL;
             return true;
 
         case 'E':
-            faaModeIndicator = FAA_MODE_ESTIMATED;
+            faaMode = FAA_MODE_ESTIMATED;
             return true;
 
         case 'F':
-            faaModeIndicator = FAA_MODE_RTK_FLOAT;
+            faaMode = FAA_MODE_RTK_FLOAT;
             return true;
 
         case 'M':
-            faaModeIndicator = FAA_MODE_MANUAL;
+            faaMode = FAA_MODE_MANUAL;
             return true;
 
         case 'N':
-            faaModeIndicator = FAA_MODE_DATA_NOT_VALID;
+            faaMode = FAA_MODE_DATA_NOT_VALID;
             return true;
 
         case 'P':
-            faaModeIndicator = FAA_MODE_PRECISE;
+            faaMode = FAA_MODE_PRECISE;
             return true;
 
         case 'R':
-            faaModeIndicator = FAA_MODE_RTK_INTEGER;
+            faaMode = FAA_MODE_RTK_INTEGER;
             return true;
 
         case 'S':
-            faaModeIndicator = FAA_MODE_SIMULATED;
+            faaMode = FAA_MODE_SIMULATED;
+            return true;
+
+        case 'U':
+            faaMode = FAA_MODE_UNSAFE;
             return true;
 
         default:
@@ -55,13 +68,21 @@ bool parseNMEAFAAModeIndicator(String &faaModeStr, enum NMEAFAAModeIndicator &fa
     }
 }
 
-void printNMEAFAAModeIndicator(enum NMEAFAAModeIndicator faaModeIndicator) {
-    switch (faaModeIndicator) {
+bool NMEAFAAModeIndicator::hasValue() const {
+    return faaMode != FAA_MODE_NONE;
+}
+
+void NMEAFAAModeIndicator::print() const {
+    switch (faaMode) {
         case FAA_MODE_NONE:
             break;
 
         case FAA_MODE_AUTONOMOUS:
             Serial.print("Autonomous");
+            break;
+
+        case FAA_MODE_CAUTION:
+            Serial.print("Caution");
             break;
 
         case FAA_MODE_DIFFERENTIAL:
@@ -94,5 +115,59 @@ void printNMEAFAAModeIndicator(enum NMEAFAAModeIndicator faaModeIndicator) {
 
         case FAA_MODE_SIMULATED:
             Serial.print("Simulated");
+            break;
+
+        case FAA_MODE_UNSAFE:
+            Serial.print("Unsafe");
+    }
+}
+
+void NMEAFAAModeIndicator::publish(DataModelLeaf &leaf) const {
+    switch (faaMode) {
+        case FAA_MODE_NONE:
+            break;
+
+        case FAA_MODE_AUTONOMOUS:
+            leaf << "Autonomous";
+            break;
+
+        case FAA_MODE_CAUTION:
+            leaf << "Caution";
+            break;
+
+        case FAA_MODE_DIFFERENTIAL:
+            leaf << "Differential";
+            break;
+
+        case FAA_MODE_ESTIMATED:
+            leaf << "Estimated";
+            break;
+
+        case FAA_MODE_RTK_FLOAT:
+            leaf << "RTK Float";
+            break;
+
+        case FAA_MODE_MANUAL:
+            leaf << "Manual";
+            break;
+
+        case FAA_MODE_DATA_NOT_VALID:
+            leaf << "Data Not Valid";
+            break;
+
+        case FAA_MODE_PRECISE:
+            leaf << "Precise";
+            break;
+
+        case FAA_MODE_RTK_INTEGER:
+            leaf << "RTK Integer";
+            break;
+
+        case FAA_MODE_SIMULATED:
+            leaf << "Simulated";
+            break;
+
+        case FAA_MODE_UNSAFE:
+            leaf << "Unsafe";
     }
 }

@@ -2,6 +2,8 @@
 
 #include "Latitude.h"
 
+#include "DataModel/DataModelLeaf.h"
+
 bool Latitude::set(const String &string, const String &northOrSouthStr) {
     if (string.length() < 4) {
         return false;
@@ -29,8 +31,6 @@ bool Latitude::set(const String &string, const String &northOrSouthStr) {
 void Latitude::print() {
     Coordinate::print();
 
-    Serial.print(" ");
-
     switch (northOrSouth) {
         case NORTH:
             Serial.print("N");
@@ -38,5 +38,16 @@ void Latitude::print() {
 
         case SOUTH:
             Serial.print("S");
+    }
+}
+
+void Latitude::publish(DataModelLeaf &leaf) {
+    switch (northOrSouth) {
+        case NORTH:
+            Coordinate::publish(leaf, true);
+            break;
+
+        case SOUTH:
+            Coordinate::publish(leaf, false);
     }
 }

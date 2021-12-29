@@ -7,19 +7,15 @@
 #include "NMEAGLLMessage.h"
 #include "Util/Logger.h"
 
-void NMEAMessage::setTalker(enum NMEATalker talker) {
-    NMEAMessage::talker = talker;
-}
-
-NMEAMessage *parseNMEAMessage(NMEALine &nmeaLine) {
+void parseNMEAMessage(NMEALine &nmeaLine) {
     String tag;
     if (!nmeaLine.extractWord(tag)) {
         logger << logWarning << "NMEA message missing tag" << eol;
-        return NULL;
+        return;
     }
     if (tag.length() != 5) {
         logger << logWarning << "Bad NMEA tag" << eol;
-        return NULL;
+        return;
     }
 
     String talkerCode = tag.substring(0, 2);
@@ -28,22 +24,14 @@ NMEAMessage *parseNMEAMessage(NMEALine &nmeaLine) {
     String msgTypeStr = tag.substring(2, 5);
     enum NMEAMsgType msgType = parseNMEAMsgType(msgTypeStr);
 
-    NMEAMessage *message;
     switch (msgType) {
         case NMEA_MSG_TYPE_GLL:
-            message = parseNMEAGLLMessage(talker, nmeaLine);
-            if (!message) {
-                return NULL;
-            }
+            parseNMEAGLLMessage(talker, nmeaLine);
             break;
 
         case NMEA_MSG_TYPE_UNKNOWN:
         default:
             logger << logWarning << "Unknown NMEA message type (" << msgTypeStr << ") from "
                    << talker << eol;
-            return NULL;
     }
-
-    message->setTalker(talker);
-    return message;
 }

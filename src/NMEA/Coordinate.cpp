@@ -1,25 +1,11 @@
 #include <Arduino.h>
 
 #include "Coordinate.h"
+
+#include "DataModel/DataModelLeaf.h"
+
+#include "Util/CharacterTools.h"
 #include "Util/StringTools.h"
-
-uint32_t Coordinate::tenthsSecondScaler() {
-    uint32_t scaler = 1;
-    int i;
-    for (i = 0; i < (minutePrecision - 1); i++) {
-        scaler = scaler * 10;
-    }
-    return scaler;
-}
-
-uint16_t Coordinate::tenthsOfSeconds() {
-    if (minutePrecision == 0) {
-        return 0;
-    } else {
-        uint32_t tenthsSecondScaler = Coordinate::tenthsSecondScaler();
-        return (60 * minuteFraction + tenthsSecondScaler / 2) / tenthsSecondScaler;
-    }
-}
 
 bool Coordinate::setDegrees(const String &string, unsigned startDegrees, unsigned endDegrees,
                             uint8_t maxDegrees) {
@@ -31,8 +17,9 @@ bool Coordinate::setDegrees(const String &string, unsigned startDegrees, unsigne
 }
 
 bool Coordinate::setMinutes(const String &string, unsigned startMinutes) {
+    uint8_t wholeMinutes;
     const unsigned endWholeMinutes = startMinutes + 2;
-    if (!extractUInt8FromString(string, startMinutes, endWholeMinutes, minutes, 59)) {
+    if (!extractUInt8FromString(string, startMinutes, endWholeMinutes, wholeMinutes, 59)) {
         return false;
     }
 
@@ -43,27 +30,48 @@ bool Coordinate::setMinutes(const String &string, unsigned startMinutes) {
 
         const unsigned startMinuteFraction = endWholeMinutes + 1;
         const unsigned endMinuteFraction = string.length();
-        if (!extractUInt32FromString(string, startMinuteFraction, endMinuteFraction,
-                                     minuteFraction)) {
-            return false;
+
+        uint32_t numerator = 0;
+        uint32_t denominator = 1;
+
+        unsigned fractionPos;
+        for (fractionPos = startMinuteFraction; fractionPos < endMinuteFraction; fractionPos++) {
+            char digit = string.charAt(fractionPos);
+            if (!isDigit(digit)) {
+                return false;
+            }
+            numerator = numerator * 10 + decimalValue(digit);
+            denominator = denominator * 10;
         }
-        minutePrecision = endMinuteFraction - startMinuteFraction;
+
+        minutes = (float)wholeMinutes + (float)numerator / denominator;
     } else {
-        minuteFraction = 0;
-        minutePrecision = 0;
+        minutes = (float)wholeMinutes;
     }
 
     return true;
 }
 
+// This prints the coordinate as unsigned and the caller is responsible for appending N/S or E/W.
 void Coordinate::print() {
     Serial.print(degrees);
     Serial.print("\xC2\xB0");     // Degree symbol
-    Serial.print(minutes);
+    Serial.print(minutes, 5);
     Serial.print("'");
+}
 
-    uint16_t tenthsOfSeconds = Coordinate::tenthsOfSeconds();
-    Serial.print(tenthsOfSeconds / 10);
-    Serial.print(".");
-    Serial.print(tenthsOfSeconds % 10);
+// We publish coordinates as a string containing a signed, floating point number of degrees.
+// Clients are responsible for displaying the values in a way that matches the users preference.
+void Coordinate::publish(DataModelLeaf &leaf, bool isPositive) {
+    char string[40];
+
+    float degreesFloat;
+    degreesFloat = (float)degrees + minutes / 60;
+    if (isPositive) {
+        snprintf(string, 40, "%f", degreesFloat);
+    } else {
+        snprintf(string, 40, "-%f", degreesFloat);
+    }
+
+    leaf << string;
 }
