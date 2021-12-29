@@ -3,9 +3,9 @@
 #include "NMEAGLLMessage.h"
 #include "NMEALine.h"
 #include "NMEATalker.h"
-#include "Latitude.h"
-#include "Longitude.h"
-#include "Time.h"
+#include "NMEALatitude.h"
+#include "NMEALongitude.h"
+#include "NMEATime.h"
 #include "NMEADataValid.h"
 #include "NMEAFAAModeIndicator.h"
 
@@ -26,7 +26,7 @@ void parseNMEAGLLMessage(NMEATalker talker, NMEALine &nmeaLine) {
         return;
     }
 
-    Latitude latitude;
+    NMEALatitude latitude;
     if (!latitude.set(latitudeStr, northOrSouthStr)) {
         logger << logWarning << talker << " GLL message with bad latitude '" << latitudeStr << "' '"
                << northOrSouthStr << "'" << eol;
@@ -45,7 +45,7 @@ void parseNMEAGLLMessage(NMEATalker talker, NMEALine &nmeaLine) {
         return;
     }
 
-    Longitude longitude;
+    NMEALongitude longitude;
     if (!longitude.set(longitudeStr, eastOrWestStr)) {
         logger << logWarning << talker << " GLL message with bad longitude '" << longitudeStr
                << "' '" << eastOrWestStr << "'" << eol;

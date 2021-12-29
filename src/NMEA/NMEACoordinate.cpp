@@ -1,13 +1,13 @@
 #include <Arduino.h>
 
-#include "Coordinate.h"
+#include "NMEACoordinate.h"
 
 #include "DataModel/DataModelLeaf.h"
 
 #include "Util/CharacterTools.h"
 #include "Util/StringTools.h"
 
-bool Coordinate::setDegrees(const String &string, unsigned startDegrees, unsigned endDegrees,
+bool NMEACoordinate::setDegrees(const String &string, unsigned startDegrees, unsigned endDegrees,
                             uint8_t maxDegrees) {
     if (!extractUInt8FromString(string, startDegrees, endDegrees, degrees, maxDegrees)) {
         return false;
@@ -16,7 +16,7 @@ bool Coordinate::setDegrees(const String &string, unsigned startDegrees, unsigne
     return true;
 }
 
-bool Coordinate::setMinutes(const String &string, unsigned startMinutes) {
+bool NMEACoordinate::setMinutes(const String &string, unsigned startMinutes) {
     uint8_t wholeMinutes;
     const unsigned endWholeMinutes = startMinutes + 2;
     if (!extractUInt8FromString(string, startMinutes, endWholeMinutes, wholeMinutes, 59)) {
@@ -53,7 +53,7 @@ bool Coordinate::setMinutes(const String &string, unsigned startMinutes) {
 }
 
 // This prints the coordinate as unsigned and the caller is responsible for appending N/S or E/W.
-void Coordinate::print() {
+void NMEACoordinate::print() {
     Serial.print(degrees);
     Serial.print("\xC2\xB0");     // Degree symbol
     Serial.print(minutes, 5);
@@ -62,7 +62,7 @@ void Coordinate::print() {
 
 // We publish coordinates as a string containing a signed, floating point number of degrees.
 // Clients are responsible for displaying the values in a way that matches the users preference.
-void Coordinate::publish(DataModelLeaf &leaf, bool isPositive) {
+void NMEACoordinate::publish(DataModelLeaf &leaf, bool isPositive) {
     char string[40];
 
     float degreesFloat;

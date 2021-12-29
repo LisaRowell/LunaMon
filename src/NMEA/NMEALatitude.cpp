@@ -1,10 +1,10 @@
 #include <Arduino.h>
 
-#include "Latitude.h"
+#include "NMEALatitude.h"
 
 #include "DataModel/DataModelLeaf.h"
 
-bool Latitude::set(const String &string, const String &northOrSouthStr) {
+bool NMEALatitude::set(const String &string, const String &northOrSouthStr) {
     if (string.length() < 4) {
         return false;
     }
@@ -28,8 +28,8 @@ bool Latitude::set(const String &string, const String &northOrSouthStr) {
     return true;
 }
 
-void Latitude::print() {
-    Coordinate::print();
+void NMEALatitude::print() {
+    NMEACoordinate::print();
 
     switch (northOrSouth) {
         case NORTH:
@@ -41,13 +41,13 @@ void Latitude::print() {
     }
 }
 
-void Latitude::publish(DataModelLeaf &leaf) {
+void NMEALatitude::publish(DataModelLeaf &leaf) {
     switch (northOrSouth) {
         case NORTH:
-            Coordinate::publish(leaf, true);
+            NMEACoordinate::publish(leaf, true);
             break;
 
         case SOUTH:
-            Coordinate::publish(leaf, false);
+            NMEACoordinate::publish(leaf, false);
     }
 }

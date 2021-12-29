@@ -1,8 +1,10 @@
 #include <Arduino.h>
 
-#include "Longitude.h"
+#include "NMEALongitude.h"
 
-bool Longitude::set(const String &string, const String &eastOrWestStr) {
+#include "DataModel/DataModelLeaf.h"
+
+bool NMEALongitude::set(const String &string, const String &eastOrWestStr) {
     if (string.length() < 5) {
         return false;
     }
@@ -26,8 +28,8 @@ bool Longitude::set(const String &string, const String &eastOrWestStr) {
     return true;
 }
 
-void Longitude::print() {
-    Coordinate::print();
+void NMEALongitude::print() {
+    NMEACoordinate::print();
 
     switch (eastOrWest) {
         case EAST:
@@ -39,13 +41,13 @@ void Longitude::print() {
     }
 }
 
-void Longitude::publish(DataModelLeaf &leaf) {
+void NMEALongitude::publish(DataModelLeaf &leaf) {
     switch (eastOrWest) {
         case EAST:
-            Coordinate::publish(leaf, true);
+            NMEACoordinate::publish(leaf, true);
             break;
 
         case WEST:
-            Coordinate::publish(leaf, false);
+            NMEACoordinate::publish(leaf, false);
     }
 }

@@ -1,14 +1,14 @@
-#ifndef LONGITUDE_H
-#define LONGITUDE_H
+#ifndef NMEA_LONGITUDE_H
+#define NMEA_LONGITUDE_H
 
-#include "Coordinate.h"
+#include "NMEACoordinate.h"
 
 enum EastOrWest {
     EAST,
     WEST
 };
 
-class Longitude : public Coordinate {
+class NMEALongitude : public NMEACoordinate {
     private:
         enum EastOrWest eastOrWest;
 

@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-#include "Time.h"
+#include "NMEATime.h"
 
 #include "DataModel/DataModelLeaf.h"
 

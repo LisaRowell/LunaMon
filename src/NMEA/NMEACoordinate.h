@@ -1,9 +1,9 @@
-#ifndef COORDINATE_H
-#define COORDINATE_H
+#ifndef NMEA_COORDINATE_H
+#define NMEA_COORDINATE_H
 
 #include "DataModel/DataModelLeaf.h"
 
-class Coordinate {
+class NMEACoordinate {
     protected:
         uint8_t degrees;
         float minutes;

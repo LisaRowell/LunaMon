@@ -1,7 +1,7 @@
-#ifndef LATITUDE_H
-#define LATITUDE_H
+#ifndef NMEA_LATITUDE_H
+#define NMEA_LATITUDE_H
 
-#include "Coordinate.h"
+#include "NMEACoordinate.h"
 
 #include "DataModel/DataModelLeaf.h"
 
@@ -10,7 +10,7 @@ enum NorthOrSouth {
     SOUTH
 };
 
-class Latitude : public Coordinate {
+class NMEALatitude : public NMEACoordinate {
     private:
         enum NorthOrSouth northOrSouth;
 
