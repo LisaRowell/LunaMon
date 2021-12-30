@@ -4,6 +4,8 @@
 
 #include "DataModel/DataModelLeaf.h"
 
+#include "Util/Logger.h"
+
 NMEAFAAModeIndicator::NMEAFAAModeIndicator() : faaMode(FAA_MODE_NONE) {
 }
 
@@ -72,56 +74,6 @@ bool NMEAFAAModeIndicator::hasValue() const {
     return faaMode != FAA_MODE_NONE;
 }
 
-void NMEAFAAModeIndicator::print() const {
-    switch (faaMode) {
-        case FAA_MODE_NONE:
-            break;
-
-        case FAA_MODE_AUTONOMOUS:
-            Serial.print("Autonomous");
-            break;
-
-        case FAA_MODE_CAUTION:
-            Serial.print("Caution");
-            break;
-
-        case FAA_MODE_DIFFERENTIAL:
-            Serial.print("Differential");
-            break;
-
-        case FAA_MODE_ESTIMATED:
-            Serial.print("Estimated");
-            break;
-
-        case FAA_MODE_RTK_FLOAT:
-            Serial.print("RTK Float");
-            break;
-
-        case FAA_MODE_MANUAL:
-            Serial.print("Manual");
-            break;
-
-        case FAA_MODE_DATA_NOT_VALID:
-            Serial.print("Data Not Valid");
-            break;
-
-        case FAA_MODE_PRECISE:
-            Serial.print("Precise");
-            break;
-
-        case FAA_MODE_RTK_INTEGER:
-            Serial.print("RTK Integer");
-            break;
-
-        case FAA_MODE_SIMULATED:
-            Serial.print("Simulated");
-            break;
-
-        case FAA_MODE_UNSAFE:
-            Serial.print("Unsafe");
-    }
-}
-
 void NMEAFAAModeIndicator::publish(DataModelLeaf &leaf) const {
     switch (faaMode) {
         case FAA_MODE_NONE:
@@ -169,5 +121,55 @@ void NMEAFAAModeIndicator::publish(DataModelLeaf &leaf) const {
 
         case FAA_MODE_UNSAFE:
             leaf << "Unsafe";
+    }
+}
+
+void NMEAFAAModeIndicator::log(Logger &logger) const {
+    switch (faaMode) {
+        case FAA_MODE_NONE:
+            break;
+
+        case FAA_MODE_AUTONOMOUS:
+            logger << "Autonomous";
+            break;
+
+        case FAA_MODE_CAUTION:
+            logger << "Caution";
+            break;
+
+        case FAA_MODE_DIFFERENTIAL:
+            logger << "Differential";
+            break;
+
+        case FAA_MODE_ESTIMATED:
+            logger << "Estimated";
+            break;
+
+        case FAA_MODE_RTK_FLOAT:
+            logger << "RTK Float";
+            break;
+
+        case FAA_MODE_MANUAL:
+            logger << "Manual";
+            break;
+
+        case FAA_MODE_DATA_NOT_VALID:
+            logger << "Data Not Valid";
+            break;
+
+        case FAA_MODE_PRECISE:
+            logger << "Precise";
+            break;
+
+        case FAA_MODE_RTK_INTEGER:
+            logger << "RTK Integer";
+            break;
+
+        case FAA_MODE_SIMULATED:
+            logger << "Simulated";
+            break;
+
+        case FAA_MODE_UNSAFE:
+            logger << "Unsafe";
     }
 }

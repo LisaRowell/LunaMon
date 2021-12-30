@@ -1,6 +1,8 @@
 #include <Arduino.h>
 
 #include "NMEATalker.h"
+
+#include "Util/Logger.h"
 #include "Util/Error.h"
 
 NMEATalker::NMEATalker (String &talkerCode) {
@@ -22,4 +24,8 @@ const char *NMEATalker::name() const {
         default:
         fatalError("Messed up NMEATalker enumeration found while getting name.");
     }
+}
+
+void NMEATalker::log(Logger &logger) const {
+    logger << name();
 }

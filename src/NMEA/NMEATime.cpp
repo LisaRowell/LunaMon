@@ -4,9 +4,10 @@
 
 #include "DataModel/DataModelLeaf.h"
 
+#include "Util/Logger.h"
 #include "Util/StringTools.h"
 
-bool Time::set(const String &timeStr) {
+bool NMEATime::set(const String &timeStr) {
     if (timeStr.length() < 6) {
         return false;
     }
@@ -43,22 +44,7 @@ bool Time::set(const String &timeStr) {
     return true;
 }
 
-void Time::print() {
-    Serial.print(hours / 10);
-    Serial.print(hours % 10);
-    Serial.print(":");
-    Serial.print(minutes / 10);
-    Serial.print(minutes % 10);
-    Serial.print(":");
-    Serial.print(seconds / 10);
-    Serial.print(seconds % 10);
-
-    char secondFractionStr[12];
-    buildSecondsFactionString(secondFractionStr);
-    Serial.print(secondFractionStr);
-}
-
-void Time::publish(DataModelLeaf &leaf) {
+void NMEATime::publish(DataModelLeaf &leaf) {
     char secondFractionStr[12];
     buildSecondsFactionString(secondFractionStr);
 
@@ -68,7 +54,7 @@ void Time::publish(DataModelLeaf &leaf) {
     leaf << timeStr;
 }
 
-void Time::buildSecondsFactionString(char *string) {
+void NMEATime::buildSecondsFactionString(char *string) const {
     if (secondPrecision > 0) {
         *string = '.';
         string++;
@@ -86,4 +72,14 @@ void Time::buildSecondsFactionString(char *string) {
     } else {
         *string = 0;
     }
+}
+
+void NMEATime::log(Logger &logger) const {
+    char secondFractionStr[12];
+    buildSecondsFactionString(secondFractionStr);
+
+    char timeString[22];
+    snprintf(timeString, 22, "%02u:%02u:%02u%s", hours, minutes, seconds, secondFractionStr);
+
+    logger << timeString;
 }

@@ -3,15 +3,18 @@
 
 #include "DataModel/DataModelLeaf.h"
 
-class NMEADataValid {
+#include "Util/LoggableItem.h"
+#include "Util/Logger.h"
+
+class NMEADataValid : public LoggableItem {
     private:
         bool valid;
 
     public:
         NMEADataValid();
         bool set(String &validStr);
-        void print();
         void publish(DataModelLeaf &leaf);
+        virtual void log(Logger &logger) const override;
 };
 
 #endif

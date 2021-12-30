@@ -26,11 +26,16 @@ bool MQTTConnectMessage::parse() {
     variableHeader = (MQTTConnectVariableHeader *)variableHeaderStart;
     const uint32_t bytesAfterVariableHdr = bytesAfterFixedHdr - sizeof(MQTTConnectVariableHeader);
 
-    const uint32_t protocolNameLength = variableHeader->protocolNameLengthMSB * 256 + variableHeader->protocolNameLengthLSB;
+    const uint32_t protocolNameLength
+        = variableHeader->protocolNameLengthMSB * 256 + variableHeader->protocolNameLengthLSB;
     if (protocolNameLength != 4 ||
         variableHeader->protocolName[0] != 'M' || variableHeader->protocolName[1] != 'Q' ||
         variableHeader->protocolName[2] != 'T' || variableHeader->protocolName[3] != 'T') {
-        logger << logWarning << "Received MQTT CONNECT message with non MQTT protocol string" << eol;
+        logger << logWarning
+               << "Received MQTT CONNECT message with non MQTT protocol string: Length "
+               << protocolNameLength << "'"
+               << variableHeader->protocolName[0] << variableHeader->protocolName[1]
+               << variableHeader->protocolName[2] << variableHeader->protocolName[3] <<  "'" << eol;
         return false;
     }
 

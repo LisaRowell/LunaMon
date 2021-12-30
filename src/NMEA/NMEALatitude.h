@@ -5,19 +5,22 @@
 
 #include "DataModel/DataModelLeaf.h"
 
+#include "Util/LoggableItem.h"
+#include "Util/Logger.h"
+
 enum NorthOrSouth {
     NORTH,
     SOUTH
 };
 
-class NMEALatitude : public NMEACoordinate {
+class NMEALatitude : public NMEACoordinate, public LoggableItem {
     private:
         enum NorthOrSouth northOrSouth;
 
     public:
         bool set(const String &string, const String &northOrSouthStr);
-        void print();
         void publish(DataModelLeaf &leaf);
+        virtual void log(Logger &logger) const override;
 };
 
 #endif

@@ -3,11 +3,11 @@
 
 #include <Arduino.h>
 
-#include "MQTT/MQTTString.h"
-
-#include "NMEA/NMEATalker.h"
+#include "LoggableItem.h"
 
 #include "DataModel/DataModel.h"
+
+#include "MQTT/MQTTString.h"
 
 enum LogLevel {
     logNone,
@@ -47,6 +47,7 @@ class Logger {
         Logger(LogLevel level, Stream &console);
         Logger & operator << (const LogLevel level);
         Logger & operator << (const LogBase base);
+        Logger & operator << (char character);
         Logger & operator << (const char *string);
         Logger & operator << (const String &string);
         Logger & operator << (uint8_t value);
@@ -55,9 +56,11 @@ class Logger {
         Logger & operator << (unsigned value);
         Logger & operator << (int value);
         Logger & operator << (bool value);
+        // The following two are here instead of being LoggableItems because they are used in data
+        // streams which would be messed up by having a virtual function pointer thrown in there.
         Logger & operator << (const IPAddress &addr);
         Logger & operator << (const MQTTString &string);
-        Logger & operator << (const NMEATalker &talker);
+        Logger & operator << (const LoggableItem &item);
         Logger & operator << (const EndOfLine &eol);
 };
 

@@ -3,7 +3,10 @@
 
 #include "DataModel/DataModelLeaf.h"
 
-class NMEAFAAModeIndicator {
+#include "Util/LoggableItem.h"
+#include "Util/Logger.h"
+
+class NMEAFAAModeIndicator : public LoggableItem {
     private:
         enum FAAMode {
             FAA_MODE_NONE,
@@ -25,8 +28,8 @@ class NMEAFAAModeIndicator {
         NMEAFAAModeIndicator();
         bool set(String &faaModeStr);
         bool hasValue() const;
-        void print() const;
         void publish(DataModelLeaf &leaf) const;
+        virtual void log(Logger &logger) const override;
 };
 
 #endif

@@ -4,6 +4,8 @@
 
 #include "DataModel/DataModelLeaf.h"
 
+#include "Util/Logger.h"
+
 NMEADataValid::NMEADataValid() : valid(false) {
 }
 
@@ -19,18 +21,18 @@ bool NMEADataValid::set(String &validStr) {
     }
 }
 
-void NMEADataValid::print() {
-    if (valid) {
-        Serial.print("Valid");
-    } else {
-        Serial.print("Invalid");
-    }
-}
-
 void NMEADataValid::publish(DataModelLeaf &leaf) {
     if (valid) {
         leaf << "1";
     } else {
         leaf << "0";
+    }
+}
+
+void NMEADataValid::log(Logger &logger) const {
+    if (valid) {
+        logger << "Valid";
+    } else {
+        logger << "Invalid";
     }
 }

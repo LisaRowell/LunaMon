@@ -1,7 +1,10 @@
 #ifndef NMEA_TALKER_H
 #define NMEA_TALKER_H
 
-class NMEATalker {
+#include "Util/LoggableItem.h"
+#include "Util/Logger.h"
+
+class NMEATalker : public LoggableItem {
     private:
         enum Talker {
         NMEA_TALKER_UNKNOWN,
@@ -13,6 +16,7 @@ class NMEATalker {
     public:
         NMEATalker(String &talkerCode);
         const char *name() const;
+        virtual void log(Logger &logger) const override;
 };
 
 #endif

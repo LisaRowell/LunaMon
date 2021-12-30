@@ -4,6 +4,8 @@
 
 #include "DataModel/DataModelLeaf.h"
 
+#include "Util/Logger.h"
+
 bool NMEALongitude::set(const String &string, const String &eastOrWestStr) {
     if (string.length() < 5) {
         return false;
@@ -28,19 +30,6 @@ bool NMEALongitude::set(const String &string, const String &eastOrWestStr) {
     return true;
 }
 
-void NMEALongitude::print() {
-    NMEACoordinate::print();
-
-    switch (eastOrWest) {
-        case EAST:
-            Serial.print("E");
-            break;
-
-        case WEST:
-            Serial.print("W");
-    }
-}
-
 void NMEALongitude::publish(DataModelLeaf &leaf) {
     switch (eastOrWest) {
         case EAST:
@@ -49,5 +38,21 @@ void NMEALongitude::publish(DataModelLeaf &leaf) {
 
         case WEST:
             NMEACoordinate::publish(leaf, false);
+    }
+}
+
+void NMEALongitude::log(Logger &logger) const {
+    char coordinateStr[20];
+
+    NMEACoordinate::snprint(coordinateStr, 20);
+    logger << coordinateStr;
+
+    switch (eastOrWest) {
+        case EAST:
+            logger << "E";
+            break;
+
+        case WEST:
+            logger << "W";
     }
 }

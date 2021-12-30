@@ -53,11 +53,8 @@ bool NMEACoordinate::setMinutes(const String &string, unsigned startMinutes) {
 }
 
 // This prints the coordinate as unsigned and the caller is responsible for appending N/S or E/W.
-void NMEACoordinate::print() {
-    Serial.print(degrees);
-    Serial.print("\xC2\xB0");     // Degree symbol
-    Serial.print(minutes, 5);
-    Serial.print("'");
+void NMEACoordinate::snprint(char *string, size_t maxLength) const {
+    snprintf(string, maxLength, "%u\xC2\xB0%05f'", degrees, minutes);
 }
 
 // We publish coordinates as a string containing a signed, floating point number of degrees.

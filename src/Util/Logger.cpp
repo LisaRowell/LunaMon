@@ -1,8 +1,10 @@
 #include <Arduino.h>
 
 #include "Logger.h"
-#include "MQTT/MQTTString.h"
+#include "LoggableItem.h"
 #include "Error.h"
+
+#include "MQTT/MQTTString.h"
 
 Logger logger(logDebug, Serial);
 
@@ -20,6 +22,14 @@ Logger & Logger::operator << (const LogLevel level) {
 
 Logger & Logger::operator << (const LogBase base) {
     Logger::base = base;
+
+    return *this;
+}
+
+Logger & Logger::operator << (char character) {
+    if (lineLevel >= logLevel) {
+        logCharacter(character);
+    }
 
     return *this;
 }
@@ -194,9 +204,9 @@ Logger & Logger::operator << (const MQTTString &string) {
     return *this;
 }
 
-Logger & Logger::operator << (const NMEATalker &talker) {
+Logger & Logger::operator << (const LoggableItem &item) {
     if (lineLevel >= logLevel) {
-        logString(talker.name());
+        item.log(*this);
     }
 
     return *this;

@@ -52,7 +52,7 @@ void parseNMEAGLLMessage(NMEATalker talker, NMEALine &nmeaLine) {
         return;
     }
 
-    Time time;
+    NMEATime time;
     String timeStr;
     if (!nmeaLine.extractWord(timeStr)) {
         logger << logWarning << talker << " GLL message missing Time field" << eol;
@@ -92,20 +92,10 @@ void parseNMEAGLLMessage(NMEATalker talker, NMEALine &nmeaLine) {
     dataValid.publish(positionDataValid);
     faaModeIndicator.publish(positionFAAModeindicator);
 
-    Serial.print(talker.name());
-    Serial.print(" GLL: ");
-    latitude.print();
-    Serial.print(" ");
-    longitude.print();
-    Serial.print(" ");
-    time.print();
-    Serial.print(" ");
-    dataValid.print();
-
+    logger << logDebug << talker << " GLL: " << latitude << " " << longitude << " " << time << " "
+           << dataValid;
     if (faaModeIndicator.hasValue()) {
-        Serial.print(" ");
-        faaModeIndicator.print();
+        logger << " " << faaModeIndicator;
     }
-
-    Serial.println();
+    logger << eol;
 }
