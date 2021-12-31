@@ -7,6 +7,7 @@ extern bool extractUInt8FromString(const String &string, unsigned start, unsigne
                                    uint8_t &value, uint8_t maxValue);
 extern bool extractUInt32FractionFromDecimalString(const String &string, unsigned decimalStart,
                                                    uint32_t &numerator, uint32_t &denominator);
+extern bool convertTwoDigitDecimalString(const String &string, uint8_t &value);
 
 extern bool isEmptyString(const char *string);
 

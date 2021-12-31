@@ -59,6 +59,16 @@ bool extractUInt32FractionFromDecimalString(const String &string, unsigned decim
     return true;
 }
 
+bool convertTwoDigitDecimalString(const String &string, uint8_t &value) {
+    if (string.length() != 2) {
+        return false;
+    }
+
+    value = decimalValue(string.charAt(0)) * 10 + decimalValue(string.charAt(1));
+
+    return true;
+}
+
 bool isEmptyString(const char *string) {
     return *string == 0;
 }

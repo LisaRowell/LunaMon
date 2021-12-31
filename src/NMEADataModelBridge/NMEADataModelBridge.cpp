@@ -14,10 +14,13 @@ void NMEADataModelBridge::processMessage(NMEAMessage *message) {
     switch (message->type()) {
         case NMEA_MSG_TYPE_GLL:
             bridgeNMEAGLLMessage((NMEAGLLMessage *)message);
-        break;
-    
-    default:
-        break;
+            break;
+
+        case NMEA_MSG_TYPE_TXT:
+            break;
+
+        default:
+            break;
     }
 }
 
