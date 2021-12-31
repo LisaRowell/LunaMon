@@ -4,15 +4,19 @@
 #include "WiFiManager/WiFiManager.h"
 #include "MQTT/MQTTBroker.h"
 #include "DataModel/DataModel.h"
+#include "NMEADataModelBridge/NMEADataModelBridge.h"
 #include "Util/TimeConstants.h"
 
 NMEASource usbSerialNMEASource(Serial);
 WiFiManager wifiManager;
 MQTTBroker mqttBroker;
 DataModel dataModel;
+NMEADataModelBridge nmeaDataModelBridge;
 
 void setup() {
     controllerUpTime = millis() / msInSecond;
+
+    usbSerialNMEASource.addMessageHandler(nmeaDataModelBridge);
 
     Serial.begin(9600);
 

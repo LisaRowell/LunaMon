@@ -2,6 +2,7 @@
 #define NMEA_SOURCE_H
 
 #include "NMEALine.h"
+#include "NMEAMessageHandler.h"
 
 class NMEASource {
     private:
@@ -11,6 +12,9 @@ class NMEASource {
         unsigned remaining;
         bool carriageReturnFound;
         NMEALine inputLine;
+        static const unsigned maxMessageHandlers = 5;
+        NMEAMessageHandler *messageHandlers[maxMessageHandlers];
+        unsigned numberMessageHandlers;
 
         bool scanForCarriageReturn(unsigned &carriageReturnPos);
         bool readAvailableInput();
@@ -19,6 +23,7 @@ class NMEASource {
 
     public:
         NMEASource(Stream &stream);
+        void addMessageHandler(NMEAMessageHandler &messageHandler);
         void service();
 };
 

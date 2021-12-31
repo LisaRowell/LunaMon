@@ -3,15 +3,29 @@
 #include "NMEASource.h"
 #include "NMEALine.h"
 #include "NMEAMessage.h"
+#include "NMEAMessageHandler.h"
 
 #include "Util/CharacterTools.h"
 #include "Util/Logger.h"
+#include "Util/Error.h"
 
-NMEASource::NMEASource(Stream &stream) : stream(stream) {
-    bufferPos = 0;
-    remaining = 0;
-    carriageReturnFound = false;
+NMEASource::NMEASource(Stream &stream)
+    : stream(stream),
+      bufferPos(0),
+      remaining(0),
+      carriageReturnFound(false),
+      numberMessageHandlers(0) {
 }
+
+void NMEASource::addMessageHandler(NMEAMessageHandler &messageHandler) {
+    if (numberMessageHandlers == maxMessageHandlers) {
+        fatalError("Too many message handles for NMEA source");
+    }
+
+    messageHandlers[numberMessageHandlers] = &messageHandler;
+    numberMessageHandlers++;
+}
+
 
 bool NMEASource::scanForCarriageReturn(unsigned &carriageReturnPos) {
     unsigned scanRemaining;
@@ -116,17 +130,29 @@ void NMEASource::lineCompleted() {
 
     if (!inputLine.sanityCheck()) {
         // Errors are logged by the sanity check.
-    } else {
-        parseNMEAMessage(inputLine);
+        return;
     }
 
-    inputLine.reset();
+    NMEAMessage *nmeaMessage = parseNMEAMessage(inputLine);
+    if (nmeaMessage != NULL) {
+        nmeaMessage->log();
+
+        unsigned msgHandledIndex;
+        for (msgHandledIndex = 0; msgHandledIndex < numberMessageHandlers; msgHandledIndex++) {
+            NMEAMessageHandler *messageHandler = messageHandlers[msgHandledIndex];
+            messageHandler->processMessage(nmeaMessage);
+        }
+
+        // While we're done with the nmeaMessage, we don't do a free here
+        // since it was allocated with a static buffer and placement new.
+    }
 }
 
 void NMEASource::service() {
     if (remaining) {
         if (processBuffer()) {
             lineCompleted();
+            inputLine.reset();
             return;
         }
     }
@@ -134,6 +160,7 @@ void NMEASource::service() {
     if (readAvailableInput()) {
         if (processBuffer()) {
             lineCompleted();
+            inputLine.reset();
         }
     }
 }
