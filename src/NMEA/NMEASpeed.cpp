@@ -71,8 +71,16 @@ void NMEASpeed::publish(DataModelLeaf &leaf) const {
 
 void NMEASpeed::log(Logger &logger) const {
     if (hasValue) {
-        logger << speed << "." << tenths << "kn";
+        logger << speed << "." << tenths << "kns";
     } else {
         logger << "Unknown kns";
+    }
+}
+
+void NMEASpeed::log(Logger &logger, const char *units) const {
+    if (hasValue) {
+        logger << speed << "." << tenths << units;
+    } else {
+        logger << "Unknown " << units;
     }
 }

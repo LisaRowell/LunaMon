@@ -4,11 +4,12 @@
 #include "NMEAGLLMessage.h"
 #include "NMEARMCMessage.h"
 #include "NMEATXTMessage.h"
+#include "NMEAVTGMessage.h"
 
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
 #define NMEA_MESSAGE_BUFFER_SIZE (MAX(MAX(sizeof(NMEAGLLMessage), sizeof(NMEARMCMessage)), \
-                                      sizeof(NMEATXTMessage)))
+                                      MAX(sizeof(NMEATXTMessage), sizeof(NMEAVTGMessage))))
 
 extern uint8_t nmeaMessageBuffer[NMEA_MESSAGE_BUFFER_SIZE];
 

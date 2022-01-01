@@ -20,6 +20,7 @@ class NMEASpeed : public LoggableItem {
         bool extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType);
         void publish(DataModelLeaf &leaf) const;
         virtual void log(Logger &logger) const override;
+        void log(Logger &logger, const char *units) const;
 };
 
 #endif

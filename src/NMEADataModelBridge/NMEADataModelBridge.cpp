@@ -6,6 +6,7 @@
 #include "NMEA/NMEAMsgType.h"
 #include "NMEA/NMEAGLLMessage.h"
 #include "NMEA/NMEARMCMessage.h"
+#include "NMEA/NMEAVTGMessage.h"
 
 #include "DataModel/DataModel.h"
 
@@ -23,6 +24,9 @@ void NMEADataModelBridge::processMessage(NMEAMessage *message) {
 
         case NMEA_MSG_TYPE_TXT:
             break;
+
+        case NMEA_MSG_TYPE_VTG:
+            bridgeNMEAVTGMessage((NMEAVTGMessage *)message);
 
         default:
             break;
@@ -46,5 +50,11 @@ void NMEADataModelBridge::bridgeNMEARMCMessage(NMEARMCMessage *message) {
     message->trackMadeGood.publish(positionTrackMadeGood);
     message->date.publish(positionDate);
     message->magneticVariation.publish(positionMagneticVariation);
+    message->faaModeIndicator.publish(positionFAAModeindicator);
+}
+
+void NMEADataModelBridge::bridgeNMEAVTGMessage(NMEAVTGMessage *message) {
+    message->trackMadeGood.publish(positionTrackMadeGood);
+    message->speedOverGround.publish(positionSpeedOverGround);
     message->faaModeIndicator.publish(positionFAAModeindicator);
 }

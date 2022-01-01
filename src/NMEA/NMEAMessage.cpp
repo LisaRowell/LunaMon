@@ -7,6 +7,7 @@
 #include "NMEAGLLMessage.h"
 #include "NMEARMCMessage.h"
 #include "NMEATXTMessage.h"
+#include "NMEAVTGMessage.h"
 
 #include "Util/Logger.h"
 
@@ -39,6 +40,9 @@ NMEAMessage *parseNMEAMessage(NMEALine &nmeaLine) {
 
         case NMEA_MSG_TYPE_TXT:
             return parseNMEATXTMessage(talker, nmeaLine);
+
+        case NMEA_MSG_TYPE_VTG:
+            return parseNMEAVTGMessage(talker, nmeaLine);
 
         case NMEA_MSG_TYPE_UNKNOWN:
         default:

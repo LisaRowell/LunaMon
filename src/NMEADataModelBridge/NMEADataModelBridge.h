@@ -4,11 +4,13 @@
 #include "NMEA/NMEAMessageHandler.h"
 #include "NMEA/NMEAGLLMessage.h"
 #include "NMEA/NMEARMCMessage.h"
+#include "NMEA/NMEAVTGMessage.h"
 
 class NMEADataModelBridge : public NMEAMessageHandler {
     private:
         void bridgeNMEAGLLMessage(NMEAGLLMessage *message);
         void bridgeNMEARMCMessage(NMEARMCMessage *message);
+        void bridgeNMEAVTGMessage(NMEAVTGMessage *message);
 
     public:
         virtual void processMessage(NMEAMessage *message) override;
