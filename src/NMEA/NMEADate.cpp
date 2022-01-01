@@ -57,9 +57,9 @@ bool NMEADate::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgTy
 void NMEADate::publish(DataModelLeaf &leaf) const {
     if (hasValue) {
         // We use the US format of mm/dd/yyyyy.
-        char dateStr[13];
+        char dateStr[14];
 
-        snprintf(dateStr, 13, "%02u/%02u/%u", month, day, year);
+        snprintf(dateStr, 14, "%02u/%02u/%u", month, day, year);
         leaf << dateStr;
     } else {
         leaf << "";
