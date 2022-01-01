@@ -1,6 +1,8 @@
 #include <Arduino.h>
 
 #include "NMEATime.h"
+#include "NMEALine.h"
+#include "NMEATalker.h"
 
 #include "DataModel/DataModelLeaf.h"
 
@@ -44,7 +46,23 @@ bool NMEATime::set(const String &timeStr) {
     return true;
 }
 
-void NMEATime::publish(DataModelLeaf &leaf) {
+bool NMEATime::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType) {
+    String timeStr;
+    if (!nmeaLine.extractWord(timeStr)) {
+        logger << logWarning << talker << " " << msgType << " message missing Time field" << eol;
+        return false;
+    }
+
+    if (!set(timeStr)) {
+        logger << logWarning << talker << " " << msgType << " message with bad Time field '"
+               << timeStr << "'" << eol;
+        return false;
+    }
+
+    return true;
+}
+
+void NMEATime::publish(DataModelLeaf &leaf) const {
     char secondFractionStr[12];
     buildSecondsFactionString(secondFractionStr);
 

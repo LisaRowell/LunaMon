@@ -1,5 +1,8 @@
-#ifndef TIME_H
-#define TIME_H
+#ifndef NMEA_TIME_H
+#define NMEA_TIME_H
+
+#include "NMEALine.h"
+#include "NMEATalker.h"
 
 #include "DataModel/DataModelLeaf.h"
 
@@ -18,7 +21,8 @@ class NMEATime : public LoggableItem {
 
     public:
         bool set(const String &timeStr);
-        void publish(DataModelLeaf &leaf);
+        bool extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType);
+        void publish(DataModelLeaf &leaf) const;
         virtual void log(Logger &logger) const override;
 };
 

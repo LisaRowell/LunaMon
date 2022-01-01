@@ -19,61 +19,19 @@ NMEAGLLMessage::NMEAGLLMessage(NMEATalker &talker) : NMEAMessage(talker) {
 }
 
 bool NMEAGLLMessage::parse(NMEALine &nmeaLine) {
-    String latitudeStr;
-    if (!nmeaLine.extractWord(latitudeStr)) {
-        logger << logWarning << talker << " GLL message missing latitude" << eol;
+    if (!latitude.extract(nmeaLine, talker, "GLL")) {
         return false;
     }
 
-    String northOrSouthStr;
-    if (!nmeaLine.extractWord(northOrSouthStr)) {
-        logger << logWarning << talker << " GLL message missing N/S" << eol;
+    if (!longitude.extract(nmeaLine, talker, "GLL")) {
         return false;
     }
 
-    if (!latitude.set(latitudeStr, northOrSouthStr)) {
-        logger << logWarning << talker << " GLL message with bad latitude '" << latitudeStr << "' '"
-               << northOrSouthStr << "'" << eol;
+    if (!time.extract(nmeaLine, talker, "GLL")) {
         return false;
     }
 
-    String longitudeStr;
-    if (!nmeaLine.extractWord(longitudeStr)) {
-        logger << logWarning << talker << " GLL message missing longitude" << eol;
-        return false;
-    }
-
-    String eastOrWestStr;
-    if (!nmeaLine.extractWord(eastOrWestStr)) {
-        logger << logWarning << talker << " GLL message missing E/W" << eol;
-        return false;
-    }
-
-    if (!longitude.set(longitudeStr, eastOrWestStr)) {
-        logger << logWarning << talker << " GLL message with bad longitude '" << longitudeStr
-               << "' '" << eastOrWestStr << "'" << eol;
-        return false;
-    }
-
-    String timeStr;
-    if (!nmeaLine.extractWord(timeStr)) {
-        logger << logWarning << talker << " GLL message missing Time field" << eol;
-        return false;
-    }
-    if (!time.set(timeStr)) {
-        logger << logWarning << talker << " GLL message with bad Time field '" << timeStr << "'"
-               << eol;
-        return false;
-    }
-
-    String dataValidStr;
-    if (!nmeaLine.extractWord(dataValidStr)) {
-        logger << logWarning << talker << " GLL message missing Data Valid field" << eol;
-        return false;
-    }
-    if (!dataValid.set(dataValidStr)) {
-        logger << logWarning << talker << " GLL message with bad Data Valid field '" << dataValidStr
-               << "'" << eol;
+    if (!dataValid.extract(nmeaLine, talker, "GLL")) {
         return false;
     }
 

@@ -59,7 +59,7 @@ void NMEACoordinate::snprint(char *string, size_t maxLength) const {
 
 // We publish coordinates as a string containing a signed, floating point number of degrees.
 // Clients are responsible for displaying the values in a way that matches the users preference.
-void NMEACoordinate::publish(DataModelLeaf &leaf, bool isPositive) {
+void NMEACoordinate::publish(DataModelLeaf &leaf, bool isPositive) const {
     char string[40];
 
     float degreesFloat;

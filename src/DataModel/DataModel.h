@@ -48,6 +48,10 @@ extern DataModelLeaf positionLongitude;
 extern DataModelLeaf positionTime;
 extern DataModelLeaf positionDataValid;
 extern DataModelLeaf positionFAAModeindicator;
+extern DataModelLeaf positionSpeedOverGround;
+extern DataModelLeaf positionTrackMadeGood;
+extern DataModelLeaf positionDate;
+extern DataModelLeaf positionMagneticVariation;
 
 extern DataModelNode positionNode;
 

@@ -1,6 +1,8 @@
 #include <Arduino.h>
 
 #include "NMEALongitude.h"
+#include "NMEALine.h"
+#include "NMEATalker.h"
 
 #include "DataModel/DataModelLeaf.h"
 
@@ -30,7 +32,29 @@ bool NMEALongitude::set(const String &string, const String &eastOrWestStr) {
     return true;
 }
 
-void NMEALongitude::publish(DataModelLeaf &leaf) {
+bool NMEALongitude::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType) {
+    String longitudeStr;
+    if (!nmeaLine.extractWord(longitudeStr)) {
+        logger << logWarning << talker << " " << msgType << " message missing longitude" << eol;
+        return false;
+    }
+
+    String eastOrWestStr;
+    if (!nmeaLine.extractWord(eastOrWestStr)) {
+        logger << logWarning << talker << " " << msgType << " message missing E/W" << eol;
+        return false;
+    }
+
+    if (!set(longitudeStr, eastOrWestStr)) {
+        logger << logWarning << talker << " " << msgType << " message with bad longitude '"
+               << longitudeStr << "' '" << eastOrWestStr << "'" << eol;
+        return false;
+    }
+
+    return true;
+}
+
+void NMEALongitude::publish(DataModelLeaf &leaf) const {
     switch (eastOrWest) {
         case EAST:
             NMEACoordinate::publish(leaf, true);

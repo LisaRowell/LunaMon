@@ -2,6 +2,8 @@
 #define NMEA_LONGITUDE_H
 
 #include "NMEACoordinate.h"
+#include "NMEALine.h"
+#include "NMEATalker.h"
 
 #include "DataModel/DataModelLeaf.h"
 
@@ -19,7 +21,8 @@ class NMEALongitude : public NMEACoordinate, public LoggableItem {
 
     public:
         bool set(const String &string, const String &eastOrWestStr);
-        void publish(DataModelLeaf &leaf);
+        bool extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType);
+        void publish(DataModelLeaf &leaf) const;
         virtual void log(Logger &logger) const override;
 };
 

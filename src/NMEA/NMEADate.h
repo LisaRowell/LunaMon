@@ -1,0 +1,28 @@
+#ifndef NMEA_DATE_H
+#define NMEA_DATE_H
+
+#include <Arduino.h>
+
+#include "NMEA/NMEALine.h"
+#include "NMEA/NMEATalker.h"
+
+#include "DataModel/DataModelLeaf.h"
+
+#include "Util/Logger.h"
+#include "Util/LoggableItem.h"
+
+class NMEADate : public LoggableItem {
+    private:
+        bool hasValue;
+        uint16_t year;
+        uint8_t month;
+        uint8_t day;
+
+    public:
+        bool set(const String &dateStr);
+        bool extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType);
+        void publish(DataModelLeaf &leaf) const;
+        virtual void log(Logger &logger) const override;
+};
+
+#endif

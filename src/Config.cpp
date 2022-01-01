@@ -7,6 +7,8 @@
 const char wifiSSID[] = "NETWORK_NAME";
 const char wifiPassword[] = "YOUR_PASSWORD";
 
+const uint16_t century = 2000;
+
 const char mmsi[] = "YOUR_MMSI";
 
 // We use this ID to destinquish between multiple instances of this type controller within the

@@ -146,6 +146,29 @@ Logger & Logger::operator << (unsigned value) {
     return *this;
 }
 
+Logger & Logger::operator << (int16_t value) {
+    if (lineLevel >= logLevel) {
+        switch (base) {
+            case Dec:
+                char decimalStr[12];
+                snprintf(decimalStr, 12, "%d", value);
+                logString(decimalStr);
+                break;
+
+            case Hex:
+                char hexStr[11];
+                snprintf(hexStr, 11, "0x%0x", value);
+                logString(hexStr);
+                break;
+
+            default:
+                fatalError("Messed up base in logger");
+        }
+    }
+
+    return *this;
+}
+
 Logger & Logger::operator << (int value) {
     if (lineLevel >= logLevel) {
         switch (base) {

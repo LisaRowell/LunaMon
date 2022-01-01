@@ -1,6 +1,8 @@
 #include <Arduino.h>
 
 #include "NMEADataValid.h"
+#include "NMEALine.h"
+#include "NMEATalker.h"
 
 #include "DataModel/DataModelLeaf.h"
 
@@ -21,7 +23,23 @@ bool NMEADataValid::set(String &validStr) {
     }
 }
 
-void NMEADataValid::publish(DataModelLeaf &leaf) {
+bool NMEADataValid::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType) {
+    String dataValidStr;
+    if (!nmeaLine.extractWord(dataValidStr)) {
+        logger << logWarning << talker << " " << msgType << " message missing Data Valid field"
+               << eol;
+        return false;
+    }
+    if (!set(dataValidStr)) {
+        logger << logWarning << talker << " " << msgType << " message with bad Data Valid field '"
+               << dataValidStr << "'" << eol;
+        return false;
+    }
+
+    return true;
+}
+
+void NMEADataValid::publish(DataModelLeaf &leaf) const {
     if (valid) {
         leaf << "1";
     } else {

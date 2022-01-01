@@ -5,6 +5,7 @@
 #include "NMEATalker.h"
 #include "NMEAMsgType.h"
 #include "NMEAGLLMessage.h"
+#include "NMEARMCMessage.h"
 #include "NMEATXTMessage.h"
 
 #include "Util/Logger.h"
@@ -32,6 +33,9 @@ NMEAMessage *parseNMEAMessage(NMEALine &nmeaLine) {
     switch (msgType) {
         case NMEA_MSG_TYPE_GLL:
             return parseNMEAGLLMessage(talker, nmeaLine);
+
+        case NMEA_MSG_TYPE_RMC:
+            return parseNMEARMCMessage(talker, nmeaLine);
 
         case NMEA_MSG_TYPE_TXT:
             return parseNMEATXTMessage(talker, nmeaLine);

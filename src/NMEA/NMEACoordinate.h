@@ -15,7 +15,7 @@ class NMEACoordinate {
                         uint8_t maxDegrees);
         bool setMinutes(const String &string, unsigned startMinutes);
         void snprint(char *string, size_t maxLength) const;
-        void publish(DataModelLeaf &leaf, bool isPositive);
+        void publish(DataModelLeaf &leaf, bool isPositive) const;
 };
 
 #endif

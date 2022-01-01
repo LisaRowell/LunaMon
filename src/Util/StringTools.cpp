@@ -19,6 +19,22 @@ bool extractUInt32FromString(const String &string, unsigned start, unsigned end,
     return true;
 }
 
+bool extractUInt16FromString(const String &string, unsigned start, unsigned end, uint16_t &value,
+                             uint16_t maxValue) {
+    uint32_t uint32Value = 0;
+    if (!extractUInt32FromString(string, start, end, uint32Value)) {
+        return false;
+    }
+
+    if (uint32Value > maxValue) {
+        return false;
+    }
+
+    value = (uint16_t)uint32Value;
+
+    return true;
+}
+
 bool extractUInt8FromString(const String &string, unsigned start, unsigned end, uint8_t &value,
                             uint8_t maxValue) {
     uint32_t uint32Value = 0;
@@ -31,6 +47,18 @@ bool extractUInt8FromString(const String &string, unsigned start, unsigned end, 
     }
 
     value = (uint8_t)uint32Value;    
+
+    return true;
+}
+
+bool extractDigitFromString(const String &string, unsigned pos, uint8_t &value) {
+    const char digitChar = string.charAt(pos);
+
+    if (!isDigit(digitChar)) {
+        return false;
+    }
+
+    value = decimalValue(digitChar);
 
     return true;
 }

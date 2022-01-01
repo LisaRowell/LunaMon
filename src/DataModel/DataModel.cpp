@@ -117,6 +117,10 @@ DataModelLeaf positionLongitude("longitude", &positionNode);
 DataModelLeaf positionTime("time", &positionNode);
 DataModelLeaf positionDataValid("dataValid", &positionNode);
 DataModelLeaf positionFAAModeindicator("faaModeIndicator", &positionNode);
+DataModelLeaf positionSpeedOverGround("speedOverGround", &positionNode);
+DataModelLeaf positionTrackMadeGood("trackMadeGood", &positionNode);
+DataModelLeaf positionDate("date", &positionNode);
+DataModelLeaf positionMagneticVariation("magneticVariation", &positionNode);
 
 DataModelElement *positionNodeChildren[] = {
     &positionLatitude,
@@ -124,6 +128,10 @@ DataModelElement *positionNodeChildren[] = {
     &positionTime,
     &positionDataValid,
     &positionFAAModeindicator,
+    &positionSpeedOverGround,
+    &positionTrackMadeGood,
+    &positionDate,
+    &positionMagneticVariation,
     NULL
 };
 DataModelNode positionNode("position", &navigationNode, positionNodeChildren);

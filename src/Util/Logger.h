@@ -54,6 +54,7 @@ class Logger {
         Logger & operator << (uint16_t value);
         Logger & operator << (uint32_t value);
         Logger & operator << (unsigned value);
+        Logger & operator << (int16_t value);
         Logger & operator << (int value);
         Logger & operator << (bool value);
         // The following two are here instead of being LoggableItems because they are used in data
