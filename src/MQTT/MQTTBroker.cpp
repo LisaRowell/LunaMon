@@ -459,7 +459,7 @@ void MQTTBroker::subscribeMessageReceived(MQTTConnection *connection, MQTTMessag
                        << session->name() << "'" << eol;
                 subscribeResults[topicFilterIndex] = mqttSubscribeResult(true, 0);
             } else {
-                logger << logDebug << "Client '" << session->name()
+                logger << logWarning << "Client '" << session->name()
                        << "' failed to subscribe to Topic Filter '" << topicFilter << "'" << eol;
                  subscribeResults[topicFilterIndex] = mqttSubscribeResult(false, 0);
            }
