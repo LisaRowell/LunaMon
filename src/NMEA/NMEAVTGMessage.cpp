@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 #include "NMEAVTGMessage.h"
-#include "NMEASpeed.h"
+#include "NMEATenthsUInt16.h"
 #include "NMEAHeading.h"
 #include "NMEAFAAModeIndicator.h"
 #include "NMEATalker.h"
@@ -46,27 +46,27 @@ bool NMEAVTGMessage::parse(NMEALine &nmeaLine) {
     }
 
     if (!oldForm) {
-        if (!extractConstantWord(nmeaLine, "M")) {
+        if (!extractConstantWord(nmeaLine, "VTG", "M")) {
             return false;
         }
     }
 
-    if (!speedOverGround.extract(nmeaLine, talker, "VTG")) {
+    if (!speedOverGround.extract(nmeaLine, talker, "VTG", "Speed Over Ground")) {
         return false;
     }
 
    if (!oldForm) {
-        if (!extractConstantWord(nmeaLine, "N")) {
+        if (!extractConstantWord(nmeaLine, "VTG", "N")) {
             return false;
         }
     }
 
-    if (!speedOverGroundKm2.extract(nmeaLine, talker, "VTG")) {
+    if (!speedOverGroundKm2.extract(nmeaLine, talker, "VTG", "Speed Over Ground km/s")) {
         return false;
     }
 
    if (!oldForm) {
-        if (!extractConstantWord(nmeaLine, "K")) {
+        if (!extractConstantWord(nmeaLine, "VTG", "K")) {
             return false;
         }
     }
@@ -84,30 +84,13 @@ bool NMEAVTGMessage::parse(NMEALine &nmeaLine) {
     return true;
 }
 
-bool NMEAVTGMessage::extractConstantWord(NMEALine &nmeaLine, const char *constantWord) {
-    String word;
-    if (!nmeaLine.extractWord(word)) {
-        logger << logError << talker << " VTG message missing " << constantWord << " field" << eol;
-        return false;
-    }
-
-    if (word != constantWord) {
-        logger << logError << talker << " VTG message with bad " << constantWord << " field" << eol;
-        return false;
-    }
-
-    return true;
-}
-
 enum NMEAMsgType NMEAVTGMessage::type() {
     return NMEA_MSG_TYPE_VTG;
 }
 
 void NMEAVTGMessage::log() {
     logger << logDebug << talker << " VTG: " << trackMadeGood << " " << courseOverGroundMagnetic
-           << " " << speedOverGround << " ";
-
-    speedOverGroundKm2.log(logger, "km/h");
+           << " " << speedOverGround << "kn " << speedOverGroundKm2 << "km/h";
 
     if (faaModeIndicator.hasValue()) {
         logger << " " << faaModeIndicator;
@@ -116,7 +99,7 @@ void NMEAVTGMessage::log() {
 }
 
 NMEAVTGMessage *parseNMEAVTGMessage(NMEATalker &talker, NMEALine &nmeaLine) {
-    NMEAVTGMessage *message = new(nmeaMessageBuffer) NMEAVTGMessage(talker);
+    NMEAVTGMessage *message = new (nmeaMessageBuffer)NMEAVTGMessage(talker);
     if (!message) {
         return NULL;
     }

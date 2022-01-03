@@ -5,7 +5,7 @@
 #include "NMEADataValid.h"
 #include "NMEALatitude.h"
 #include "NMEALongitude.h"
-#include "NMEASpeed.h"
+#include "NMEATenthsUInt16.h"
 #include "NMEAHeading.h"
 #include "NMEADate.h"
 #include "NMEAMagneticVariation.h"
@@ -37,7 +37,7 @@ bool NMEARMCMessage::parse(NMEALine &nmeaLine) {
         return false;
     }
 
-    if (!speedOverGround.extract(nmeaLine, talker, "RMC")) {
+    if (!speedOverGround.extract(nmeaLine, talker, "RMC", "Speed Over Ground")) {
         return false;
     }
 
@@ -71,7 +71,7 @@ enum NMEAMsgType NMEARMCMessage::type() {
 
 void NMEARMCMessage::log() {
     logger << logDebug << talker << " RMC: " << time << " " << dataValid << " " << latitude << " "
-           << longitude << " " << speedOverGround << " " << trackMadeGood << " " << date << " "
+           << longitude << " " << speedOverGround << "kn " << trackMadeGood << " " << date << " "
            << magneticVariation;
     if (faaModeIndicator.hasValue()) {
         logger << " " << faaModeIndicator;
@@ -80,7 +80,7 @@ void NMEARMCMessage::log() {
 }
 
 NMEARMCMessage *parseNMEARMCMessage(NMEATalker &talker, NMEALine &nmeaLine) {
-    NMEARMCMessage *message = new(nmeaMessageBuffer) NMEARMCMessage(talker);
+    NMEARMCMessage *message = new (nmeaMessageBuffer)NMEARMCMessage(talker);
     if (!message) {
         return NULL;
     }

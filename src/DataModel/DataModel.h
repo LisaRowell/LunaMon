@@ -52,6 +52,13 @@ extern DataModelLeaf positionSpeedOverGround;
 extern DataModelLeaf positionTrackMadeGood;
 extern DataModelLeaf positionDate;
 extern DataModelLeaf positionMagneticVariation;
+extern DataModelLeaf positionGPSQuality;
+extern DataModelLeaf positionNumberSatellites;
+extern DataModelLeaf positionHorizontalDilutionOfPrecision;
+extern DataModelLeaf positionAntennaAltitude;
+extern DataModelLeaf positionGeoidalSeparation;
+extern DataModelLeaf positionGPSDataAge;
+extern DataModelLeaf positionDifferentialReferenceStation;
 
 extern DataModelNode positionNode;
 

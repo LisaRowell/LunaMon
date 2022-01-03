@@ -68,7 +68,7 @@ void NMEATXTMessage::log() {
 }
 
 NMEATXTMessage *parseNMEATXTMessage(NMEATalker &talker, NMEALine &nmeaLine) {
-    NMEATXTMessage *message = new(nmeaMessageBuffer) NMEATXTMessage(talker);
+    NMEATXTMessage *message = new (nmeaMessageBuffer)NMEATXTMessage(talker);
     if (!message) {
         return NULL;
     }

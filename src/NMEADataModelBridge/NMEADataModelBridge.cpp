@@ -14,6 +14,10 @@ void NMEADataModelBridge::processMessage(NMEAMessage *message) {
     // Add a filter here so that messages with redundant content are having their content sent
     // unnecessarily.
     switch (message->type()) {
+        case NMEA_MSG_TYPE_GGA:
+            bridgeNMEAGGAMessage((NMEAGGAMessage *)message);
+            break;
+
         case NMEA_MSG_TYPE_GLL:
             bridgeNMEAGLLMessage((NMEAGLLMessage *)message);
             break;
@@ -31,6 +35,19 @@ void NMEADataModelBridge::processMessage(NMEAMessage *message) {
         default:
             break;
     }
+}
+
+void NMEADataModelBridge::bridgeNMEAGGAMessage(NMEAGGAMessage *message) {
+    message->time.publish(positionTime);
+    message->latitude.publish(positionLatitude);
+    message->longitude.publish(positionLongitude);
+    message->gpsQuality.publish(positionGPSQuality);
+    message->numberSatellites.publish(positionNumberSatellites);
+    message->horizontalDilutionOfPrecision.publish(positionHorizontalDilutionOfPrecision);
+    message->antennaAltitude.publish(positionAntennaAltitude);
+    message->geoidalSeparation.publish(positionGeoidalSeparation);
+    message->gpsDataAge.publish(positionGPSDataAge);
+    message->differentialReferenceStation.publish(positionDifferentialReferenceStation);
 }
 
 void NMEADataModelBridge::bridgeNMEAGLLMessage(NMEAGLLMessage *message) {

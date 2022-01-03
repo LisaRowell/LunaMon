@@ -4,6 +4,7 @@
 #include "NMEAMessage.h"
 #include "NMEATalker.h"
 #include "NMEAMsgType.h"
+#include "NMEAGGAMessage.h"
 #include "NMEAGLLMessage.h"
 #include "NMEARMCMessage.h"
 #include "NMEATXTMessage.h"
@@ -12,6 +13,24 @@
 #include "Util/Logger.h"
 
 NMEAMessage::NMEAMessage(NMEATalker &talker) : talker(talker) {
+}
+
+bool NMEAMessage::extractConstantWord(NMEALine &nmeaLine, const char *messageType,
+                                      const char *constantWord) {
+    String word;
+    if (!nmeaLine.extractWord(word)) {
+        logger << logError << talker << " " << messageType << " message missing " << constantWord
+               << " field" << eol;
+        return false;
+    }
+
+    if (word != constantWord) {
+        logger << logError << talker << " " << messageType << " message with bad " << constantWord
+               << " field" << eol;
+        return false;
+    }
+
+    return true;
 }
 
 NMEAMessage *parseNMEAMessage(NMEALine &nmeaLine) {
@@ -32,6 +51,9 @@ NMEAMessage *parseNMEAMessage(NMEALine &nmeaLine) {
     enum NMEAMsgType msgType = parseNMEAMsgType(msgTypeStr);
 
     switch (msgType) {
+        case NMEA_MSG_TYPE_GGA:
+            return parseNMEAGGAMessage(talker, nmeaLine);
+
         case NMEA_MSG_TYPE_GLL:
             return parseNMEAGLLMessage(talker, nmeaLine);
 

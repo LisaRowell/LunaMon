@@ -61,7 +61,7 @@ void NMEAGLLMessage::log() {
 }
 
 NMEAGLLMessage *parseNMEAGLLMessage(NMEATalker &talker, NMEALine &nmeaLine) {
-    NMEAGLLMessage *message = new(nmeaMessageBuffer) NMEAGLLMessage(talker);
+    NMEAGLLMessage *message = new (nmeaMessageBuffer)NMEAGLLMessage(talker);
     if (!message) {
         return NULL;
     }

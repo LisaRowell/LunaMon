@@ -19,7 +19,7 @@ bool NMEAFAAModeIndicator::set(String &faaModeStr) {
         return false;
     }
 
-    char faaModeChar = faaModeStr.charAt(0);
+    const char faaModeChar = faaModeStr.charAt(0);
     switch (faaModeChar) {
         case 'A':
             faaMode = FAA_MODE_AUTONOMOUS;

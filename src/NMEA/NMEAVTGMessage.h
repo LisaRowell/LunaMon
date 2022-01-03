@@ -3,7 +3,7 @@
 
 #include "NMEAMessage.h"
 #include "NMEAHeading.h"
-#include "NMEASpeed.h"
+#include "NMEATenthsUInt16.h"
 #include "NMEAFAAModeIndicator.h"
 #include "NMEATalker.h"
 #include "NMEALine.h"
@@ -12,11 +12,9 @@ class NMEAVTGMessage : public NMEAMessage {
     private:
         NMEAHeading trackMadeGood;
         NMEAHeading courseOverGroundMagnetic;
-        NMEASpeed speedOverGround;
-        NMEASpeed speedOverGroundKm2;
+        NMEATenthsUInt16 speedOverGround;
+        NMEATenthsUInt16 speedOverGroundKm2;
         NMEAFAAModeIndicator faaModeIndicator;
-
-        bool extractConstantWord(NMEALine &nmeaLine, const char *constantWord);
 
     public:
         NMEAVTGMessage(NMEATalker &talker);

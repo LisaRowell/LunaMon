@@ -9,6 +9,9 @@ class NMEAMessage {
     protected:
         NMEATalker talker;
 
+        bool extractConstantWord(NMEALine &nmeaLine, const char *messageType,
+                                 const char *constantWord);
+
     public:
         NMEAMessage(NMEATalker &talker);
         virtual enum NMEAMsgType type() = 0;

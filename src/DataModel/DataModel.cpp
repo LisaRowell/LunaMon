@@ -121,6 +121,13 @@ DataModelLeaf positionSpeedOverGround("speedOverGround", &positionNode);
 DataModelLeaf positionTrackMadeGood("trackMadeGood", &positionNode);
 DataModelLeaf positionDate("date", &positionNode);
 DataModelLeaf positionMagneticVariation("magneticVariation", &positionNode);
+DataModelLeaf positionGPSQuality("gpsQuality", &positionNode);
+DataModelLeaf positionNumberSatellites("numberSatellites", &positionNode);
+DataModelLeaf positionHorizontalDilutionOfPrecision("horizontalDilutionOfPrecision", &positionNode);
+DataModelLeaf positionAntennaAltitude("antennaAltitude", &positionNode);
+DataModelLeaf positionGeoidalSeparation("geoidalSeparation", &positionNode);
+DataModelLeaf positionGPSDataAge("gpsDataAge", &positionNode);
+DataModelLeaf positionDifferentialReferenceStation("differentialReferenceStation", &positionNode);
 
 DataModelElement *positionNodeChildren[] = {
     &positionLatitude,
@@ -132,6 +139,13 @@ DataModelElement *positionNodeChildren[] = {
     &positionTrackMadeGood,
     &positionDate,
     &positionMagneticVariation,
+    &positionGPSQuality,
+    &positionNumberSatellites,
+    &positionHorizontalDilutionOfPrecision,
+    &positionAntennaAltitude,
+    &positionGeoidalSeparation,
+    &positionGPSDataAge,
+    &positionDifferentialReferenceStation,
     NULL
 };
 DataModelNode positionNode("position", &navigationNode, positionNodeChildren);

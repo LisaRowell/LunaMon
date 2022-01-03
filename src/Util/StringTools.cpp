@@ -87,12 +87,42 @@ bool extractUInt32FractionFromDecimalString(const String &string, unsigned decim
     return true;
 }
 
-bool convertTwoDigitDecimalString(const String &string, uint8_t &value) {
+bool extractInt16FromString(const String &string, unsigned start, unsigned end, int16_t &value) {
+    bool isNegative;
+    if (string.charAt(start) == '-') {
+        isNegative = true;
+        start++;
+        if (start == end) {
+            return false;
+        }
+    } else {
+        isNegative = false;
+    }
+
+    uint16_t unsignedValue;
+    if (!extractUInt16FromString(string, start, end, unsignedValue, 0x7ffe)) {
+        return false;
+    }
+
+    if (isNegative) {
+        value = -unsignedValue;
+    } else {
+        value = unsignedValue;
+    }
+
+    return true;
+}
+
+bool convertTwoDigitDecimalString(const String &string, uint8_t &value, uint8_t maxValue) {
     if (string.length() != 2) {
         return false;
     }
 
     value = decimalValue(string.charAt(0)) * 10 + decimalValue(string.charAt(1));
+
+    if (value > maxValue) {
+        return false;
+    }
 
     return true;
 }
