@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-#include "NMEARMCMessage.h"
+#include "NMEAGGAMessage.h"
 #include "NMEATime.h"
 #include "NMEADataValid.h"
 #include "NMEALatitude.h"
