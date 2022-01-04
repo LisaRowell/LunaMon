@@ -1,14 +1,22 @@
 #include <Arduino.h>
 
 #include "NMEA/NMEASource.h"
+
 #include "WiFiManager/WiFiManager.h"
+
+#include "NMEAWiFiSource/NMEAWiFiSource.h"
+
 #include "MQTT/MQTTBroker.h"
+
 #include "DataModel/DataModel.h"
+
 #include "NMEADataModelBridge/NMEADataModelBridge.h"
+
 #include "Util/TimeConstants.h"
 
 NMEASource usbSerialNMEASource(Serial);
 WiFiManager wifiManager;
+NMEAWiFiSource nmeaWiFiSource(wifiManager);
 MQTTBroker mqttBroker;
 DataModel dataModel;
 NMEADataModelBridge nmeaDataModelBridge;
@@ -17,6 +25,7 @@ void setup() {
     controllerUpTime = millis() / msInSecond;
 
     usbSerialNMEASource.addMessageHandler(nmeaDataModelBridge);
+    nmeaWiFiSource.addMessageHandler(nmeaDataModelBridge);
 
     Serial.begin(9600);
 
@@ -26,11 +35,13 @@ void setup() {
 
     wifiManager.begin();
     mqttBroker.begin(wifiManager);
+    nmeaWiFiSource.begin();
 }
 
 void loop() {
     wifiManager.service();
     usbSerialNMEASource.service();
+    nmeaWiFiSource.service();
     mqttBroker.service();
 
     uint32_t currentUpTime = millis() / msInSecond;

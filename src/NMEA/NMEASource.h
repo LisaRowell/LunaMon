@@ -1,6 +1,8 @@
 #ifndef NMEA_SOURCE_H
 #define NMEA_SOURCE_H
 
+#include <Arduino.h>
+
 #include "NMEALine.h"
 #include "NMEAMessageHandler.h"
 

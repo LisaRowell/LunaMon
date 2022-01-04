@@ -2,10 +2,9 @@
 #define WIFI_MANAGER_CLIENT_H
 
 class WiFiManagerClient {
-    private:
     public:
-        virtual void wifiConnected();
-        virtual void wifiDisconnected();
+        virtual void wifiConnected() = 0;
+        virtual void wifiDisconnected() = 0;
 };
 
 #endif
