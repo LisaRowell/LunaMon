@@ -53,6 +53,10 @@ bool NMEALine::isEmpty() {
     return length == 0;
 }
 
+bool NMEALine::isEncapsulatedData() {
+    return encapsulatedData;
+}
+
 bool NMEALine::sanityCheck() {
     char msgStart;
 
@@ -60,9 +64,20 @@ bool NMEALine::sanityCheck() {
         logger << logWarning << "Empty NMEA message" << eol;
         return false;
     }
-    if (msgStart != '$') {
-        logger << logWarning << "NMEA message missing leading '$'" << eol;
-        return false;
+
+    switch (msgStart) {
+        case '$':
+            encapsulatedData = false;
+            break;
+
+        case '!':
+            encapsulatedData = true;
+            break;
+
+        default:
+            logger << logWarning << "NMEA message missing leading '$'" << eol;
+            logLine();
+            return false;
     }
 
     if (!checkParity()) {
@@ -150,4 +165,14 @@ bool NMEALine::checkParity() {
                                  hexidecimalValue(secondChecksumChar);
 
     return lineChecksum == checksum;
+}
+
+void NMEALine::logLine() {
+    logger << logDebug;
+    unsigned pos;
+    for (pos = 0; pos < length; pos++) {
+        logger << buffer[pos];
+    }
+
+    logger << eol;
 }

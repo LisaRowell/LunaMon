@@ -19,6 +19,11 @@ NMEAGLLMessage::NMEAGLLMessage(NMEATalker &talker) : NMEAMessage(talker) {
 }
 
 bool NMEAGLLMessage::parse(NMEALine &nmeaLine) {
+    if (nmeaLine.isEncapsulatedData()) {
+        logger << logWarning << talker << " GLL message in unsupported encapsulated format" << eol;
+        return false;
+    }
+
     if (!latitude.extract(nmeaLine, talker, "GLL")) {
         return false;
     }

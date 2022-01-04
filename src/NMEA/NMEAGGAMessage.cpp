@@ -19,6 +19,11 @@ NMEAGGAMessage::NMEAGGAMessage(NMEATalker &talker) : NMEAMessage(talker) {
 }
 
 bool NMEAGGAMessage::parse(NMEALine &nmeaLine) {
+    if (nmeaLine.isEncapsulatedData()) {
+        logger << logWarning << talker << " GGA message in unsupported encapsulated format" << eol;
+        return false;
+    }
+
     if (!time.extract(nmeaLine, talker, "GGA")) {
         return false;
     }

@@ -15,6 +15,11 @@ NMEATXTMessage::NMEATXTMessage(NMEATalker &talker) : NMEAMessage(talker) {
 }
 
 bool NMEATXTMessage::parse(NMEALine &nmeaLine) {
+    if (nmeaLine.isEncapsulatedData()) {
+        logger << logWarning << talker << " TXT message in unsupported encapsulated format" << eol;
+        return false;
+    }
+
     String totalSentencesStr;
     if (!nmeaLine.extractWord(totalSentencesStr)) {
         logger << logWarning << talker << " TXT message missing Total Sentences field" << eol;

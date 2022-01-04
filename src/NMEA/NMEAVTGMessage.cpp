@@ -15,6 +15,11 @@ NMEAVTGMessage::NMEAVTGMessage(NMEATalker &talker) : NMEAMessage(talker) {
 }
 
 bool NMEAVTGMessage::parse(NMEALine &nmeaLine) {
+    if (nmeaLine.isEncapsulatedData()) {
+        logger << logWarning << talker << " VTG message in unsupported encapsulated format" << eol;
+        return false;
+    }
+
     if (!trackMadeGood.extract(nmeaLine, talker, "VTG")) {
         return false;
     }

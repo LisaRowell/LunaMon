@@ -10,10 +10,14 @@ class NMEALine {
         unsigned length;
         unsigned position;
         unsigned remaining;
+        // This flag is used to indentify the lines which are in the encapsulated encoding scheme
+        // used for AIS messages (and possibly others), versus the normal style NMEA 0183 CSV data.
+        bool encapsulatedData;
 
         void stripParity();
         bool checkParity();
         String bufferSubstring(unsigned start, unsigned end);
+        void logLine();
 
     public:
         NMEALine();
@@ -21,6 +25,7 @@ class NMEALine {
         void reset();
         void append(const char *srcBuffer, unsigned start, unsigned end);
         bool isEmpty();
+        bool isEncapsulatedData();
         bool sanityCheck();
         bool extractChar(char &character);
         bool extractWord(String &word);
