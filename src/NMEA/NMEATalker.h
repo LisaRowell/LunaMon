@@ -6,12 +6,7 @@
 
 class NMEATalker : public LoggableItem {
     private:
-        enum Talker {
-        NMEA_TALKER_UNKNOWN,
-        NMEA_TALKER_GPS
-    };
-
-    enum Talker talker;
+        char talkerCode[2];
 
     public:
         NMEATalker(String &talkerCode);
