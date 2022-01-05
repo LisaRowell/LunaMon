@@ -7,6 +7,8 @@ enum NMEAMsgType parseNMEAMsgType(String &msgTypeStr) {
         return NMEA_MSG_TYPE_GGA;
     } else if (msgTypeStr == "GLL") {
         return NMEA_MSG_TYPE_GLL;
+    } else if (msgTypeStr == "GSA") {
+        return NMEA_MSG_TYPE_GSA;
     } else if (msgTypeStr == "RMC") {
         return NMEA_MSG_TYPE_RMC;
     } else if (msgTypeStr == "TXT") {

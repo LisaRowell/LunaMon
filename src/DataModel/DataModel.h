@@ -59,6 +59,12 @@ extern DataModelLeaf positionAntennaAltitude;
 extern DataModelLeaf positionGeoidalSeparation;
 extern DataModelLeaf positionGPSDataAge;
 extern DataModelLeaf positionDifferentialReferenceStation;
+extern DataModelLeaf positionSatelliteSelectionMode;
+extern DataModelLeaf positionFixMode;
+extern DataModelLeaf positionActiveSatellites;
+extern DataModelLeaf positionPDOP;
+extern DataModelLeaf positionHDOP;
+extern DataModelLeaf positionVDOP;
 
 extern DataModelNode positionNode;
 

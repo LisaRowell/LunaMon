@@ -5,6 +5,7 @@
 #include "Util/Logger.h"
 #include "Util/CharacterTools.h"
 #include "Util/StringTools.h"
+#include "Util/Error.h"
 
 bool NMEAUInt16::set(const String &valueStr, bool optional) {
     const unsigned length = valueStr.length();
@@ -49,6 +50,14 @@ bool NMEAUInt16::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msg
 
 bool NMEAUInt16::hasValue() const {
     return valuePresent;
+}
+
+uint16_t NMEAUInt16::getValue() const {
+    if (!valuePresent) {
+        fatalError("Attempt to read value from NMEAUInt8 with value not present");
+    }
+
+    return value;
 }
 
 void NMEAUInt16::publish(DataModelLeaf &leaf) const {

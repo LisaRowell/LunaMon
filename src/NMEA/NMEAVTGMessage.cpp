@@ -110,8 +110,7 @@ NMEAVTGMessage *parseNMEAVTGMessage(NMEATalker &talker, NMEALine &nmeaLine) {
     }
 
     if (!message->parse(nmeaLine)) {
-        // Since we use a static buffer and placement new for messages,
-        // we don't do a free here.
+        // Since we use a static buffer and placement new for messages, we don't do a free here.
         return NULL;
     }
 

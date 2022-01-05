@@ -1,5 +1,5 @@
-#ifndef NMEA_UINT16_H
-#define NMEA_UINT16_H
+#ifndef NMEA_HUNDREDTHS_UINT8_H
+#define NMEA_HUNDREDTHS_UINT8_H
 
 #include "NMEALine.h"
 #include "NMEATalker.h"
@@ -9,17 +9,15 @@
 #include "Util/LoggableItem.h"
 #include "Util/Logger.h"
 
-class NMEAUInt16 : public LoggableItem {
+class NMEAHundredthsUInt8 : public LoggableItem {
     private:
-        uint16_t value;
-        bool valuePresent;
+        uint8_t wholeNumber;
+        uint8_t hundredths;
 
     public:
-        bool set(const String &valueStr, bool optional);
+        bool set(const String &decimalString);
         bool extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType,
-                     const char *fieldName, bool optional = false, uint16_t maxValue = 0xffff);
-        bool hasValue() const;
-        uint16_t getValue() const;
+                     const char *fieldName);
         void publish(DataModelLeaf &leaf) const;
         virtual void log(Logger &logger) const override;
 };

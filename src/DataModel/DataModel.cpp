@@ -128,6 +128,12 @@ DataModelLeaf positionAntennaAltitude("antennaAltitude", &positionNode);
 DataModelLeaf positionGeoidalSeparation("geoidalSeparation", &positionNode);
 DataModelLeaf positionGPSDataAge("gpsDataAge", &positionNode);
 DataModelLeaf positionDifferentialReferenceStation("differentialReferenceStation", &positionNode);
+DataModelLeaf positionSatelliteSelectionMode("satelliteSelectionMode", &positionNode);
+DataModelLeaf positionFixMode("fixMode", &positionNode);
+DataModelLeaf positionActiveSatellites("activeSatellites", &positionNode);
+DataModelLeaf positionPDOP("pdop", &positionNode);
+DataModelLeaf positionHDOP("hdop", &positionNode);
+DataModelLeaf positionVDOP("vdop", &positionNode);
 
 DataModelElement *positionNodeChildren[] = {
     &positionLatitude,
@@ -146,6 +152,12 @@ DataModelElement *positionNodeChildren[] = {
     &positionGeoidalSeparation,
     &positionGPSDataAge,
     &positionDifferentialReferenceStation,
+    &positionSatelliteSelectionMode,
+    &positionFixMode,
+    &positionActiveSatellites,
+    &positionPDOP,
+    &positionHDOP,
+    &positionVDOP,
     NULL
 };
 DataModelNode positionNode("position", &navigationNode, positionNodeChildren);
