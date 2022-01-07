@@ -10,7 +10,6 @@
 #include "NMEATalker.h"
 #include "NMEALine.h"
 
-// Note: Currently we ignore the sattelite
 class NMEAGSAMessage : public NMEAMessage {
     private:
         bool automaticMode;
