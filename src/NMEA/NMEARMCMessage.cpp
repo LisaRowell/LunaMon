@@ -6,7 +6,7 @@
 #include "NMEALatitude.h"
 #include "NMEALongitude.h"
 #include "NMEATenthsUInt16.h"
-#include "NMEAHeading.h"
+#include "NMEADirection.h"
 #include "NMEADate.h"
 #include "NMEAMagneticVariation.h"
 #include "NMEAFAAModeIndicator.h"
@@ -46,7 +46,7 @@ bool NMEARMCMessage::parse(NMEALine &nmeaLine) {
         return false;
     }
 
-    if (!trackMadeGood.extract(nmeaLine, talker, "RMC")) {
+    if (!trackMadeGood.extract(nmeaLine, talker, "RMC", "Track Made Good", true)) {
         return false;
     }
 

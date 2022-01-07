@@ -2,7 +2,7 @@
 
 #include "NMEAVTGMessage.h"
 #include "NMEATenthsUInt16.h"
-#include "NMEAHeading.h"
+#include "NMEADirection.h"
 #include "NMEAFAAModeIndicator.h"
 #include "NMEATalker.h"
 #include "NMEALine.h"
@@ -20,7 +20,7 @@ bool NMEAVTGMessage::parse(NMEALine &nmeaLine) {
         return false;
     }
 
-    if (!trackMadeGood.extract(nmeaLine, talker, "VTG")) {
+    if (!trackMadeGood.extract(nmeaLine, talker, "VTG", "Track Made Good")) {
         return false;
     }
 
@@ -44,7 +44,7 @@ bool NMEAVTGMessage::parse(NMEALine &nmeaLine) {
         }
     }
 
-    if (!courseOverGroundMagnetic.set(secondWord)) {
+    if (!courseOverGroundMagnetic.set(secondWord, true)) {
         logger << logError << talker << " VTG message with a bad Course Over Ground, Magentic"
                << eol;
         return false;

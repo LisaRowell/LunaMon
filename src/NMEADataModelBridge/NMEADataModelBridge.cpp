@@ -26,6 +26,11 @@ void NMEADataModelBridge::processMessage(NMEAMessage *message) {
             bridgeNMEAGSAMessage((NMEAGSAMessage *)message);
             break;
 
+        case NMEA_MSG_TYPE_GST:
+            // For now we ignore this message because of the detailed knowledge required to do much
+            // with its contents.
+            break;
+
         case NMEA_MSG_TYPE_RMC:
             bridgeNMEARMCMessage((NMEARMCMessage *)message);
             break;

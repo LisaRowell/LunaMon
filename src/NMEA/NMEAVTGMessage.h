@@ -2,7 +2,7 @@
 #define NMEA_VTG_MESSAGE_H
 
 #include "NMEAMessage.h"
-#include "NMEAHeading.h"
+#include "NMEADirection.h"
 #include "NMEATenthsUInt16.h"
 #include "NMEAFAAModeIndicator.h"
 #include "NMEATalker.h"
@@ -10,8 +10,8 @@
 
 class NMEAVTGMessage : public NMEAMessage {
     private:
-        NMEAHeading trackMadeGood;
-        NMEAHeading courseOverGroundMagnetic;
+        NMEADirection trackMadeGood;
+        NMEADirection courseOverGroundMagnetic;
         NMEATenthsUInt16 speedOverGround;
         NMEATenthsUInt16 speedOverGroundKm2;
         NMEAFAAModeIndicator faaModeIndicator;

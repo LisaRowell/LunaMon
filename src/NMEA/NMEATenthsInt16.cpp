@@ -13,15 +13,20 @@ bool NMEATenthsInt16::set(const String &decimalStr) {
     }
 
     const int periodPos = decimalStr.indexOf(".");
-    if (periodPos != 0) {
-        if (!extractInt16FromString(decimalStr, 0, periodPos, integer)) {
+    if (periodPos < 0) {
+        if (!extractInt16FromString(decimalStr, 0, length, integer)) {
             return false;
         }
+        tenths = 0;
     } else {
-        integer = 0;
-    }
+        if (periodPos != 0) {
+            if (!extractInt16FromString(decimalStr, 0, periodPos, integer)) {
+                return false;
+            }
+        } else {
+            integer = 0;
+        }
 
-    if (periodPos >= 0) {
         const unsigned charactersAfterPeriod = length - periodPos - 1;
         if (charactersAfterPeriod) {
             const unsigned decimalStart = periodPos + 1;
@@ -39,8 +44,6 @@ bool NMEATenthsInt16::set(const String &decimalStr) {
         } else {
             tenths = 0;
         }
-    } else {
-        tenths = 0;
     }
 
     return true;

@@ -1,16 +1,20 @@
 #include <Arduino.h>
 
-#include "NMEAHeading.h"
+#include "NMEADirection.h"
 
 #include "Util/CharacterTools.h"
 #include "Util/StringTools.h"
 #include "Util/Logger.h"
 
-bool NMEAHeading::set(const String &headingStr) {
+bool NMEADirection::set(const String &headingStr, bool optional) {
     const unsigned length = headingStr.length();
     if (length == 0) {
-        hasValue = false;
-        return true;
+        if (optional) {
+            valuePresent = false;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     int periodPos = headingStr.indexOf(".");
@@ -38,28 +42,35 @@ bool NMEAHeading::set(const String &headingStr) {
         tenths = 0;
     }
 
-    hasValue = true;
+    valuePresent = true;
     return true;
 }
 
-bool NMEAHeading::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType) {
-    String headingStr;
-    if (!nmeaLine.extractWord(headingStr)) {
-        logger << logWarning << talker << " " << msgType << " message missing Heading field" << eol;
-        return false;
+bool NMEADirection::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType,
+                            const char *fieldName, bool optional) {
+    String directionStr;
+    if (!nmeaLine.extractWord(directionStr)) {
+        if (!optional) {
+            logger << logWarning << talker << " " << msgType << " message missing " << fieldName
+                   << " field" << eol;
+            return false;
+        }
+
+        valuePresent = false;
+        return true;
     }
 
-    if (!set(headingStr)) {
-        logger << logWarning << talker << " " << msgType << " message with bad Heading field '"
-               << headingStr << "'" << eol;
+    if (!set(directionStr, optional)) {
+        logger << logWarning << talker << " " << msgType << " message with bad " << fieldName
+               << " field '"<< directionStr << "'" << eol;
         return false;
     }
 
     return true;
 }
 
-void NMEAHeading::publish(DataModelLeaf &leaf) const {
-    if (hasValue) {
+void NMEADirection::publish(DataModelLeaf &leaf) const {
+    if (valuePresent) {
         char headingStr[10];
 
         snprintf(headingStr, 10, "%u.%u", heading, tenths);
@@ -69,8 +80,8 @@ void NMEAHeading::publish(DataModelLeaf &leaf) const {
     }
 }
 
-void NMEAHeading::log(Logger &logger) const {
-    if (hasValue) {
+void NMEADirection::log(Logger &logger) const {
+    if (valuePresent) {
         logger << heading << "." << tenths << "\xC2\xB0";
     } else {
         logger << "Unknown\xC2\xB0";

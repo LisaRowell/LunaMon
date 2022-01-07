@@ -1,5 +1,5 @@
-#ifndef NMEA_HEADING_H
-#define NMEA_HEADING_H
+#ifndef NMEA_DIRECTION_H
+#define NMEA_DIRECTION_H
 
 #include <Arduino.h>
 
@@ -11,15 +11,16 @@
 #include "Util/Logger.h"
 #include "Util/LoggableItem.h"
 
-class NMEAHeading : public LoggableItem {
+class NMEADirection : public LoggableItem {
     private:
         uint16_t heading;
         uint8_t tenths;
-        bool hasValue;
+        bool valuePresent;
 
     public:
-        bool set(const String &headingStr);
-        bool extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType);
+        bool set(const String &headingStr, bool optional);
+        bool extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType,
+                     const char *fieldName, bool optional = false);
         void publish(DataModelLeaf &leaf) const;
         virtual void log(Logger &logger) const override;
 };

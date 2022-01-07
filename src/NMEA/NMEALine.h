@@ -17,7 +17,6 @@ class NMEALine {
         void stripParity();
         bool checkParity();
         String bufferSubstring(unsigned start, unsigned end);
-        void logLine();
 
     public:
         NMEALine();
@@ -29,6 +28,7 @@ class NMEALine {
         bool sanityCheck();
         bool extractChar(char &character);
         bool extractWord(String &word);
+        void logLine();
 };
 
 #endif
