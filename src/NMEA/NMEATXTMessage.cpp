@@ -68,7 +68,7 @@ enum NMEAMsgType NMEATXTMessage::type() {
 }
 
 void NMEATXTMessage::log() {
-    logger << logDebug << talker << " TXT: TotalSentences " << totalSentences << " Sentence "
+    logger << logDebugNMEA << talker << " TXT: TotalSentences " << totalSentences << " Sentence "
            << sentenceNumber << " TextId " << textIdentifier << " " << text << eol;
 }
 

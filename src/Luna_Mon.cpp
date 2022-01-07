@@ -22,6 +22,10 @@ DataModel dataModel;
 NMEADataModelBridge nmeaDataModelBridge;
 
 void setup() {
+    logger.setLevel(LOGGER_LEVEL_DEBUG);
+    logger.enableModuleDebug(LOGGER_MODULE_WIFI_MANAGER);
+    logger.enableModuleDebug(LOGGER_MODULE_NMEA);
+
     controllerUpTime = millis() / msInSecond;
 
     usbSerialNMEASource.addMessageHandler(nmeaDataModelBridge);

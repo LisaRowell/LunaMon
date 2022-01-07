@@ -45,7 +45,7 @@ void WiFiManager::service() {
 }
 
 void WiFiManager::initiateConnection() {
-    logger << logDebug << "Attempting to connect to WiFi network " << wifiSSID << eol;
+    logger << logDebugWiFiManager << "Attempting to connect to WiFi network " << wifiSSID << eol;
 
     if (WiFi.begin(wifiSSID, wifiPassword) == WL_CONNECTED) {
         connectionEstablished();
@@ -162,7 +162,7 @@ void WiFiManager::checkFirmwareVersion() {
         }
     }
 
-    logger << logDebug << "Firmware version: " << firmwareVersion << eol;
+    logger << logDebugWiFiManager << "Firmware version: " << firmwareVersion << eol;
 }
 
 void WiFiManager::firmwareVersionError(const String firmwareVersion) {

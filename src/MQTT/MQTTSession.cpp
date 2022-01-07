@@ -23,7 +23,7 @@ void MQTTSession::begin(bool cleanSession, const char *clientID, MQTTConnection 
     MQTTSession::keepAliveTime = keepAliveTime;
     resetKeepAliveTimer();
 
-    logger << logDebug << "Established new session for Client ID '" << clientID
+    logger << logDebugMQTT << "Established new session for Client ID '" << clientID
            << "' with a keep alive of " << keepAliveTime << " sec"  << eol;
 }
 
@@ -48,13 +48,13 @@ void MQTTSession::service(MQTTBroker *broker) {
     // Do things like timeout sessions whose connection died and hasn't returned.
     if (isConnected()) {
         if (keepAliveTimer.expired()) {
-            logger << logDebug << "Keep alive time expired for Client '" << clientID
+            logger << logDebugMQTT << "Keep alive time expired for Client '" << clientID
                    << "'. Disconnecting..." << eol;
             broker->terminateConnection(connection);
         }
     } else {
         if (tearDownTimer.expired()) {
-            logger << logDebug << "Client '" << clientID
+            logger << logDebugMQTT << "Client '" << clientID
                    << "' failed to reconnect in the allotted time. Terminating Session" << eol;
             dataModel.unsubscribeAll(*this);
             broker->terminateSession(this);
@@ -92,7 +92,7 @@ const char *MQTTSession::name() const {
 }
 
 void MQTTSession::publish(const char *topic, const char *value, bool retainedValue) {
-    logger << logDebug << "Publishing Topic '" << topic << "' to Client '" << clientID
+    logger << logDebugMQTT << "Publishing Topic '" << topic << "' to Client '" << clientID
            << "' with value '" << value << "' and retain " << retainedValue << eol;
     
     sendMQTTPublishMessage(connection, topic, value, false, 0, retainedValue, 0);

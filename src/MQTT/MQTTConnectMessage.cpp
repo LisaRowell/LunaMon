@@ -127,8 +127,8 @@ uint8_t MQTTConnectMessage::sanityCheck() {
         return MQTT_CONNACK_REFUSED_IDENTIFIER_REJECTED;
     }
 
-    logger << logDebug << "MQTT Connect with Client ID '" << *clientIDStr << "' and Clean Session "
-           << cleanSession() << eol;
+    logger << logDebugMQTT << "MQTT Connect with Client ID '" << *clientIDStr
+           << "' and Clean Session " << cleanSession() << eol;
 
     return MQTT_CONNACK_ACCEPTED;
 }

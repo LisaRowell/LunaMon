@@ -75,9 +75,9 @@ enum NMEAMsgType NMEARMCMessage::type() {
 }
 
 void NMEARMCMessage::log() {
-    logger << logDebug << talker << " RMC: " << time << " " << dataValid << " " << latitude << " "
-           << longitude << " " << speedOverGround << "kn " << trackMadeGood << " " << date << " "
-           << magneticVariation;
+    logger << logDebugNMEA << talker << " RMC: " << time << " " << dataValid << " " << latitude
+           << " " << longitude << " " << speedOverGround << "kn " << trackMadeGood << " " << date
+           << " " << magneticVariation;
     if (faaModeIndicator.hasValue()) {
         logger << " " << faaModeIndicator;
     }

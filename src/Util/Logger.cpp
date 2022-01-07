@@ -6,16 +6,44 @@
 
 #include "MQTT/MQTTString.h"
 
-Logger logger(logDebug, Serial);
+Logger logger(LOGGER_LEVEL_WARNING, Serial);
 
-Logger::Logger(LogLevel level, Stream &console)
-    : logLevel(level), lineLevel(logError), base(Dec), console(console), errorsSetInDataModel(0),
-      errorLinePos(0), inLogger(false) {
+Logger::Logger(LoggerLevel level, Stream &console)
+    : logLevel(level), lineLevel(LOGGER_LEVEL_ERROR), outputCurrentLine(false), base(Dec),
+      console(console), errorsSetInDataModel(0), errorLinePos(0), inLogger(false) {
     errorLine[0] = 0;
+
+    unsigned moduleIndex;
+    for (moduleIndex = 0; moduleIndex < LOGGER_MODULE_COUNT; moduleIndex++) {
+        moduleDebugFlags[moduleIndex] = false;
+    }
 }
 
-Logger & Logger::operator << (const LogLevel level) {
-    lineLevel = level;
+void Logger::setLevel(LoggerLevel level) {
+    logLevel = level;
+}
+
+void Logger::enableModuleDebug(LoggerModule module) {
+    moduleDebugFlags[module] = true;
+}
+
+void Logger::disableModuleDebug(LoggerModule module) {
+    moduleDebugFlags[module] = false;
+}
+
+Logger & Logger::operator << (const LogSelector logSelector) {
+    lineLevel = (LoggerLevel)((uint16_t)logSelector >> LOG_LEVEL_SHIFT);
+    if (lineLevel >= logLevel) {
+        if (lineLevel == LOGGER_LEVEL_DEBUG) {
+            const enum LoggerModule module =
+                (LoggerModule)((uint16_t)logSelector & LOGGER_MODULE_MASK);
+            outputCurrentLine = moduleDebugFlags[module];
+        } else {
+            outputCurrentLine = true;
+        }
+    } else {
+        outputCurrentLine = false;
+    }
 
     return *this;
 }
@@ -27,7 +55,7 @@ Logger & Logger::operator << (const LogBase base) {
 }
 
 Logger & Logger::operator << (char character) {
-    if (lineLevel >= logLevel) {
+    if (outputCurrentLine) {
         logCharacter(character);
     }
 
@@ -35,7 +63,7 @@ Logger & Logger::operator << (char character) {
 }
 
 Logger & Logger::operator << (const char *string) {
-    if (lineLevel >= logLevel) {
+    if (outputCurrentLine) {
         if (string != NULL) {
             logString(string);
         } else {
@@ -47,7 +75,7 @@ Logger & Logger::operator << (const char *string) {
 }
 
 Logger & Logger::operator << (const String &string) {
-    if (lineLevel >= logLevel) {
+    if (outputCurrentLine) {
        logString(string.c_str());
     }
 
@@ -55,7 +83,7 @@ Logger & Logger::operator << (const String &string) {
 }
 
 Logger & Logger::operator << (uint8_t value) {
-    if (lineLevel >= logLevel) {
+    if (outputCurrentLine) {
         switch (base) {
             case Dec:
                 char decimalStr[4];
@@ -78,7 +106,7 @@ Logger & Logger::operator << (uint8_t value) {
 }
 
 Logger & Logger::operator << (uint16_t value) {
-    if (lineLevel >= logLevel) {
+    if (outputCurrentLine) {
         switch (base) {
             case Dec:
                 char decimalStr[6];
@@ -101,7 +129,7 @@ Logger & Logger::operator << (uint16_t value) {
 }
 
 Logger & Logger::operator << (uint32_t value) {
-    if (lineLevel >= logLevel) {
+    if (outputCurrentLine) {
         switch (base) {
             case Dec:
                 char decimalStr[11];
@@ -124,7 +152,7 @@ Logger & Logger::operator << (uint32_t value) {
 }
 
 Logger & Logger::operator << (unsigned value) {
-    if (lineLevel >= logLevel) {
+    if (outputCurrentLine) {
         switch (base) {
             case Dec:
                 char decimalStr[11];
@@ -147,7 +175,7 @@ Logger & Logger::operator << (unsigned value) {
 }
 
 Logger & Logger::operator << (int16_t value) {
-    if (lineLevel >= logLevel) {
+    if (outputCurrentLine) {
         switch (base) {
             case Dec:
                 char decimalStr[12];
@@ -170,7 +198,7 @@ Logger & Logger::operator << (int16_t value) {
 }
 
 Logger & Logger::operator << (int value) {
-    if (lineLevel >= logLevel) {
+    if (outputCurrentLine) {
         switch (base) {
             case Dec:
                 char decimalStr[12];
@@ -193,7 +221,7 @@ Logger & Logger::operator << (int value) {
 }
 
 Logger & Logger::operator << (bool value) {
-    if (lineLevel >= logLevel) {
+    if (outputCurrentLine) {
         if (value) {
             logString("true");
         } else {
@@ -205,7 +233,7 @@ Logger & Logger::operator << (bool value) {
 }
 
 Logger & Logger::operator << (const IPAddress &addr) {
-    if (lineLevel >= logLevel) {
+    if (outputCurrentLine) {
         char ipAddressStr[maxIPAddressTextLength];
         ipAddressToStr(ipAddressStr, addr);
         logString(ipAddressStr);
@@ -215,7 +243,7 @@ Logger & Logger::operator << (const IPAddress &addr) {
 }
 
 Logger & Logger::operator << (const MQTTString &string) {
-    if (lineLevel >= logLevel) {
+    if (outputCurrentLine) {
         const uint16_t length = string.length();
 
         unsigned pos;
@@ -228,7 +256,7 @@ Logger & Logger::operator << (const MQTTString &string) {
 }
 
 Logger & Logger::operator << (const LoggableItem &item) {
-    if (lineLevel >= logLevel) {
+    if (outputCurrentLine) {
         item.log(*this);
     }
 
@@ -238,10 +266,10 @@ Logger & Logger::operator << (const LoggableItem &item) {
 Logger & Logger::operator << (const EndOfLine &eol) {
     base = Dec;
  
-    if (lineLevel >= logLevel) {
+    if (outputCurrentLine) {
         console.println();
 
-        if (lineLevel >= logWarning) {
+        if (lineLevel >= LOGGER_LEVEL_WARNING) {
             addErrorLineToDebugs();
         }
     }
@@ -257,7 +285,7 @@ Logger & Logger::operator << (const EndOfLine &eol) {
 void Logger::logString(const char *string) {
     console.print(string);
 
-    if (lineLevel >= logWarning && !inLogger) {
+    if (lineLevel >= LOGGER_LEVEL_WARNING && !inLogger) {
         unsigned strPos;
         for (strPos = 0;
              errorLinePos < maxErrorLength - 1 && string[strPos];
@@ -271,7 +299,7 @@ void Logger::logString(const char *string) {
 void Logger::logCharacter(char character) {
     console.print(character);
 
-    if (lineLevel >= logWarning && !inLogger) {
+    if (lineLevel >= LOGGER_LEVEL_WARNING && !inLogger) {
         errorLine[errorLinePos] = character;
         errorLinePos++;
         errorLine[errorLinePos] = 0;

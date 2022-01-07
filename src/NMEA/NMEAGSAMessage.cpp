@@ -64,7 +64,7 @@ enum NMEAMsgType NMEAGSAMessage::type() {
 }
 
 void NMEAGSAMessage::log() {
-    logger << logDebug << talker << " GSA: ";
+    logger << logDebugNMEA << talker << " GSA: ";
 
     if (automaticMode) {
         logger << "Automatic ";

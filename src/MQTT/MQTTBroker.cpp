@@ -74,8 +74,8 @@ void MQTTBroker::serviceWiFiClientWithData(WiFiClient &wifiClient) {
             refuseIncomingWiFiClient(wifiClient);
             return;
         }
-        logger << logDebug << "Established MQTT Connection from " << connection->ipAddress() << ":"
-               << connection->port() << eol;
+        logger << logDebugMQTT << "Established MQTT Connection from " << connection->ipAddress()
+               << ":" << connection->port() << eol;
     }
 
     // Since we're receiving messages over TCP, even if it's a small message we have no guarantee
@@ -197,7 +197,7 @@ void MQTTBroker::checkForLostConnections() {
 }
 
 void MQTTBroker::cleanupLostConnection(MQTTConnection &connection) {
-    logger << logDebug << "Lost TCP connection from " << connection.ipAddress() << ":"
+    logger << logDebugMQTT << "Lost TCP connection from " << connection.ipAddress() << ":"
            << connection.port() << eol;
     if (connection.hasSession()) {
         MQTTSession *session = connection.session();
@@ -358,8 +358,8 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
                    << ") that already has an active Connection" << eol;
             sendMQTTConnectAckMessage(connection, false, MQTT_CONNACK_REFUSED_SERVER_UNAVAILABLE);
         } else {
-            logger << logDebug << "Attempting to re-establish the Session for Client '" << clientID
-                   << "'" << eol;
+            logger << logDebugMQTT << "Attempting to re-establish the Session for Client '"
+                   << clientID << "'" << eol;
             const bool cleanSession = connectMessage.cleanSession();
             session->reconnect(cleanSession, connection, keepAliveTime);
             connection->connectTo(session);
@@ -369,11 +369,11 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
     } else {
         session = findAvailableSession();
         if (session) {
-            logger << logDebug << "Starting new MQTT Session for Client '" << clientID << "'"
+            logger << logDebugMQTT << "Starting new MQTT Session for Client '" << clientID << "'"
                    << eol;
             session->begin(connectMessage.cleanSession(), clientID, connection, keepAliveTime);
             connection->connectTo(session);
-            logger << logDebug << "MQTT Client '" << clientID << "' connected with new Session"
+            logger << logDebugMQTT << "MQTT Client '" << clientID << "' connected with new Session"
                    << eol;
             sendMQTTConnectAckMessage(connection, false, MQTT_CONNACK_ACCEPTED);
             dataModelDebugNeedsUpdating = true;
@@ -445,7 +445,7 @@ void MQTTBroker::subscribeMessageReceived(MQTTConnection *connection, MQTTMessag
             break;
         }
 
-        logger << logDebug << "MQTT Client '" << session->name() << "' wants to subscribe to '"
+        logger << logDebugMQTT << "MQTT Client '" << session->name() << "' wants to subscribe to '"
                << *topicFilterStr << "' with max QoS " << maxQoS << eol;
 
         char topicFilter[maxTopicFilterLength + 1];
@@ -455,7 +455,7 @@ void MQTTBroker::subscribeMessageReceived(MQTTConnection *connection, MQTTMessag
             subscribeResults[topicFilterIndex] = mqttSubscribeResult(false, 0);
         } else {
             if (dataModel.subscribe(topicFilter, *session, (uint32_t)maxQoS)) {
-                logger << logDebug << "Topic Filter '" << topicFilter << "' subscribed to by '"
+                logger << logDebugMQTT << "Topic Filter '" << topicFilter << "' subscribed to by '"
                        << session->name() << "'" << eol;
                 subscribeResults[topicFilterIndex] = mqttSubscribeResult(true, 0);
             } else {
@@ -466,7 +466,7 @@ void MQTTBroker::subscribeMessageReceived(MQTTConnection *connection, MQTTMessag
         }
     }
 
-    logger << logDebug << "Sending SUBACK message with " << topicFilterCount
+    logger << logDebugMQTT << "Sending SUBACK message with " << topicFilterCount
            << " results to Client '" << session->name() << "'" << eol;
     if (!sendMQTTSubscribeAckMessage(connection, subscribeMessage.packetId(), topicFilterCount,
                                      subscribeResults)) {
@@ -506,8 +506,8 @@ void MQTTBroker::unsubscribeMessageReceived(MQTTConnection *connection, MQTTMess
             break;
         }
 
-        logger << logDebug << "MQTT Client '" << session->name() << "' wants to unsubscribe from '"
-               << *topicFilterStr << "'" << eol;
+        logger << logDebugMQTT << "MQTT Client '" << session->name()
+               << "' wants to unsubscribe from '" << *topicFilterStr << "'" << eol;
 
         char topicFilter[maxTopicFilterLength + 1];
         if (!topicFilterStr->copyTo(topicFilter, maxTopicFilterLength)) {
@@ -515,12 +515,13 @@ void MQTTBroker::unsubscribeMessageReceived(MQTTConnection *connection, MQTTMess
                    << *topicFilterStr << "'" << eol;
         } else {
             dataModel.unsubscribe(topicFilter, *session);
-            logger << logDebug << "Topic Filter '" << topicFilter << "' unsubscribed from by '"
+            logger << logDebugMQTT << "Topic Filter '" << topicFilter << "' unsubscribed from by '"
                    << session->name() << "'" << eol;
         }
     }
 
-    logger << logDebug << "Sending UNSUBACK message to Client '" << session->name() << "'" << eol;
+    logger << logDebugMQTT << "Sending UNSUBACK message to Client '" << session->name() << "'"
+           << eol;
     if (!sendMQTTUnsubscribeAckMessage(connection, unsubscribeMessage.packetId())) {
         logger << logError << "Failed to send UNSUBACK message to Client '" << session->name()
                << "'" << eol;
@@ -550,7 +551,7 @@ void MQTTBroker::pingRequestMessageReceived(MQTTConnection *connection, MQTTMess
     MQTTSession *session = connection->session();
     session->resetKeepAliveTimer();
 
-    logger << logDebug << "Sending MQTT PINGRESP message to Client '" << session->name() << eol;
+    logger << logDebugMQTT << "Sending MQTT PINGRESP message to Client '" << session->name() << eol;
 
     if (!sendMQTTPingResponseMessage(connection)) {
         logger << logError << "Failed to sent MQTT PINGRESP message to "
@@ -580,7 +581,7 @@ void MQTTBroker::disconnectMessageReceived(MQTTConnection *connection, MQTTMessa
         return;
     }
 
-    logger << logDebug << "Stopping client due to DISCONNECT" << eol;
+    logger << logDebugMQTT << "Stopping client due to DISCONNECT" << eol;
     terminateConnection(connection);
 }
 

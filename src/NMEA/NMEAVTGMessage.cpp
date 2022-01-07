@@ -94,7 +94,7 @@ enum NMEAMsgType NMEAVTGMessage::type() {
 }
 
 void NMEAVTGMessage::log() {
-    logger << logDebug << talker << " VTG: " << trackMadeGood << " " << courseOverGroundMagnetic
+    logger << logDebugNMEA << talker << " VTG: " << trackMadeGood << " " << courseOverGroundMagnetic
            << " " << speedOverGround << "kn " << speedOverGroundKm2 << "km/h";
 
     if (faaModeIndicator.hasValue()) {

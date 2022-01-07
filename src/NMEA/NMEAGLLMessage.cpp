@@ -57,8 +57,8 @@ enum NMEAMsgType NMEAGLLMessage::type() {
 }
 
 void NMEAGLLMessage::log() {
-    logger << logDebug << talker << " GLL: " << latitude << " " << longitude << " " << time << " "
-           << dataValid;
+    logger << logDebugNMEA << talker << " GLL: " << latitude << " " << longitude << " " << time
+           << " " << dataValid;
     if (faaModeIndicator.hasValue()) {
         logger << " " << faaModeIndicator;
     }

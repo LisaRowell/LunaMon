@@ -168,7 +168,7 @@ bool NMEALine::checkParity() {
 }
 
 void NMEALine::logLine() {
-    logger << logDebug;
+    logger << logDebugNMEA;
     unsigned pos;
     for (pos = 0; pos < length; pos++) {
         logger << buffer[pos];

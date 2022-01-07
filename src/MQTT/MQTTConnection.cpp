@@ -169,7 +169,7 @@ MQTTSession *MQTTConnection::session() {
 }
 
 void MQTTConnection::stop() {
-    logger << logDebug << "Stopping client " << wifiClient.remoteIP() << ":"
+    logger << logDebugMQTT << "Stopping client " << wifiClient.remoteIP() << ":"
            << wifiClient.remotePort() << eol;
 
     wifiClient.flush();

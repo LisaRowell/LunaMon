@@ -82,10 +82,10 @@ enum NMEAMsgType NMEAGGAMessage::type() {
 }
 
 void NMEAGGAMessage::log() {
-    logger << logDebug << talker << " GGA: " << time << " " << latitude << " " << longitude << " "
-           << gpsQuality << " " << numberSatellites << " " << horizontalDilutionOfPrecision << " "
-           << antennaAltitude << "m " << geoidalSeparation << "m";
-    
+    logger << logDebugNMEA << talker << " GGA: " << time << " " << latitude << " " << longitude
+           << " " << gpsQuality << " " << numberSatellites << " " << horizontalDilutionOfPrecision
+           << " " << antennaAltitude << "m " << geoidalSeparation << "m";
+
     if (gpsDataAge.hasValue()) {
         logger << " " << gpsDataAge;
     }

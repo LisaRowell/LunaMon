@@ -31,7 +31,7 @@ void DataModelLeaf::unsubscribe(DataModelSubscriber &subscriber) {
     for (subscriberPos = 0; subscriberPos < maxDataModelSubscribers; subscriberPos++) {
         if (subscribers[subscriberPos] == &subscriber) {
             subscribers[subscriberPos] = NULL;
-            logger << logDebug << "Client '" << subscriber.name()
+            logger << logDebugDataModel << "Client '" << subscriber.name()
                    << "' unscribed from topic ending in '" << elementName() << "'" << eol;
             return;
         }
@@ -121,7 +121,7 @@ void DataModelLeaf::unsubscribeAll(DataModelSubscriber &subscriber) {
             // We don't cache the full name of a topic, and instead store it in bits in the tree,
             // so we don't log the full name. If we switch to storing the name, this debug could be
             // made to be more specific
-            logger << logDebug << "Unsubscribing Client '" << subscriber.name()
+            logger << logDebugDataModel << "Unsubscribing Client '" << subscriber.name()
                    << "' from Topic ending in '" << elementName() << "'" << eol;
 
             subscribers[subscriberIndex] = NULL;

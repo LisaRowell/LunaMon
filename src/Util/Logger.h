@@ -9,12 +9,41 @@
 
 #include "MQTT/MQTTString.h"
 
-enum LogLevel {
-    logNone,
-    logDebug,
-    logWarning,
-    logNotify,
-    logError
+enum LoggerModule {
+    LOGGER_MODULE_DATA_MODEL,
+    LOGGER_MODULE_MQTT,
+    LOGGER_MODULE_NMEA,
+    LOGGER_MODULE_NMEA_DATA_MODEL_BRIDGE,
+    LOGGER_MODULE_NMEA_WIFI_BRIDGE,
+    LOGGER_MODULE_NMEA_WIFI,
+    LOGGER_MODULE_UTIL,
+    LOGGER_MODULE_WIFI_MANAGER,
+    LOGGER_MODULE_COUNT,
+    LOGGER_MODULE_ANY = 0xff
+};
+
+enum LoggerLevel {
+    LOGGER_LEVEL_DEBUG,
+    LOGGER_LEVEL_WARNING,
+    LOGGER_LEVEL_NOTIFY,
+    LOGGER_LEVEL_ERROR
+};
+#define LOG_LEVEL_SHIFT 8
+#define LOGGER_MODULE_MASK 0xff
+
+#define LOG_SELECTOR(level, module) (((level) << LOG_LEVEL_SHIFT) | (module))
+enum LogSelector {
+    logDebugDataModel = LOG_SELECTOR(LOGGER_LEVEL_DEBUG, LOGGER_MODULE_DATA_MODEL),
+    logDebugMQTT = LOG_SELECTOR(LOGGER_LEVEL_DEBUG, LOGGER_MODULE_MQTT),
+    logDebugNMEA = LOG_SELECTOR(LOGGER_LEVEL_DEBUG, LOGGER_MODULE_NMEA),
+    logDebugNMEADataModelBridge =
+        LOG_SELECTOR(LOGGER_LEVEL_DEBUG, LOGGER_MODULE_NMEA_DATA_MODEL_BRIDGE),
+    logDebugNMEAWiFi = LOG_SELECTOR(LOGGER_LEVEL_DEBUG, LOGGER_MODULE_NMEA_WIFI),
+    logDebugUtil = LOG_SELECTOR(LOGGER_LEVEL_DEBUG, LOGGER_MODULE_UTIL),
+    logDebugWiFiManager = LOG_SELECTOR(LOGGER_LEVEL_DEBUG, LOGGER_MODULE_WIFI_MANAGER),
+    logWarning = LOG_SELECTOR(LOGGER_LEVEL_WARNING, LOGGER_MODULE_ANY),
+    logNotify = LOG_SELECTOR(LOGGER_LEVEL_NOTIFY, LOGGER_MODULE_ANY),
+    logError = LOG_SELECTOR(LOGGER_LEVEL_ERROR, LOGGER_MODULE_ANY)
 };
 
 enum LogBase {
@@ -27,8 +56,11 @@ const EndOfLine eol = EndOfLine();
 
 class Logger {
     private:
-        LogLevel logLevel;
-        LogLevel lineLevel;
+        LoggerLevel logLevel;
+        LoggerLevel lineLevel;
+        bool outputCurrentLine;
+        bool moduleDebugFlags[LOGGER_MODULE_COUNT];
+
         LogBase base;
         Stream &console;
         uint8_t errorsSetInDataModel;
@@ -44,8 +76,11 @@ class Logger {
         void scrollUpDebugs();
 
     public:
-        Logger(LogLevel level, Stream &console);
-        Logger & operator << (const LogLevel level);
+        Logger(LoggerLevel level, Stream &console);
+        void setLevel(LoggerLevel level);
+        void enableModuleDebug(LoggerModule module);
+        void disableModuleDebug(LoggerModule module);
+        Logger & operator << (const LogSelector level);
         Logger & operator << (const LogBase base);
         Logger & operator << (char character);
         Logger & operator << (const char *string);
