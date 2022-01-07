@@ -134,6 +134,19 @@ DataModelLeaf positionActiveSatellites("activeSatellites", &positionNode);
 DataModelLeaf positionPDOP("pdop", &positionNode);
 DataModelLeaf positionHDOP("hdop", &positionNode);
 DataModelLeaf positionVDOP("vdop", &positionNode);
+DataModelLeaf positionStandardDeviationOfRangeInputsRMS("standardDeviationOfRangeInputsRMS",
+                                                        &positionNode);
+DataModelLeaf positionStandardDeviationOfSemiMajorAxis("standardDeviationOfSemiMajorAxis",
+                                                       &positionNode);
+DataModelLeaf positionStandardDeviationOfSemiMinorAxis("standardDeviationOfSemiMinorAxis",
+                                                       &positionNode);
+DataModelLeaf positionOrientationOfSemiMajorAxis("orientationOfSemiMajorAxis", &positionNode);
+DataModelLeaf positionStandardDeviationOfLatitudeError("standardDeviationOfLatitudeError",
+                                                       &positionNode);
+DataModelLeaf positionStandardDeviationOfLongitudeError("standardDeviationOfLongitudeError",
+                                                        &positionNode);
+DataModelLeaf positionStandardDeviationOfAltitudeError("standardDeviationOfAltitudeError",
+                                                       &positionNode);
 
 DataModelElement *positionNodeChildren[] = {
     &positionLatitude,
@@ -158,6 +171,13 @@ DataModelElement *positionNodeChildren[] = {
     &positionPDOP,
     &positionHDOP,
     &positionVDOP,
+    &positionStandardDeviationOfRangeInputsRMS,
+    &positionStandardDeviationOfSemiMajorAxis,
+    &positionStandardDeviationOfSemiMinorAxis,
+    &positionOrientationOfSemiMajorAxis,
+    &positionStandardDeviationOfLatitudeError,
+    &positionStandardDeviationOfLongitudeError,
+    &positionStandardDeviationOfAltitudeError,
     NULL
 };
 DataModelNode positionNode("position", &navigationNode, positionNodeChildren);

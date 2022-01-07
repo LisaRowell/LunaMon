@@ -65,6 +65,13 @@ extern DataModelLeaf positionActiveSatellites;
 extern DataModelLeaf positionPDOP;
 extern DataModelLeaf positionHDOP;
 extern DataModelLeaf positionVDOP;
+extern DataModelLeaf positionStandardDeviationOfRangeInputsRMS;
+extern DataModelLeaf positionStandardDeviationOfSemiMajorAxis;
+extern DataModelLeaf positionStandardDeviationOfSemiMinorAxis;
+extern DataModelLeaf positionOrientationOfSemiMajorAxis;
+extern DataModelLeaf positionStandardDeviationOfLatitudeError;
+extern DataModelLeaf positionStandardDeviationOfLongitudeError;
+extern DataModelLeaf positionStandardDeviationOfAltitudeError;
 
 extern DataModelNode positionNode;
 

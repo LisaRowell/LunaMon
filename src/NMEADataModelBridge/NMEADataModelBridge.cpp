@@ -4,7 +4,10 @@
 
 #include "NMEA/NMEAMessage.h"
 #include "NMEA/NMEAMsgType.h"
+#include "NMEA/NMEAGGAMessage.h"
 #include "NMEA/NMEAGLLMessage.h"
+#include "NMEA/NMEAGSAMessage.h"
+#include "NMEA/NMEAGSTMessage.h"
 #include "NMEA/NMEARMCMessage.h"
 #include "NMEA/NMEAVTGMessage.h"
 
@@ -27,8 +30,7 @@ void NMEADataModelBridge::processMessage(NMEAMessage *message) {
             break;
 
         case NMEA_MSG_TYPE_GST:
-            // For now we ignore this message because of the detailed knowledge required to do much
-            // with its contents.
+            bridgeNMEAGSTMessage((NMEAGSTMessage *)message);
             break;
 
         case NMEA_MSG_TYPE_RMC:
@@ -98,6 +100,15 @@ void NMEADataModelBridge::bridgeNMEAGSAMessage(NMEAGSAMessage *message) {
     message->pdop.publish(positionPDOP);
     message->hdop.publish(positionHDOP);
     message->vdop.publish(positionVDOP);
+}
+void NMEADataModelBridge::bridgeNMEAGSTMessage(NMEAGSTMessage *message) {
+    message->standardDeviationOfRangeInputsRMS.publish(positionStandardDeviationOfRangeInputsRMS);
+    message->standardDeviationOfSemiMajorAxis.publish(positionStandardDeviationOfSemiMajorAxis);
+    message->standardDeviationOfSemiMinorAxis.publish(positionStandardDeviationOfSemiMinorAxis);
+    message->orientationOfSemiMajorAxis.publish(positionOrientationOfSemiMajorAxis);
+    message->standardDeviationOfLatitudeError.publish(positionStandardDeviationOfLatitudeError);
+    message->standardDeviationOfLongitudeError.publish(positionStandardDeviationOfLongitudeError);
+    message->standardDeviationOfAltitudeError.publish(positionStandardDeviationOfAltitudeError);
 }
 
 void NMEADataModelBridge::bridgeNMEARMCMessage(NMEARMCMessage *message) {
