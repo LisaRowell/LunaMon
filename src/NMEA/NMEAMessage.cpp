@@ -11,11 +11,16 @@
 #include "NMEAGSVMessage.h"
 #include "NMEARMCMessage.h"
 #include "NMEATXTMessage.h"
+#include "NMEAVDMMessage.h"
 #include "NMEAVTGMessage.h"
 
 #include "Util/Logger.h"
 
 NMEAMessage::NMEAMessage(NMEATalker &talker) : talker(talker) {
+}
+
+NMEATalker NMEAMessage::source() const {
+    return talker;
 }
 
 bool NMEAMessage::extractConstantWord(NMEALine &nmeaLine, const char *messageType,
@@ -74,6 +79,9 @@ NMEAMessage *parseNMEAMessage(NMEALine &nmeaLine) {
 
         case NMEA_MSG_TYPE_TXT:
             return parseNMEATXTMessage(talker, nmeaLine);
+
+        case NMEA_MSG_TYPE_VDM:
+            return parseNMEAVDMMessage(talker, nmeaLine);
 
         case NMEA_MSG_TYPE_VTG:
             return parseNMEAVTGMessage(talker, nmeaLine);

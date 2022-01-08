@@ -14,6 +14,7 @@ class NMEAMessage {
 
     public:
         NMEAMessage(NMEATalker &talker);
+        NMEATalker source() const;
         virtual enum NMEAMsgType type() = 0;
         virtual void log() = 0;
 };

@@ -10,6 +10,7 @@
 #include "NMEA/NMEAGSTMessage.h"
 #include "NMEA/NMEAGSVMessage.h"
 #include "NMEA/NMEARMCMessage.h"
+#include "NMEA/NMEAVDMMessage.h"
 #include "NMEA/NMEAVTGMessage.h"
 
 #include "DataModel/DataModel.h"
@@ -17,7 +18,8 @@
 void NMEADataModelBridge::processMessage(NMEAMessage *message) {
     // Add a filter here so that messages with redundant content are having their content sent
     // unnecessarily.
-    switch (message->type()) {
+    const NMEAMsgType msgType = message->type();
+    switch (msgType) {
         case NMEA_MSG_TYPE_GGA:
             bridgeNMEAGGAMessage((NMEAGGAMessage *)message);
             break;
@@ -34,21 +36,24 @@ void NMEADataModelBridge::processMessage(NMEAMessage *message) {
             bridgeNMEAGSTMessage((NMEAGSTMessage *)message);
             break;
 
-        case NMEA_MSG_TYPE_GSV:
-            // Currently not output to clients.
-            break;
-
         case NMEA_MSG_TYPE_RMC:
             bridgeNMEARMCMessage((NMEARMCMessage *)message);
-            break;
-
-        case NMEA_MSG_TYPE_TXT:
             break;
 
         case NMEA_MSG_TYPE_VTG:
             bridgeNMEAVTGMessage((NMEAVTGMessage *)message);
 
+        case NMEA_MSG_TYPE_GSV:
+        case NMEA_MSG_TYPE_TXT:
+        case NMEA_MSG_TYPE_VDM:
+            // Currently not output to clients.
+            logger << logDebugNMEADataModelBridge << "Ignoring " << message->source() << " "
+                   << msgType << " message in NMEA->Data Model Bridge" << eol;
+            break;
+
         default:
+            logger << logWarning << "Unhandled " << message->source() << " " << msgType
+                   << " message in NMEA->Data Model Bridge" << eol;
             break;
     }
 }

@@ -17,6 +17,8 @@ enum NMEAMsgType parseNMEAMsgType(String &msgTypeStr) {
         return NMEA_MSG_TYPE_RMC;
     } else if (msgTypeStr == "TXT") {
         return NMEA_MSG_TYPE_TXT;
+    } else if (msgTypeStr == "VDM") {
+        return NMEA_MSG_TYPE_VDM;
     } else if (msgTypeStr == "VTG") {
         return NMEA_MSG_TYPE_VTG;
     } else {
