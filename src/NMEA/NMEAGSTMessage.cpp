@@ -16,6 +16,11 @@ NMEAGSTMessage::NMEAGSTMessage(NMEATalker &talker) : NMEAMessage(talker) {
 }
 
 bool NMEAGSTMessage::parse(NMEALine &nmeaLine) {
+    if (nmeaLine.isEncapsulatedData()) {
+        logger << logWarning << talker << " GST message in unsupported encapsulated format" << eol;
+        return false;
+    }
+
     if (!time.extract(nmeaLine, talker, "GST")) {
         return false;
     }
