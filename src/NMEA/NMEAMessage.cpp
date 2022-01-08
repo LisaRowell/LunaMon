@@ -8,6 +8,7 @@
 #include "NMEAGLLMessage.h"
 #include "NMEAGSAMessage.h"
 #include "NMEAGSTMessage.h"
+#include "NMEAGSVMessage.h"
 #include "NMEARMCMessage.h"
 #include "NMEATXTMessage.h"
 #include "NMEAVTGMessage.h"
@@ -64,6 +65,9 @@ NMEAMessage *parseNMEAMessage(NMEALine &nmeaLine) {
 
         case NMEA_MSG_TYPE_GST:
             return parseNMEAGSTMessage(talker, nmeaLine);
+
+        case NMEA_MSG_TYPE_GSV:
+            return parseNMEAGSVMessage(talker, nmeaLine);
 
         case NMEA_MSG_TYPE_RMC:
             return parseNMEARMCMessage(talker, nmeaLine);

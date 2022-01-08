@@ -7,7 +7,7 @@
 #include "Util/StringTools.h"
 #include "Util/Error.h"
 
-bool NMEAUInt16::set(const String &valueStr, bool optional) {
+bool NMEAUInt16::set(const String &valueStr, bool optional, uint16_t maxValue) {
     const unsigned length = valueStr.length();
     if (length == 0) {
         if (!optional) {
@@ -17,7 +17,7 @@ bool NMEAUInt16::set(const String &valueStr, bool optional) {
         return true;
     }
 
-    if (!extractUInt16FromString(valueStr, 0, length, value)) {
+    if (!extractUInt16FromString(valueStr, 0, length, value, maxValue)) {
         return false;
     }
 
@@ -39,7 +39,7 @@ bool NMEAUInt16::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msg
         return true;
     }
 
-    if (!set(decimalStr, optional)) {
+    if (!set(decimalStr, optional, maxValue)) {
         logger << logWarning << talker << " " << msgType << " message with bad " << fieldName
                << " field '" << decimalStr << "'" << eol;
         return false;

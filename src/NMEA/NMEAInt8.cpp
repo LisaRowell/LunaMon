@@ -1,13 +1,13 @@
 #include <Arduino.h>
 
-#include "NMEAUInt8.h"
+#include "NMEAInt8.h"
 
 #include "Util/Logger.h"
 #include "Util/CharacterTools.h"
 #include "Util/StringTools.h"
 
-bool NMEAUInt8::set(const String &valueStr, bool optional, uint8_t maxValue) {
-    const unsigned length = valueStr.length();
+bool NMEAInt8::set(const String &decimalStr, bool optional, int8_t minValue, int8_t maxValue) {
+    const unsigned length = decimalStr.length();
     if (length == 0) {
         if (!optional) {
             return false;
@@ -16,16 +16,15 @@ bool NMEAUInt8::set(const String &valueStr, bool optional, uint8_t maxValue) {
         return true;
     }
 
-    if (!extractUInt8FromString(valueStr, 0, length, value, maxValue)) {
+    if (!extractInt8FromString(decimalStr, 0, length, value, minValue, maxValue)) {
         return false;
     }
 
-    valuePresent = true;
     return true;
 }
 
-bool NMEAUInt8::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType,
-                        const char *fieldName, bool optional, uint8_t maxValue) {
+bool NMEAInt8::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType,
+                       const char *fieldName, bool optional, int8_t minValue, int8_t maxValue) {
     String decimalStr;
     if (!nmeaLine.extractWord(decimalStr)) {
         if (!optional) {
@@ -38,7 +37,7 @@ bool NMEAUInt8::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgT
         return true;
     }
 
-    if (!set(decimalStr, optional, maxValue)) {
+    if (!set(decimalStr, optional, minValue, maxValue)) {
         logger << logWarning << talker << " " << msgType << " message with bad " << fieldName
                << " field '" << decimalStr << "'" << eol;
         return false;
@@ -47,22 +46,13 @@ bool NMEAUInt8::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgT
     return true;
 }
 
-bool NMEAUInt8::hasValue() const {
-    return valuePresent;
+void NMEAInt8::publish(DataModelLeaf &leaf) const {
+    char decimalStr[5];
+
+    snprintf(decimalStr, 5, "%d", value);
+    leaf << decimalStr;
 }
 
-void NMEAUInt8::publish(DataModelLeaf &leaf) const {
-    if (valuePresent) {
-        leaf << value;
-    } else {
-        leaf << "";
-    }
-}
-
-void NMEAUInt8::log(Logger &logger) const {
-    if (valuePresent) {
-        logger << value;
-    } else {
-        logger << "NA";
-    }
+void NMEAInt8::log(Logger &logger) const {
+    logger << value;
 }

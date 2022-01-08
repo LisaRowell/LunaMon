@@ -11,6 +11,8 @@ enum NMEAMsgType parseNMEAMsgType(String &msgTypeStr) {
         return NMEA_MSG_TYPE_GSA;
     } else if (msgTypeStr == "GST") {
         return NMEA_MSG_TYPE_GST;
+    } else if (msgTypeStr == "GSV") {
+        return NMEA_MSG_TYPE_GSV;
     } else if (msgTypeStr == "RMC") {
         return NMEA_MSG_TYPE_RMC;
     } else if (msgTypeStr == "TXT") {

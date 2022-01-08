@@ -8,6 +8,7 @@
 #include "NMEA/NMEAGLLMessage.h"
 #include "NMEA/NMEAGSAMessage.h"
 #include "NMEA/NMEAGSTMessage.h"
+#include "NMEA/NMEAGSVMessage.h"
 #include "NMEA/NMEARMCMessage.h"
 #include "NMEA/NMEAVTGMessage.h"
 
@@ -31,6 +32,10 @@ void NMEADataModelBridge::processMessage(NMEAMessage *message) {
 
         case NMEA_MSG_TYPE_GST:
             bridgeNMEAGSTMessage((NMEAGSTMessage *)message);
+            break;
+
+        case NMEA_MSG_TYPE_GSV:
+            // Currently not output to clients.
             break;
 
         case NMEA_MSG_TYPE_RMC:

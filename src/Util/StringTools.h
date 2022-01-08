@@ -12,6 +12,8 @@ extern bool extractUInt32FractionFromDecimalString(const String &string, unsigne
                                                    uint32_t &numerator, uint32_t &denominator);
 extern bool extractInt16FromString(const String &string, unsigned start, unsigned end,
                                    int16_t &value);
+extern bool extractInt8FromString(const String &string, unsigned start, unsigned end,
+                                  int8_t &value, int8_t minValue = -128, int8_t maxValue = 127);
 extern bool convertTwoDigitDecimalString(const String &string, uint8_t &value,
                                          uint8_t maxValue = 99);
 

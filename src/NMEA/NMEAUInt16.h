@@ -15,7 +15,7 @@ class NMEAUInt16 : public LoggableItem {
         bool valuePresent;
 
     public:
-        bool set(const String &valueStr, bool optional);
+        bool set(const String &valueStr, bool optional, uint16_t maxValue);
         bool extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType,
                      const char *fieldName, bool optional = false, uint16_t maxValue = 0xffff);
         bool hasValue() const;

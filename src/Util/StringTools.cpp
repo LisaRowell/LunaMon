@@ -113,6 +113,43 @@ bool extractInt16FromString(const String &string, unsigned start, unsigned end, 
     return true;
 }
 
+bool extractInt8FromString(const String &string, unsigned start, unsigned end, int8_t &value,
+                           int8_t minValue, int8_t maxValue) {
+    bool isNegative;
+    if (string.charAt(start) == '-') {
+        isNegative = true;
+        start++;
+        if (start == end) {
+            return false;
+        }
+    } else {
+        isNegative = false;
+    }
+
+    uint8_t unsignedValue;
+    if (!extractUInt8FromString(string, start, end, unsignedValue)) {
+        return false;
+    }
+
+    if (isNegative) {
+        if (unsignedValue < 128) {
+            return false;
+        }
+        value = -unsignedValue;
+    } else {
+        if (unsignedValue > 127) {
+            return false;
+        }
+        value = unsignedValue;
+    }
+
+    if (value < minValue || value > maxValue) {
+        return false;
+    }
+
+    return true;
+}
+
 bool convertTwoDigitDecimalString(const String &string, uint8_t &value, uint8_t maxValue) {
     if (string.length() != 2) {
         return false;
