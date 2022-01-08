@@ -68,7 +68,7 @@ bool NMEATenthsInt16::extract(NMEALine &nmeaLine, NMEATalker &talker, const char
 }
 
 void NMEATenthsInt16::publish(DataModelLeaf &leaf) const {
-    char decimalStr[12];
+    char decimalStr[11];
 
     snprintf(decimalStr, 11, "%d.%u", integer, tenths);
     leaf << decimalStr;
