@@ -63,11 +63,11 @@ bool NMEATXTMessage::parse(NMEALine &nmeaLine) {
     return true;
 }
 
-enum NMEAMsgType NMEATXTMessage::type() {
+enum NMEAMsgType NMEATXTMessage::type() const {
     return NMEA_MSG_TYPE_TXT;
 }
 
-void NMEATXTMessage::log() {
+void NMEATXTMessage::log() const {
     logger << logDebugNMEA << talker << " TXT: TotalSentences " << totalSentences << " Sentence "
            << sentenceNumber << " TextId " << textIdentifier << " " << text << eol;
 }

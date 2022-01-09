@@ -77,11 +77,11 @@ bool NMEAGGAMessage::parse(NMEALine &nmeaLine) {
     return true;
 }
 
-enum NMEAMsgType NMEAGGAMessage::type() {
+enum NMEAMsgType NMEAGGAMessage::type() const {
     return NMEA_MSG_TYPE_GGA;
 }
 
-void NMEAGGAMessage::log() {
+void NMEAGGAMessage::log() const {
     logger << logDebugNMEA << talker << " GGA: " << time << " " << latitude << " " << longitude
            << " " << gpsQuality << " " << numberSatellites << " " << horizontalDilutionOfPrecision
            << " " << antennaAltitude << "m " << geoidalSeparation << "m";

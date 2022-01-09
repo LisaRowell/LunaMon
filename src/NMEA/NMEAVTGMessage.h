@@ -19,8 +19,8 @@ class NMEAVTGMessage : public NMEAMessage {
     public:
         NMEAVTGMessage(NMEATalker &talker);
         bool parse(NMEALine &nmeaLine);
-        virtual enum NMEAMsgType type() override;
-        virtual void log() override;
+        virtual enum NMEAMsgType type() const override;
+        virtual void log() const override;
 
     friend class NMEADataModelBridge;
 };

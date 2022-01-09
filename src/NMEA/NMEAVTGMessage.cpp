@@ -89,11 +89,11 @@ bool NMEAVTGMessage::parse(NMEALine &nmeaLine) {
     return true;
 }
 
-enum NMEAMsgType NMEAVTGMessage::type() {
+enum NMEAMsgType NMEAVTGMessage::type() const {
     return NMEA_MSG_TYPE_VTG;
 }
 
-void NMEAVTGMessage::log() {
+void NMEAVTGMessage::log() const {
     logger << logDebugNMEA << talker << " VTG: " << trackMadeGood << " " << courseOverGroundMagnetic
            << " " << speedOverGround << "kn " << speedOverGroundKm2 << "km/h";
 

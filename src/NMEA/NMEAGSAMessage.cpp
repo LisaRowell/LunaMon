@@ -59,11 +59,11 @@ bool NMEAGSAMessage::parse(NMEALine &nmeaLine) {
     return true;
 }
 
-enum NMEAMsgType NMEAGSAMessage::type() {
+enum NMEAMsgType NMEAGSAMessage::type() const {
     return NMEA_MSG_TYPE_GSA;
 }
 
-void NMEAGSAMessage::log() {
+void NMEAGSAMessage::log() const {
     logger << logDebugNMEA << talker << " GSA: ";
 
     if (automaticMode) {

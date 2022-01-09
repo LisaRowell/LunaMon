@@ -45,11 +45,11 @@ bool NMEAGSVMessage::parse(NMEALine &nmeaLine) {
     return true;
 }
 
-enum NMEAMsgType NMEAGSVMessage::type() {
+enum NMEAMsgType NMEAGSVMessage::type() const {
     return NMEA_MSG_TYPE_GSV;
 }
 
-void NMEAGSVMessage::log() {
+void NMEAGSVMessage::log() const {
     logger << logDebugNMEA << talker << " GSV: " << sentenceNumber << " of " << sentencesInGroup
            << " Satelllites " << numberSatellites;
 

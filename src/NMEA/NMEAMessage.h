@@ -15,8 +15,8 @@ class NMEAMessage {
     public:
         NMEAMessage(NMEATalker &talker);
         NMEATalker source() const;
-        virtual enum NMEAMsgType type() = 0;
-        virtual void log() = 0;
+        virtual enum NMEAMsgType type() const = 0;
+        virtual void log() const = 0;
 };
 
 NMEAMessage *parseNMEAMessage(NMEALine &nmeaLine);

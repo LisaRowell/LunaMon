@@ -70,11 +70,11 @@ bool NMEARMCMessage::parse(NMEALine &nmeaLine) {
     return true;
 }
 
-enum NMEAMsgType NMEARMCMessage::type() {
+enum NMEAMsgType NMEARMCMessage::type() const {
     return NMEA_MSG_TYPE_RMC;
 }
 
-void NMEARMCMessage::log() {
+void NMEARMCMessage::log() const {
     logger << logDebugNMEA << talker << " RMC: " << time << " " << dataValid << " " << latitude
            << " " << longitude << " " << speedOverGround << "kn " << trackMadeGood << " " << date
            << " " << magneticVariation;

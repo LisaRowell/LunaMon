@@ -42,7 +42,7 @@ bool NMEAVDMVDOMessage::parse(NMEALine &nmeaLine) {
     return true;
 }
 
-enum NMEAMsgType NMEAVDMVDOMessage::type() {
+enum NMEAMsgType NMEAVDMVDOMessage::type() const {
     return msgType;
 }
 
@@ -50,7 +50,7 @@ const char *NMEAVDMVDOMessage::msgTypeName() const {
     return nmeaMsgTypeName(msgType);
 }
 
-void NMEAVDMVDOMessage::log() {
+void NMEAVDMVDOMessage::log() const {
     logger << logDebugNMEA << talker << " " << msgTypeName() << ": " << fragmentNumber << " of "
            << totalFragments << " Msg Id " << messageId << " Channel " << radioChannelCode << eol;
 }

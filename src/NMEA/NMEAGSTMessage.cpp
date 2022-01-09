@@ -67,11 +67,11 @@ bool NMEAGSTMessage::parse(NMEALine &nmeaLine) {
     return true;
 }
 
-enum NMEAMsgType NMEAGSTMessage::type() {
+enum NMEAMsgType NMEAGSTMessage::type() const {
     return NMEA_MSG_TYPE_GST;
 }
 
-void NMEAGSTMessage::log() {
+void NMEAGSTMessage::log() const {
     logger << logDebugNMEA << talker << " GST: " << time << " SD of Range of Inputs RMS "
            << standardDeviationOfRangeInputsRMS << " SD of Semi-Major Axis "
            << standardDeviationOfSemiMajorAxis << "m SD of Semi-Minor Axis "

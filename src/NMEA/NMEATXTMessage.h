@@ -15,8 +15,8 @@ class NMEATXTMessage : public NMEAMessage {
     public:
         NMEATXTMessage(NMEATalker &talker);
         bool parse(NMEALine &nmeaLine);
-        virtual enum NMEAMsgType type() override;
-        virtual void log() override;
+        virtual enum NMEAMsgType type() const override;
+        virtual void log() const override;
 };
 
 extern NMEATXTMessage *parseNMEATXTMessage(NMEATalker &talker, NMEALine &nmeaLine);

@@ -52,11 +52,11 @@ bool NMEAGLLMessage::parse(NMEALine &nmeaLine) {
     return true;
 }
 
-enum NMEAMsgType NMEAGLLMessage::type() {
+enum NMEAMsgType NMEAGLLMessage::type() const {
     return NMEA_MSG_TYPE_GLL;
 }
 
-void NMEAGLLMessage::log() {
+void NMEAGLLMessage::log() const {
     logger << logDebugNMEA << talker << " GLL: " << latitude << " " << longitude << " " << time
            << " " << dataValid;
     if (faaModeIndicator.hasValue()) {
