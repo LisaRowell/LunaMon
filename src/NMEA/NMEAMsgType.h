@@ -11,9 +11,11 @@ enum NMEAMsgType {
     NMEA_MSG_TYPE_RMC,
     NMEA_MSG_TYPE_TXT,
     NMEA_MSG_TYPE_VDM,
+    NMEA_MSG_TYPE_VDO,
     NMEA_MSG_TYPE_VTG
 };
 
 enum NMEAMsgType parseNMEAMsgType(String &msgTypeStr);
+const char *nmeaMsgTypeName(NMEAMsgType msgType);
 
 #endif

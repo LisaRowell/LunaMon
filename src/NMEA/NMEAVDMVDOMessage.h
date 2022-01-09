@@ -1,5 +1,5 @@
-#ifndef NMEA_VDM_MESSAGE_H
-#define NMEA_VDM_MESSAGE_H
+#ifndef NMEA_VDMVDO_MESSAGE_H
+#define NMEA_VDMVDO_MESSAGE_H
 
 #include "NMEAMessage.h"
 #include "NMEAUInt8.h"
@@ -9,22 +9,27 @@
 #include "NMEALine.h"
 #include "NMEAMsgType.h"
 
-class NMEAVDMMessage : public NMEAMessage {
+class NMEAVDMVDOMessage : public NMEAMessage {
     private:
+        NMEAMsgType msgType;
         NMEAUInt8 totalFragments;
         NMEAUInt8 fragmentNumber;
         NMEAUInt16 messageId;
         NMEARadioChannelCode radioChannelCode;
 
+        const char *msgTypeName() const;
+
     public:
-        NMEAVDMMessage(NMEATalker &talker);
+        NMEAVDMVDOMessage(NMEATalker &talker, NMEAMsgType &msgType);
         bool parse(NMEALine &nmeaLine);
         virtual enum NMEAMsgType type() override;
         virtual void log() override;
+        bool isOwnShip() const;
 
     friend class NMEADataModelBridge;
 };
 
-extern NMEAVDMMessage *parseNMEAVDMMessage(NMEATalker &talker, NMEALine &nmeaLine);
+extern NMEAVDMVDOMessage *parseNMEAVDMVDOMessage(NMEATalker &talker, NMEAMsgType &msgType,
+                                                 NMEALine &nmeaLine);
 
 #endif

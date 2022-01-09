@@ -10,10 +10,12 @@
 #include "NMEA/NMEAGSTMessage.h"
 #include "NMEA/NMEAGSVMessage.h"
 #include "NMEA/NMEARMCMessage.h"
-#include "NMEA/NMEAVDMMessage.h"
+#include "NMEA/NMEAVDMVDOMessage.h"
 #include "NMEA/NMEAVTGMessage.h"
 
 #include "DataModel/DataModel.h"
+
+#include "Util/Logger.h"
 
 void NMEADataModelBridge::processMessage(NMEAMessage *message) {
     // Add a filter here so that messages with redundant content are having their content sent
@@ -46,14 +48,15 @@ void NMEADataModelBridge::processMessage(NMEAMessage *message) {
         case NMEA_MSG_TYPE_GSV:
         case NMEA_MSG_TYPE_TXT:
         case NMEA_MSG_TYPE_VDM:
+        case NMEA_MSG_TYPE_VDO:
             // Currently not output to clients.
             logger << logDebugNMEADataModelBridge << "Ignoring " << message->source() << " "
-                   << msgType << " message in NMEA->Data Model Bridge" << eol;
+                   << nmeaMsgTypeName(msgType) << " message in NMEA->Data Model Bridge" << eol;
             break;
 
         default:
-            logger << logWarning << "Unhandled " << message->source() << " " << msgType
-                   << " message in NMEA->Data Model Bridge" << eol;
+            logger << logWarning << "Unhandled " << message->source() << " "
+                   << nmeaMsgTypeName(msgType) << " message in NMEA->Data Model Bridge" << eol;
             break;
     }
 }

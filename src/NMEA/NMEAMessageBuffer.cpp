@@ -9,7 +9,7 @@
 #include "NMEAGSVMessage.h"
 #include "NMEARMCMessage.h"
 #include "NMEATXTMessage.h"
-#include "NMEAVDMMessage.h"
+#include "NMEAVDMVDOMessage.h"
 #include "NMEAVTGMessage.h"
 
 #define MAX(a,b) (((a)>(b))?(a):(b))
@@ -18,7 +18,7 @@
 (MAX(MAX(MAX(MAX(sizeof(NMEAGGAMessage), sizeof(NMEAGSAMessage)), \
              MAX(sizeof(NMEAGLLMessage), sizeof(NMEAGSTMessage))), \
          MAX(MAX(sizeof(NMEAGSVMessage), sizeof(NMEARMCMessage)), \
-             MAX(sizeof(NMEATXTMessage), sizeof(NMEAVDMMessage)))), \
+             MAX(sizeof(NMEATXTMessage), sizeof(NMEAVDMVDOMessage)))), \
      sizeof(NMEAVTGMessage)))
 
 uint8_t nmeaMessageBuffer[NMEA_MESSAGE_BUFFER_SIZE];
