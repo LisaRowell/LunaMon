@@ -2,8 +2,11 @@
 #define WIFI_MANAGER_H
 
 #include "WiFiManagerClient.h"
+
 #include "Util/PassiveTimer.h"
 #include "Util/TimeConstants.h"
+
+#include <Arduino.h>
 
 class WiFiManager {
     private:

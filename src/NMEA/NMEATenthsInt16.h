@@ -9,6 +9,8 @@
 #include "Util/LoggableItem.h"
 #include "Util/Logger.h"
 
+#include <Arduino.h>
+
 class NMEATenthsInt16 : public LoggableItem {
     private:
         int16_t integer;

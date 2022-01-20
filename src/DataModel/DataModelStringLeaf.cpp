@@ -1,6 +1,6 @@
-#include <Arduino.h>
-
 #include "DataModelStringLeaf.h"
+
+#include <Arduino.h>
 
 DataModelStringLeaf::DataModelStringLeaf(const char *name, DataModelElement *parent, size_t length)
     : DataModelRetainedValueLeaf(name, parent), maxLength(length) {

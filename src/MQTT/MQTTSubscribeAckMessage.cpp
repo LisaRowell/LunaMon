@@ -1,8 +1,7 @@
 #include "MQTTSubscribeAckMessage.h"
+#include "MQTTUtil.h"
 
 #include <Arduino.h>
-
-#include "MQTTUtil.h"
 
 bool sendMQTTSubscribeAckMessage(MQTTConnection *connection, uint16_t packetId,
                                  uint8_t numberResults, uint8_t *results) {

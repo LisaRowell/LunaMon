@@ -1,10 +1,10 @@
-#include <Arduino.h>
-
 #include "NMEAHundredthsUInt8.h"
 
 #include "Util/Logger.h"
 #include "Util/CharacterTools.h"
 #include "Util/StringTools.h"
+
+#include <Arduino.h>
 
 bool NMEAHundredthsUInt8::set(const String &decimalStr) {
     const unsigned length = decimalStr.length();

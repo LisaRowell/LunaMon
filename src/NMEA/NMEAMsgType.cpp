@@ -1,8 +1,8 @@
-#include <Arduino.h>
-
 #include "NMEAMsgType.h"
 
 #include "Util/Error.h"
+
+#include <Arduino.h>
 
 enum NMEAMsgType parseNMEAMsgType(String &msgTypeStr) {
     if (msgTypeStr == "GGA") {

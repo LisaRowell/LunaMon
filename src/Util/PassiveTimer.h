@@ -1,6 +1,8 @@
 #ifndef PASSIVE_TIMER_H
 #define PASSIVE_TIMER_H
 
+#include <Arduino.h>
+
 class PassiveTimer {
     private:
         const uint32_t halfMilliTimerRange = 0x80000000;

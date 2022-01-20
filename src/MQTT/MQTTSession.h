@@ -1,14 +1,15 @@
 #ifndef MQTT_SESSION_H
 #define MQTT_SESSION_H
 
-#include <WiFiNINA.h>
-
 #include "MQTTConnection.h"
 #include "MQTTString.h"
 
 #include "DataModel/DataModelSubscriber.h"
 
 #include "Util/PassiveTimer.h"
+
+#include <Arduino.h>
+#include <WiFiNINA.h>
 
 //
 // MQTTSession

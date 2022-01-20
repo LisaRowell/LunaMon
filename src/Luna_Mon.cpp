@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "NMEA/NMEASource.h"
 
 #include "WiFiManager/WiFiManager.h"
@@ -15,6 +13,8 @@
 #include "StatsManager/StatsManager.h"
 
 #include "Util/TimeConstants.h"
+
+#include <Arduino.h>
 
 StatsManager statsManager;
 NMEASource usbSerialNMEASource(Serial, usbNMEAMessages, usbNMEAMessageRate, statsManager);

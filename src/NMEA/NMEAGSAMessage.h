@@ -1,8 +1,6 @@
 #ifndef NMEA_GSA_MESSAGE_H
 #define NMEA_GSA_MESSAGE_H
 
-#include <Arduino.h>
-
 #include "NMEAMessage.h"
 #include "NMEAGPSFixMode.h"
 #include "NMEAUInt16.h"

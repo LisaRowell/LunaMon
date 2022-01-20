@@ -1,10 +1,11 @@
-#include <Arduino.h>
-
 #include "DataModelRoot.h"
 #include "DataModel.h"
 #include "DataModelNode.h"
 #include "DataModelElement.h"
+
 #include "Util/Logger.h"
+
+#include <Arduino.h>
 
 DataModelRoot::DataModelRoot(DataModelElement **children) : DataModelNode(NULL, NULL, children) {
 }

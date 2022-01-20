@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "NMEARMCMessage.h"
 #include "NMEATime.h"
 #include "NMEADataValid.h"
@@ -16,6 +14,8 @@
 
 #include "Util/PlacementNew.h"
 #include "Util/Logger.h"
+
+#include <Arduino.h>
 
 NMEARMCMessage::NMEARMCMessage(NMEATalker &talker) : NMEAMessage(talker) {
 }

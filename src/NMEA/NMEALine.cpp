@@ -1,8 +1,9 @@
-#include <Arduino.h>
+#include "NMEALine.h"
 
 #include "Util/CharacterTools.h"
-#include "NMEALine.h"
 #include "Util/Logger.h"
+
+#include <Arduino.h>
 
 NMEALine::NMEALine() {
     overflowed = false;

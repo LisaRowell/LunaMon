@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "NMEALongitude.h"
 #include "NMEALine.h"
 #include "NMEATalker.h"
@@ -7,6 +5,8 @@
 #include "DataModel/DataModelLeaf.h"
 
 #include "Util/Logger.h"
+
+#include <Arduino.h>
 
 bool NMEALongitude::set(const String &string, const String &eastOrWestStr) {
     if (string.length() < 5) {

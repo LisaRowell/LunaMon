@@ -1,6 +1,5 @@
-#include <Arduino.h>
-
 #include "MQTTPingRequestMessage.h"
+
 #include "Util/Logger.h"
 
 MQTTPingRequestMessage::MQTTPingRequestMessage(MQTTMessage const &message) : MQTTMessage(message) {

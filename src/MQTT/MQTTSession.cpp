@@ -1,10 +1,12 @@
-#include <Arduino.h>
-
 #include "MQTTSession.h"
 #include "MQTTPublishMessage.h"
 #include "MQTTBroker.h"
+
 #include "DataModel/DataModel.h"
+
 #include "Util/Logger.h"
+
+#include <Arduino.h>
 
 bool MQTTSession::isConnected() const {
     return connection != NULL;

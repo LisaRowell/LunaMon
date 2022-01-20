@@ -1,8 +1,6 @@
 #ifndef DATA_MODEL_H
 #define DATA_MODEL_H
 
-#include <Arduino.h>
-
 #include "DataModelNode.h"
 #include "DataModelRoot.h"
 #include "DataModelUInt32Leaf.h"
@@ -16,6 +14,8 @@
 #include "StatsManager/StatsManager.h"
 
 #include "Util/IPAddressTools.h"
+
+#include <Arduino.h>
 
 const size_t maxTCPPortTextLength = 5;
 const size_t maxConnectionDescriptionLength =

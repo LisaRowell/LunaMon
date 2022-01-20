@@ -1,13 +1,15 @@
 #ifndef MQTT_BROKER_H
 #define MQTT_BROKER_H
 
-#include <WiFiNINA.h>
-
-#include "WiFiManager/WiFiManagerClient.h"
-#include "WiFiManager/WiFiManager.h"
 #include "MQTTConnection.h"
 #include "MQTTSession.h"
 #include "MQTTMessage.h"
+
+#include "WiFiManager/WiFiManagerClient.h"
+#include "WiFiManager/WiFiManager.h"
+
+#include <Arduino.h>
+#include <WiFiNINA.h>
 
 const unsigned maxMQTTSessions = 5;
 

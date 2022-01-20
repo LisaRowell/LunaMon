@@ -1,9 +1,9 @@
 #ifndef DATA_MODEL_STRING_LEAF_H
 #define DATA_MODEL_STRING_LEAF_H
 
-#include <Arduino.h>
-
 #include "DataModelRetainedValueLeaf.h"
+
+#include <Arduino.h>
 
 class DataModelStringLeaf : public DataModelRetainedValueLeaf {
    private:

@@ -1,12 +1,12 @@
 #ifndef STATS_MANAGER_H
 #define STATS_MANAGER_H
 
-#include <Arduino.h>
-#include <Array.h>
-
 #include "StatsHolder.h"
 
 #include "Util/PassiveTimer.h"
+
+#include <Arduino.h>
+#include <Array.h>
 
 class StatsManager {
     private:

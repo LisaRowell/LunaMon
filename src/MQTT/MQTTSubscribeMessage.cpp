@@ -1,9 +1,10 @@
-#include <Arduino.h>
-
 #include "MQTTSubscribeMessage.h"
 #include "MQTTMessage.h"
-#include "Util/Logger.h"
 #include "MQTTString.h"
+
+#include "Util/Logger.h"
+
+#include <Arduino.h>
 
 MQTTSubscribeMessage::MQTTSubscribeMessage(MQTTMessage const &message) : MQTTMessage(message) {
 }

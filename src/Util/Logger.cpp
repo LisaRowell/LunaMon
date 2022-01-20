@@ -1,10 +1,10 @@
-#include <Arduino.h>
-
 #include "Logger.h"
 #include "LoggableItem.h"
 #include "Error.h"
 
 #include "MQTT/MQTTString.h"
+
+#include <Arduino.h>
 
 Logger logger(LOGGER_LEVEL_WARNING, Serial);
 

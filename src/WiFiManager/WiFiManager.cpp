@@ -1,12 +1,14 @@
-#include <Arduino.h>
-#include <WiFiNINA.h>
-
 #include "WiFiManager.h"
 #include "WiFiManagerClient.h"
+
 #include "Config.h"
+
 #include "Util/PassiveTimer.h"
 #include "Util/Error.h"
 #include "Util/Logger.h"
+
+#include <Arduino.h>
+#include <WiFiNINA.h>
 
 WiFiManager::WiFiManager() : connectionState(WIFI_CONNECTION_NEVER), numberClients(0) {
 }

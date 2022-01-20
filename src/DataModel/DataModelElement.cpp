@@ -1,8 +1,9 @@
-#include <Arduino.h>
-
 #include "DataModelElement.h"
 #include "DataModel.h"
+
 #include "Util/Logger.h"
+
+#include "Arduino.h"
 
 DataModelElement::DataModelElement(const char *name, DataModelElement *parent)
     : name(name), parent(parent) {

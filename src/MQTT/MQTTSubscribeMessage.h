@@ -4,6 +4,8 @@
 #include "MQTTMessage.h"
 #include "MQTTString.h"
 
+#include <Arduino.h>
+
 struct MQTTSubscribeVariableHeader {
     uint8_t packetIdMSB;
     uint8_t packetIdLSB;

@@ -1,6 +1,3 @@
-#include <Arduino.h>
-#include <WiFiNINA.h>
-
 #include "MQTTConnection.h"
 #include "MQTTMessage.h"
 
@@ -8,6 +5,9 @@
 
 #include "Util/IPAddressTools.h"
 #include "Util/Logger.h"
+
+#include <Arduino.h>
+#include <WiFiNINA.h>
 
 void MQTTConnection::begin(WiFiClient &wifiClient) {
     this->wifiClient = wifiClient;

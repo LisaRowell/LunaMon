@@ -1,11 +1,11 @@
-#include <Arduino.h>
-
 #include "NMEADate.h"
 
 #include "Config.h"
 
 #include "Util/StringTools.h"
 #include "Util/Logger.h"
+
+#include <Arduino.h>
 
 bool NMEADate::set(const String &dateStr) {
     const unsigned length = dateStr.length();

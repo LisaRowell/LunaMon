@@ -1,10 +1,10 @@
-#include <Arduino.h>
-
 #include "NMEADirection.h"
 
 #include "Util/CharacterTools.h"
 #include "Util/StringTools.h"
 #include "Util/Logger.h"
+
+#include <Arduino.h>
 
 bool NMEADirection::set(const String &headingStr, bool optional) {
     const unsigned length = headingStr.length();

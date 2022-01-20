@@ -1,8 +1,6 @@
 #ifndef NMEA_DATE_H
 #define NMEA_DATE_H
 
-#include <Arduino.h>
-
 #include "NMEA/NMEALine.h"
 #include "NMEA/NMEATalker.h"
 
@@ -10,6 +8,8 @@
 
 #include "Util/Logger.h"
 #include "Util/LoggableItem.h"
+
+#include <Arduino.h>
 
 class NMEADate : public LoggableItem {
     private:

@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "NMEAGGAMessage.h"
 #include "NMEATime.h"
 #include "NMEADataValid.h"

@@ -1,6 +1,8 @@
 #ifndef STRING_TOOLS_H
 #define STRING_TOOLS_H
 
+#include <Arduino.h>
+
 extern bool extractUInt32FromString(const String &string, unsigned start, unsigned end,
                                     uint32_t &value);
 extern bool extractUInt16FromString(const String &string, unsigned start, unsigned end,

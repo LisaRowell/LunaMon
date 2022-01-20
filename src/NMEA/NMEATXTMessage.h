@@ -5,6 +5,8 @@
 #include "NMEATalker.h"
 #include "NMEALine.h"
 
+#include <Arduino.h>
+
 class NMEATXTMessage : public NMEAMessage {
     private:
         uint8_t totalSentences;

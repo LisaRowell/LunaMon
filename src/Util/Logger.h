@@ -1,13 +1,13 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include <Arduino.h>
-
 #include "LoggableItem.h"
 
 #include "DataModel/DataModel.h"
 
 #include "MQTT/MQTTString.h"
+
+#include <Arduino.h>
 
 enum LoggerModule {
     LOGGER_MODULE_DATA_MODEL,

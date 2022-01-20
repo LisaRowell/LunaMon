@@ -1,10 +1,10 @@
-#include <Arduino.h>
-
 #include "NMEAMagneticVariation.h"
 
 #include "Util/CharacterTools.h"
 #include "Util/StringTools.h"
 #include "Util/Logger.h"
+
+#include <Arduino.h>
 
 bool NMEAMagneticVariation::set(const String &directionStr, const String &eastOrWestStr) {
     const unsigned directionLength = directionStr.length();

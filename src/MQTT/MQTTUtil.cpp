@@ -1,6 +1,6 @@
-#include <Arduino.h>
-
 #include "MQTTUtil.h"
+
+#include <Arduino.h>
 
 bool mqttWriteRemainingLength(MQTTConnection *connection, uint32_t remainingLength) {
     do {

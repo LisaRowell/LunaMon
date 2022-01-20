@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "NMEAGSAMessage.h"
 #include "NMEAGPSFixMode.h"
 #include "NMEATalker.h"
@@ -9,6 +7,8 @@
 #include "Util/StringTools.h"
 #include "Util/PlacementNew.h"
 #include "Util/Logger.h"
+
+#include <Arduino.h>
 
 NMEAGSAMessage::NMEAGSAMessage(NMEATalker &talker) : NMEAMessage(talker) {
 }

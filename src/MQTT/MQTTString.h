@@ -1,6 +1,8 @@
 #ifndef MQTT_STRING_H
 #define MQTT_STRING_H
 
+#include <Arduino.h>
+
 class Logger;
 
 class MQTTString {

@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "NMEAVDMVDOMessage.h"
 #include "NMEATalker.h"
 #include "NMEALine.h"

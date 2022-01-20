@@ -1,8 +1,6 @@
 #ifndef NMEA_DATA_MODEL_BRIDGE_H
 #define NMEA_DATA_MODEL_BRIDGE_H
 
-#include <Arduino.h>
-
 #include "NMEA/NMEAMessageHandler.h"
 #include "NMEA/NMEAGGAMessage.h"
 #include "NMEA/NMEAGLLMessage.h"
@@ -16,6 +14,8 @@
 #include "StatsManager/StatsManager.h"
 
 #include "Util/PassiveTimer.h"
+
+#include <Arduino.h>
 
 class NMEADataModelBridge : public NMEAMessageHandler, public StatsHolder {
     private:

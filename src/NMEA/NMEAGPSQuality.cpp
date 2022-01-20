@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "NMEAGPSQuality.h"
 #include "NMEALine.h"
 #include "NMEATalker.h"
@@ -8,6 +6,8 @@
 
 #include "Util/CharacterTools.h"
 #include "Util/Logger.h"
+
+#include <Arduino.h>
 
 bool NMEAGPSQuality::set(String &gpsQualityStr) {
     if (gpsQualityStr.length() != 1) {

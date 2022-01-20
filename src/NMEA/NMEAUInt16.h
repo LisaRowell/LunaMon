@@ -9,6 +9,8 @@
 #include "Util/LoggableItem.h"
 #include "Util/Logger.h"
 
+#include <Arduino.h>
+
 class NMEAUInt16 : public LoggableItem {
     private:
         uint16_t value;

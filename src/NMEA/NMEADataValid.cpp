@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "NMEADataValid.h"
 #include "NMEALine.h"
 #include "NMEATalker.h"
@@ -7,6 +5,8 @@
 #include "DataModel/DataModelLeaf.h"
 
 #include "Util/Logger.h"
+
+#include <Arduino.h>
 
 NMEADataValid::NMEADataValid() : valid(false) {
 }

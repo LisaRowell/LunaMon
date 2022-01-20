@@ -3,6 +3,8 @@
 
 #include "DataModelLeaf.h"
 
+#include <Arduino.h>
+
 class DataModelRetainedValueLeaf : public DataModelLeaf {
    private:
     bool hasBeenSet;

@@ -6,6 +6,8 @@
 #include "Util/LoggableItem.h"
 #include "Util/Logger.h"
 
+#include <Arduino.h>
+
 class NMEAFAAModeIndicator : public LoggableItem {
     private:
         enum FAAMode {

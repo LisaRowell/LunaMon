@@ -10,6 +10,8 @@
 #include "Util/LoggableItem.h"
 #include "Util/Logger.h"
 
+#include <Arduino.h>
+
 enum NorthOrSouth {
     NORTH,
     SOUTH

@@ -1,9 +1,10 @@
-#include <Arduino.h>
-
 #include "MQTTConnectMessage.h"
 #include "MQTTMessage.h"
 #include "MQTTConnectAckMessage.h"
+
 #include "Util/Logger.h"
+
+#include <Arduino.h>
 
 MQTTConnectMessage::MQTTConnectMessage(MQTTMessage const &message) : MQTTMessage(message) {
 }

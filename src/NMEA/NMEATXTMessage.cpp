@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "NMEATXTMessage.h"
 #include "NMEAMsgType.h"
 #include "NMEAMessage.h"
@@ -10,6 +8,8 @@
 #include "Util/PlacementNew.h"
 #include "Util/StringTools.h"
 #include "Util/Logger.h"
+
+#include <Arduino.h>
 
 NMEATXTMessage::NMEATXTMessage(NMEATalker &talker) : NMEAMessage(talker) {
 }

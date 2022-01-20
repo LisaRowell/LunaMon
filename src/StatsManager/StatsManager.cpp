@@ -1,6 +1,3 @@
-#include <Arduino.h>
-#include <Array.h>
-
 #include "StatsManager.h"
 #include "StatsHolder.h"
 
@@ -8,6 +5,9 @@
 #include "Util/TimeConstants.h"
 #include "Util/Logger.h"
 #include "Util/Error.h"
+
+#include <Arduino.h>
+#include <Array.h>
 
 StatsManager::StatsManager() : statsHolders() {
     lastHarvestTime.setNow();

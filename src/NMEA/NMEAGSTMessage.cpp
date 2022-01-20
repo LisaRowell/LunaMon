@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "NMEAGSTMessage.h"
 #include "NMEAMsgType.h"
 #include "NMEATalker.h"

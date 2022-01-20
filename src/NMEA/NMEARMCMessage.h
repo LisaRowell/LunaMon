@@ -2,7 +2,6 @@
 #define NMEA_RMC_MESSAGE_H
 
 #include "NMEAMessage.h"
-
 #include "NMEATime.h"
 #include "NMEADataValid.h"
 #include "NMEALatitude.h"

@@ -3,6 +3,8 @@
 
 #include "DataModelNode.h"
 
+#include <Arduino.h>
+
 class DataModelRoot : public DataModelNode {
     private:
         bool checkTopicFilterValidity(const char *topicFilter);

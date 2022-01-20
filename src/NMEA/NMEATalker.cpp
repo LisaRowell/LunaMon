@@ -1,9 +1,9 @@
-#include <Arduino.h>
-
 #include "NMEATalker.h"
 
 #include "Util/Logger.h"
 #include "Util/Error.h"
+
+#include <Arduino.h>
 
 typedef struct {
     const char code[3];

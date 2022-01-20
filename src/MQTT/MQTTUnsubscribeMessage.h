@@ -1,10 +1,10 @@
 #ifndef MQTT_UNSUBSCRIBE_MESSAGE_H
 #define MQTT_UNSUBSCRIBE_MESSAGE_H
 
-#include <Arduino.h>
-
 #include "MQTTMessage.h"
 #include "MQTTString.h"
+
+#include <Arduino.h>
 
 struct MQTTUnsubscribeVariableHeader {
     uint8_t packetIdMSB;

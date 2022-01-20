@@ -3,6 +3,8 @@
 
 #include "MQTTConnection.h"
 
+#include <Arduino.h>
+
 #define MQTT_CONNACK_ACCEPTED                     0x00
 #define MQTT_CONNACK_REFUSED_PROTOCOL_VERSION     0x01
 #define MQTT_CONNACK_REFUSED_IDENTIFIER_REJECTED  0x02

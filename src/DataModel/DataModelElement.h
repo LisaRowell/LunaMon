@@ -3,6 +3,8 @@
 
 #include "DataModelSubscriber.h"
 
+#include <Arduino.h>
+
 const unsigned maxDataModelSubscribers = 5;
 
 class DataModelElement {

@@ -1,8 +1,9 @@
-#include <Arduino.h>
-
 #include "MQTTMessage.h"
 #include "MQTTString.h"
+
 #include "Util/Error.h"
+
+#include <Arduino.h>
 
 MQTTMessage::MQTTMessage() : fixedHeader(NULL), length(0), fixedHdrSize(0), bytesAfterFixedHdr(0) {
 }
@@ -17,7 +18,8 @@ MQTTMessage::MQTTMessage(uint8_t *messageData, uint32_t messageLength) :
 }
 
 MQTTMessageType MQTTMessage::messageType() const {
-    uint8_t typeValue = (MQTTMessageType)(fixedHeader->typeAndFlags & MQTT_MSG_TYPE_MASK) >> MQTT_MSG_TYPE_SHIFT;
+    uint8_t typeValue =
+        (MQTTMessageType)(fixedHeader->typeAndFlags & MQTT_MSG_TYPE_MASK) >> MQTT_MSG_TYPE_SHIFT;
     return (MQTTMessageType)typeValue;
 }
 

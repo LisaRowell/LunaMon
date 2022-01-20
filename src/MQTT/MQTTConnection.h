@@ -1,11 +1,12 @@
 #ifndef MQTT_CONNECTION_H
 #define MQTT_CONNECTION_H
 
-#include <WiFiNINA.h>
-
 #include "MQTTMessage.h"
 
 #include "DataModel/DataModelStringLeaf.h"
+
+#include <Arduino.h>
+#include <WiFiNINA.h>
 
 class MQTTSession;
 

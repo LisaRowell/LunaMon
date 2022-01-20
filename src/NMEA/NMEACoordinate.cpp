@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "NMEACoordinate.h"
 
 #include "DataModel/DataModelLeaf.h"
@@ -7,8 +5,10 @@
 #include "Util/CharacterTools.h"
 #include "Util/StringTools.h"
 
+#include <Arduino.h>
+
 bool NMEACoordinate::setDegrees(const String &string, unsigned startDegrees, unsigned endDegrees,
-                            uint8_t maxDegrees) {
+                                uint8_t maxDegrees) {
     if (!extractUInt8FromString(string, startDegrees, endDegrees, degrees, maxDegrees)) {
         return false;
     }

@@ -1,10 +1,10 @@
-#include <Arduino.h>
-
 #include "NMEAUInt8.h"
 
 #include "Util/Logger.h"
 #include "Util/CharacterTools.h"
 #include "Util/StringTools.h"
+
+#include <Arduino.h>
 
 bool NMEAUInt8::set(const String &valueStr, bool optional, uint8_t maxValue) {
     const unsigned length = valueStr.length();

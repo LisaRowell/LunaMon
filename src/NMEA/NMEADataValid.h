@@ -9,6 +9,8 @@
 #include "Util/LoggableItem.h"
 #include "Util/Logger.h"
 
+#include <Arduino.h>
+
 class NMEADataValid : public LoggableItem {
     private:
         bool valid;

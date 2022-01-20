@@ -1,8 +1,9 @@
-#include <Arduino.h>
-
 #include "MQTTDisconnectMessage.h"
 #include "MQTTMessage.h"
+
 #include "Util/Logger.h"
+
+#include <Arduino.h>
 
 MQTTDisconnectMessage::MQTTDisconnectMessage(MQTTMessage const &message) : MQTTMessage(message) {
 }

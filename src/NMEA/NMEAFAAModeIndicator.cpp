@@ -1,10 +1,10 @@
-#include <Arduino.h>
-
 #include "NMEAFAAModeIndicator.h"
 
 #include "DataModel/DataModelLeaf.h"
 
 #include "Util/Logger.h"
+
+#include <Arduino.h>
 
 NMEAFAAModeIndicator::NMEAFAAModeIndicator() : faaMode(FAA_MODE_NONE) {
 }

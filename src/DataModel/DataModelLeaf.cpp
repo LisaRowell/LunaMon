@@ -1,8 +1,9 @@
-#include <Arduino.h>
-
 #include "DataModelLeaf.h"
 #include "DataModel.h"
+
 #include "Util/Logger.h"
+
+#include <Arduino.h>
 
 DataModelLeaf::DataModelLeaf(const char *name, DataModelElement *parent)
     : DataModelElement(name, parent) {

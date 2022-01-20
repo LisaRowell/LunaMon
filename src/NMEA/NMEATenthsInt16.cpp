@@ -1,10 +1,10 @@
-#include <Arduino.h>
-
 #include "NMEATenthsInt16.h"
 
 #include "Util/Logger.h"
 #include "Util/CharacterTools.h"
 #include "Util/StringTools.h"
+
+#include <Arduino.h>
 
 bool NMEATenthsInt16::set(const String &decimalStr) {
     const unsigned length = decimalStr.length();

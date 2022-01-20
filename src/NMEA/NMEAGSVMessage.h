@@ -1,8 +1,6 @@
 #ifndef NMEA_GSV_MESSAGE_H
 #define NMEA_GSV_MESSAGE_H
 
-#include <Arduino.h>
-
 #include "NMEAMessage.h"
 #include "NMEAUInt8.h"
 #include "NMEAGSVSatelitteInfo.h"

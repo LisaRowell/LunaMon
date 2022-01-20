@@ -9,6 +9,8 @@
 #include "Util/LoggableItem.h"
 #include "Util/Logger.h"
 
+#include <Arduino.h>
+
 class NMEAHundredthsUInt8 : public LoggableItem {
     private:
         uint8_t wholeNumber;

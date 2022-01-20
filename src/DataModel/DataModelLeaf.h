@@ -3,6 +3,8 @@
 
 #include "DataModelElement.h"
 
+#include <Arduino.h>
+
 class DataModelLeaf : public DataModelElement {
     protected:
         DataModelSubscriber *subscribers[maxDataModelSubscribers];

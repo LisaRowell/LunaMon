@@ -1,6 +1,6 @@
-#include <Arduino.h>
-
 #include "Config.h"
+
+#include <Arduino.h>
 
 const char wifiSSID[] = "NETWORK_NAME";
 const char wifiPassword[] = "YOUR_PASSWORD";

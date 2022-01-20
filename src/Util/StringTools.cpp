@@ -1,7 +1,7 @@
-#include <Arduino.h>
-
 #include "StringTools.h"
 #include "CharacterTools.h"
+
+#include <Arduino.h>
 
 bool extractUInt32FromString(const String &string, unsigned start, unsigned end, uint32_t &value) {
     value = 0;

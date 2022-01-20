@@ -1,9 +1,9 @@
-#include <Arduino.h>
-
 #include "StatCounter.h"
 
 #include "Util/TimeConstants.h"
 #include "Util/Logger.h"
+
+#include <Arduino.h>
 
 StatCounter::StatCounter() : count(0), lastIntervalCount(0) {
 }

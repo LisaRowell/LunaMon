@@ -1,5 +1,7 @@
-#ifndef NMEALINE_H
-#define NMEALINE_H
+#ifndef NMEA_LINE_H
+#define NMEA_LINE_H
+
+#include <Arduino.h>
 
 const unsigned maxNMEALineLength = 82;
 

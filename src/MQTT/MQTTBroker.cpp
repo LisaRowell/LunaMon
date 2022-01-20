@@ -1,8 +1,4 @@
 #include "MQTTBroker.h"
-
-#include <Arduino.h>
-
-#include "DataModel/DataModel.h"
 #include "MQTTConnectAckMessage.h"
 #include "MQTTConnectMessage.h"
 #include "MQTTConnection.h"
@@ -16,11 +12,15 @@
 #include "MQTTPingRequestMessage.h"
 #include "MQTTPingResponseMessage.h"
 
+#include "DataModel/DataModel.h"
+
 #include "Util/StringTools.h"
 #include "Util/Error.h"
 #include "Util/Logger.h"
 
 #include "WiFiManager/WiFiManager.h"
+
+#include <Arduino.h>
 
 MQTTBroker::MQTTBroker()
         : wifiIsConnected(false), wifiServer(portNumber), dataModelDebugNeedsUpdating(false) {

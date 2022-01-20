@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "NMEALatitude.h"
 #include "NMEALine.h"
 #include "NMEATalker.h"
@@ -7,6 +5,8 @@
 #include "DataModel/DataModelLeaf.h"
 
 #include "Util/Logger.h"
+
+#include <Arduino.h>
 
 bool NMEALatitude::set(const String &string, const String &northOrSouthStr) {
     if (string.length() < 4) {

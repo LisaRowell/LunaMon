@@ -1,11 +1,11 @@
-#include <Arduino.h>
-
 #include "NMEAUInt16.h"
 
 #include "Util/Logger.h"
 #include "Util/CharacterTools.h"
 #include "Util/StringTools.h"
 #include "Util/Error.h"
+
+#include <Arduino.h>
 
 bool NMEAUInt16::set(const String &valueStr, bool optional, uint16_t maxValue) {
     const unsigned length = valueStr.length();

@@ -3,8 +3,7 @@
 
 #include "DataModel/DataModelLeaf.h"
 
-#include "Util/LoggableItem.h"
-#include "Util/Logger.h"
+#include <Arduino.h>
 
 class NMEACoordinate {
     protected:

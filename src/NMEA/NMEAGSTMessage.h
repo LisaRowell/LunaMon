@@ -1,8 +1,6 @@
 #ifndef NMEA_GST_MESSAGE_H
 #define NMEA_GST_MESSAGE_H
 
-#include <Arduino.h>
-
 #include "NMEAMessage.h"
 #include "NMEATime.h"
 #include "NMEATenthsUInt16.h"

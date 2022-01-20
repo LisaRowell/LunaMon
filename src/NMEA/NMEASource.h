@@ -1,8 +1,6 @@
 #ifndef NMEA_SOURCE_H
 #define NMEA_SOURCE_H
 
-#include <Arduino.h>
-
 #include "NMEALine.h"
 #include "NMEAMessageHandler.h"
 
@@ -13,6 +11,8 @@
 #include "StatsManager/StatsManager.h"
 
 #include "Util/PassiveTimer.h"
+
+#include <Arduino.h>
 
 class NMEASource : public StatsHolder {
     private:

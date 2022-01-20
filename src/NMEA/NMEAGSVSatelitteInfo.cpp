@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "NMEAGSVSatelitteInfo.h"
 #include "NMEALine.h"
 #include "NMEATalker.h"
@@ -9,6 +7,8 @@
 #include "NMEAUInt8.h"
 
 #include "Util/Logger.h"
+
+#include <Arduino.h>
 
 bool NMEAGSVSatelitteInfo::extract(NMEALine &nmeaLine, NMEATalker &talker, bool &endOfInput) {
     String idStr;

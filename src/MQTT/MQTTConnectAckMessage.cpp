@@ -1,10 +1,9 @@
 #include "MQTTConnectAckMessage.h"
-
-#include <Arduino.h>
-
 #include "MQTTConnection.h"
 #include "MQTTMessage.h"
 #include "MQTTUtil.h"
+
+#include <Arduino.h>
 
 bool sendMQTTConnectAckMessage(MQTTConnection *connection, bool sessionPresent,
                                uint8_t returnCode) {

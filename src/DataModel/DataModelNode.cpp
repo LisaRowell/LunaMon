@@ -1,7 +1,7 @@
-#include <Arduino.h>
-
 #include "DataModelNode.h"
 #include "DataModelElement.h"
+
+#include <Arduino.h>
 
 DataModelNode::DataModelNode(const char *name, DataModelElement *parent,
                              DataModelElement *children[])

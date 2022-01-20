@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "NMEASource.h"
 #include "NMEALine.h"
 #include "NMEAMessage.h"
@@ -14,6 +12,8 @@
 #include "Util/CharacterTools.h"
 #include "Util/Logger.h"
 #include "Util/Error.h"
+
+#include <Arduino.h>
 
 NMEASource::NMEASource(Stream &stream, DataModelLeaf &messageCountDataModelLeaf,
                        DataModelLeaf &messageRateDataModelLeaf, StatsManager &statsManager)

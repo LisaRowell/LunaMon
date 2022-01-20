@@ -3,6 +3,8 @@
 
 #include "MQTTString.h"
 
+#include <Arduino.h>
+
 struct MQTTFixedHeader {
     uint8_t typeAndFlags;
     uint8_t remainingLength[];

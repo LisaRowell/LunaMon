@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "NMEATime.h"
 #include "NMEALine.h"
 #include "NMEATalker.h"
@@ -8,6 +6,8 @@
 
 #include "Util/Logger.h"
 #include "Util/StringTools.h"
+
+#include <Arduino.h>
 
 bool NMEATime::set(const String &timeStr) {
     if (timeStr.length() < 6) {

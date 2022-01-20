@@ -1,8 +1,8 @@
-#include <Arduino.h>
-
-#include "TimeConstants.h"
 #include "PassiveTimer.h"
+#include "TimeConstants.h"
 #include "Error.h"
+
+#include <Arduino.h>
 
 void PassiveTimer::setMilliSeconds(uint32_t milliSeconds) {
     // The algorithm we use for detection of a timer end is designed for system uptimes greater than

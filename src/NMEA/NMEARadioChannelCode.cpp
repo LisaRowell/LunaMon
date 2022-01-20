@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "NMEARadioChannelCode.h"
 #include "NMEALine.h"
 #include "NMEATalker.h"
@@ -7,6 +5,8 @@
 #include "DataModel/DataModelLeaf.h"
 
 #include "Util/Logger.h"
+
+#include <Arduino.h>
 
 bool NMEARadioChannelCode::set(String &radioChannelCodeStr) {
     if (radioChannelCodeStr == "A" || radioChannelCodeStr == "1") {

@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "NMEAMessageBuffer.h"
 
 #include "NMEAGGAMessage.h"
@@ -11,6 +9,8 @@
 #include "NMEATXTMessage.h"
 #include "NMEAVDMVDOMessage.h"
 #include "NMEAVTGMessage.h"
+
+#include <Arduino.h>
 
 #define MAX(a,b) (((a)>(b))?(a):(b))
 

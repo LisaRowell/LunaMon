@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "NMEADataModelBridge.h"
 
 #include "NMEA/NMEAMessage.h"
@@ -20,6 +18,8 @@
 
 #include "Util/PassiveTimer.h"
 #include "Util/Logger.h"
+
+#include <Arduino.h>
 
 NMEADataModelBridge::NMEADataModelBridge(StatsManager &statsManager) : messagesBridgedCounter() {
     statsManager.addStatsHolder(this);

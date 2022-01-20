@@ -1,8 +1,6 @@
 #ifndef NMEA_RADIO_CHANNEL_CODE_H
 #define NMEA_RADIO_CHANNEL_CODE_H
 
-#include <Arduino.h>
-
 #include "NMEALine.h"
 #include "NMEATalker.h"
 
@@ -10,6 +8,8 @@
 
 #include "Util/LoggableItem.h"
 #include "Util/Logger.h"
+
+#include <Arduino.h>
 
 class NMEARadioChannelCode : public LoggableItem {
     private:

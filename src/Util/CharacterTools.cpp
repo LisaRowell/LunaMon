@@ -1,6 +1,6 @@
-#include <Arduino.h>
-
 #include "CharacterTools.h"
+
+#include <Arduino.h>
 
 uint8_t decimalValue(char character) {
     return character - '0';

@@ -1,6 +1,8 @@
 #ifndef NMEA_MSG_TYPE_H
 #define NMEA_MSG_TYPE_H
 
+#include <Arduino.h>
+
 enum NMEAMsgType {
     NMEA_MSG_TYPE_UNKNOWN,
     NMEA_MSG_TYPE_GGA,

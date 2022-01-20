@@ -3,6 +3,8 @@
 
 #include "MQTTConnection.h"
 
+#include <Arduino.h>
+
 struct MQTTSubscribeAckVariableHeader {
     uint8_t packetIdMSB;
     uint8_t packetIdLSB;

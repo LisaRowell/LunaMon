@@ -4,6 +4,8 @@
 #include "MQTTMessage.h"
 #include "MQTTString.h"
 
+#include <Arduino.h>
+
 struct MQTTConnectVariableHeader {
     uint8_t protocolNameLengthMSB;
     uint8_t protocolNameLengthLSB;

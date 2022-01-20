@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "DataModel.h"
 #include "DataModelNode.h"
 #include "DataModelElement.h"
@@ -13,6 +11,8 @@
 
 #include "Util/Logger.h"
 #include "Util/Error.h"
+
+#include <Arduino.h>
 
 DataModelLeaf nmeaDataModelMessagesBridged("messages", &nmeaDataModelBridgeNode);
 DataModelLeaf nmeaDataModelMessageBridgeRate("messageRate", &nmeaDataModelBridgeNode);
