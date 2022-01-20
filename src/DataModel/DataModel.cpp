@@ -8,8 +8,59 @@
 #include "DataModelStringLeaf.h"
 #include "Config.h"
 
+#include "StatsManager/StatCounter.h"
+#include "StatsManager/StatsManager.h"
+
 #include "Util/Logger.h"
 #include "Util/Error.h"
+
+DataModelLeaf nmeaDataModelMessagesBridged("messages", &nmeaDataModelBridgeNode);
+DataModelLeaf nmeaDataModelMessageBridgeRate("messageRate", &nmeaDataModelBridgeNode);
+
+DataModelElement *nmeaDataModelBridgeNodeChildren[] = {
+    &nmeaDataModelMessagesBridged,
+    &nmeaDataModelMessageBridgeRate,
+    NULL
+};
+DataModelNode nmeaDataModelBridgeNode("nmeaDataModelBridge", &controllerIDNode,
+                                      nmeaDataModelBridgeNodeChildren);
+
+DataModelLeaf dataModelLeafUpdates("updates", &dataModelNode);
+DataModelLeaf dataModelLeafUpdateRate("updateRate", &dataModelNode);
+
+DataModelElement *dataModelNodeChildren[] = {
+    &dataModelLeafUpdates,
+    &dataModelLeafUpdateRate,
+    NULL
+};
+DataModelNode dataModelNode("dataModel", &controllerIDNode, dataModelNodeChildren);
+
+DataModelLeaf wifiNMEAMessages("messages", &wifiNMEANode);
+DataModelLeaf wifiNMEAMessageRate("messageRate", &wifiNMEANode);
+
+DataModelElement *wifiNMEANodeChildren[] = {
+    &wifiNMEAMessages,
+    &wifiNMEAMessageRate,
+    NULL
+};
+DataModelNode wifiNMEANode("wifi", &nmeaNode, wifiNMEANodeChildren);
+
+DataModelLeaf usbNMEAMessages("messages", &usbNMEANode);
+DataModelLeaf usbNMEAMessageRate("messageRate", &usbNMEANode);
+
+DataModelElement *usbNMEANodeChildren[] = {
+    &usbNMEAMessages,
+    &usbNMEAMessageRate,
+    NULL
+};
+DataModelNode usbNMEANode("usb", &nmeaNode, usbNMEANodeChildren);
+
+DataModelElement *nmeaNodeChildren[] = {
+    &usbNMEANode,
+    &wifiNMEANode,
+    NULL
+};
+DataModelNode nmeaNode("nmea", &controllerIDNode, nmeaNodeChildren);
 
 DataModelStringLeaf mqttSession1("1", &mqttSessionsNode, maxSessionDescriptionLength);
 DataModelStringLeaf mqttSession2("2", &mqttSessionsNode, maxSessionDescriptionLength);
@@ -102,6 +153,9 @@ DataModelElement *controllerIDNodeChildren[] = {
     &controllerUpTime,
     &errorsNode,
     &mqttNode,
+    &nmeaNode,
+    &dataModelNode,
+    &nmeaDataModelBridgeNode,
     NULL
 };
 DataModelNode controllerIDNode(controllerID, &controllersNode, controllerIDNodeChildren);
@@ -188,7 +242,8 @@ DataModelNode navigationNode("navigation", &dataModelRoot, navigationNodeChildre
 DataModelElement *topNodeChildren[] = { &electronicsNode, &navigationNode, NULL };
 DataModelRoot dataModelRoot(topNodeChildren);
 
-DataModel::DataModel() : root(dataModelRoot) {
+DataModel::DataModel(StatsManager &statsManager) : root(dataModelRoot), leafUpdatesCounter() {
+    statsManager.addStatsHolder(this);
 }
 
 bool DataModel::subscribe(const char *topicFilter, DataModelSubscriber &subscriber,
@@ -202,4 +257,12 @@ void DataModel::unsubscribe(const char *topicFilter, DataModelSubscriber &subscr
 
 void DataModel::unsubscribeAll(DataModelSubscriber &subscriber) {
     root.unsubscribeAll(subscriber);
+}
+
+void DataModel::leafUpdated() {
+    leafUpdatesCounter++;
+}
+
+void DataModel::exportStats(uint32_t msElapsed) {
+    leafUpdatesCounter.update(dataModelLeafUpdates, dataModelLeafUpdateRate, msElapsed);
 }

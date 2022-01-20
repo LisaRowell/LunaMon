@@ -9,8 +9,12 @@ class PassiveTimer {
     public:
         void setMilliSeconds(uint32_t milliSeconds);
         void setSeconds(uint32_t seconds);
+        void setNow();
+        void advanceMilliSeconds(uint32_t milliSeconds);
+        void advanceSeconds(uint32_t seconds);
         bool expired();
         uint32_t timeInMilliSeconds();
+        uint32_t elapsedTime();
 };
 
 #endif

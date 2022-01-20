@@ -6,6 +6,10 @@
 #include "WiFiManager/WiFiManager.h"
 #include "WiFiManager/WiFiManagerClient.h"
 
+#include "DataModel/DataModelLeaf.h"
+
+#include "StatsManager/StatsManager.h"
+
 #include <WiFiNINA.h>
 
 class NMEAWiFiSource : public NMEASource, public WiFiManagerClient {
@@ -17,7 +21,8 @@ class NMEAWiFiSource : public NMEASource, public WiFiManagerClient {
         void connect();
 
     public:
-        NMEAWiFiSource(WiFiManager &);
+        NMEAWiFiSource(WiFiManager &wifiManager, DataModelLeaf &messageCountDataModelLeaf,
+                       DataModelLeaf &messageRateDataModelLeaf, StatsManager &statsManager);
         void begin();
         void service();
         virtual void wifiConnected() override;

@@ -5,16 +5,26 @@
 #include "NMEAMessage.h"
 #include "NMEAMessageHandler.h"
 
+#include "DataModel/DataModel.h"
+#include "DataModel/DataModelLeaf.h"
+
+#include "StatsManager/StatCounter.h"
+#include "StatsManager/StatsManager.h"
+
 #include "Util/CharacterTools.h"
 #include "Util/Logger.h"
 #include "Util/Error.h"
 
-NMEASource::NMEASource(Stream &stream)
+NMEASource::NMEASource(Stream &stream, DataModelLeaf &messageCountDataModelLeaf,
+                       DataModelLeaf &messageRateDataModelLeaf, StatsManager &statsManager)
     : stream(stream),
       bufferPos(0),
       remaining(0),
       carriageReturnFound(false),
-      numberMessageHandlers(0) {
+      numberMessageHandlers(0),
+      messageCountDataModelLeaf(messageCountDataModelLeaf),
+      messageRateDataModelLeaf(messageRateDataModelLeaf) {
+    statsManager.addStatsHolder(this);
 }
 
 void NMEASource::addMessageHandler(NMEAMessageHandler &messageHandler) {
@@ -143,6 +153,8 @@ void NMEASource::lineCompleted() {
             messageHandler->processMessage(nmeaMessage);
         }
 
+        messagesCounter++;
+
         // While we're done with the nmeaMessage, we don't do a free here
         // since it was allocated with a static buffer and placement new.
     }
@@ -163,4 +175,8 @@ void NMEASource::service() {
             inputLine.reset();
         }
     }
+}
+
+void NMEASource::exportStats(uint32_t msElapsed) {
+    messagesCounter.update(messageCountDataModelLeaf, messageRateDataModelLeaf, msElapsed);
 }

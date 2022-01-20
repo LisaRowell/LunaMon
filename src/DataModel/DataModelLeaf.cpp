@@ -80,6 +80,8 @@ DataModelLeaf & DataModelLeaf::operator << (const char *value) {
         }
     }
 
+    dataModel.leafUpdated();
+
     return *this;
 }
 

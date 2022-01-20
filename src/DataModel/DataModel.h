@@ -11,6 +11,10 @@
 
 #include "MQTT/MQTTSession.h"
 
+#include "StatsManager/StatCounter.h"
+#include "StatsManager/StatsHolder.h"
+#include "StatsManager/StatsManager.h"
+
 #include "Util/IPAddressTools.h"
 
 const size_t maxTCPPortTextLength = 5;
@@ -19,6 +23,26 @@ const size_t maxConnectionDescriptionLength =
 
 const size_t maxSessionDescriptionLength =
     maxMQTTClientIDLength + 2 + maxIPAddressTextLength + 1 + maxTCPPortTextLength + 1 + 1;
+
+extern DataModelLeaf nmeaDataModelMessagesBridged;
+extern DataModelLeaf nmeaDataModelMessageBridgeRate;
+
+extern DataModelNode nmeaDataModelBridgeNode;
+
+extern DataModelLeaf dataModelLeafUpdates;
+extern DataModelLeaf dataModelLeafUpdateRate;
+
+extern DataModelNode dataModelNode;
+
+extern DataModelLeaf wifiNMEAMessages;
+extern DataModelLeaf wifiNMEAMessageRate;
+extern DataModelNode wifiNMEANode;
+
+extern DataModelLeaf usbNMEAMessages;
+extern DataModelLeaf usbNMEAMessageRate;
+extern DataModelNode usbNMEANode;
+
+extern DataModelNode nmeaNode;
 
 extern DataModelStringLeaf *mqttSessionDebugs[];
 extern DataModelNode mqttSessionsNode;
@@ -89,12 +113,13 @@ const char dataModelLevelSeparator = '/';
 const char dataModelMultiLevelWildcard = '#';
 const char dataModelSingleLevelWildcard = '+';
 
-class DataModel {
+class DataModel : public StatsHolder {
     private:
         DataModelRoot &root;
+        StatCounter leafUpdatesCounter;
 
     public:
-        DataModel();
+        DataModel(StatsManager &statsManager);
         bool subscribe(const char *topicFilter, DataModelSubscriber &subscriber, uint32_t cookie);
         void unsubscribe(const char *topicFilter, DataModelSubscriber &subscriber);
         // This method made need revisiting in the future. Currently we don't store references to
@@ -107,6 +132,8 @@ class DataModel {
         // Arduino syystems we target. At some poiint this should be metered to see how bad it is.
         // Fortunately, NMEA 0183 is limited to fairly low bandwidths...
         void unsubscribeAll(DataModelSubscriber &subscriber);
+        void leafUpdated();
+        virtual void exportStats(uint32_t msElapsed) override;
 };
 
 extern DataModel dataModel;

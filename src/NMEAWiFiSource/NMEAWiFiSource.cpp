@@ -4,11 +4,17 @@
 
 #include "WiFiManager/WiFiManager.h"
 
+#include "DataModel/DataModelLeaf.h"
+
+#include "StatsManager/StatsManager.h"
+
 #include "Util/Logger.h"
 #include "Util/Error.h"
 
-NMEAWiFiSource::NMEAWiFiSource(WiFiManager &wifiManager)
-    : NMEASource(client), wifiManager(wifiManager), clientConnected(false) {
+NMEAWiFiSource::NMEAWiFiSource(WiFiManager &wifiManager, DataModelLeaf &messageCountDataModelLeaf,
+                               DataModelLeaf &messageRateDataModelLeaf, StatsManager &statsManager)
+    : NMEASource(client, messageCountDataModelLeaf, messageRateDataModelLeaf, statsManager),
+      wifiManager(wifiManager), clientConnected(false) {
 }
 
 void NMEAWiFiSource::begin() {

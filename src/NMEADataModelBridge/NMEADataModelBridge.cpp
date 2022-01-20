@@ -15,7 +15,15 @@
 
 #include "DataModel/DataModel.h"
 
+#include "StatsManager/StatCounter.h"
+#include "StatsManager/StatsManager.h"
+
+#include "Util/PassiveTimer.h"
 #include "Util/Logger.h"
+
+NMEADataModelBridge::NMEADataModelBridge(StatsManager &statsManager) : messagesBridgedCounter() {
+    statsManager.addStatsHolder(this);
+}
 
 void NMEADataModelBridge::processMessage(NMEAMessage *message) {
     // Add a filter here so that messages with redundant content are having their content sent
@@ -44,6 +52,7 @@ void NMEADataModelBridge::processMessage(NMEAMessage *message) {
 
         case NMEA_MSG_TYPE_VTG:
             bridgeNMEAVTGMessage((NMEAVTGMessage *)message);
+            break;
 
         case NMEA_MSG_TYPE_GSV:
         case NMEA_MSG_TYPE_TXT:
@@ -57,7 +66,6 @@ void NMEADataModelBridge::processMessage(NMEAMessage *message) {
         default:
             logger << logWarning << "Unhandled " << message->source() << " "
                    << nmeaMsgTypeName(msgType) << " message in NMEA->Data Model Bridge" << eol;
-            break;
     }
 }
 
@@ -72,6 +80,8 @@ void NMEADataModelBridge::bridgeNMEAGGAMessage(NMEAGGAMessage *message) {
     message->geoidalSeparation.publish(positionGeoidalSeparation);
     message->gpsDataAge.publish(positionGPSDataAge);
     message->differentialReferenceStation.publish(positionDifferentialReferenceStation);
+
+    messagesBridgedCounter++;
 }
 
 void NMEADataModelBridge::bridgeNMEAGLLMessage(NMEAGLLMessage *message) {
@@ -80,6 +90,8 @@ void NMEADataModelBridge::bridgeNMEAGLLMessage(NMEAGLLMessage *message) {
     message->time.publish(positionTime);
     message->dataValid.publish(positionDataValid);
     message->faaModeIndicator.publish(positionFAAModeindicator);
+
+    messagesBridgedCounter++;
 }
 
 void NMEADataModelBridge::bridgeNMEAGSAMessage(NMEAGSAMessage *message) {
@@ -113,6 +125,8 @@ void NMEADataModelBridge::bridgeNMEAGSAMessage(NMEAGSAMessage *message) {
     message->pdop.publish(positionPDOP);
     message->hdop.publish(positionHDOP);
     message->vdop.publish(positionVDOP);
+
+    messagesBridgedCounter++;
 }
 void NMEADataModelBridge::bridgeNMEAGSTMessage(NMEAGSTMessage *message) {
     message->standardDeviationOfRangeInputsRMS.publish(positionStandardDeviationOfRangeInputsRMS);
@@ -122,6 +136,8 @@ void NMEADataModelBridge::bridgeNMEAGSTMessage(NMEAGSTMessage *message) {
     message->standardDeviationOfLatitudeError.publish(positionStandardDeviationOfLatitudeError);
     message->standardDeviationOfLongitudeError.publish(positionStandardDeviationOfLongitudeError);
     message->standardDeviationOfAltitudeError.publish(positionStandardDeviationOfAltitudeError);
+
+    messagesBridgedCounter++;
 }
 
 void NMEADataModelBridge::bridgeNMEARMCMessage(NMEARMCMessage *message) {
@@ -134,10 +150,19 @@ void NMEADataModelBridge::bridgeNMEARMCMessage(NMEARMCMessage *message) {
     message->date.publish(positionDate);
     message->magneticVariation.publish(positionMagneticVariation);
     message->faaModeIndicator.publish(positionFAAModeindicator);
+
+    messagesBridgedCounter++;
 }
 
 void NMEADataModelBridge::bridgeNMEAVTGMessage(NMEAVTGMessage *message) {
     message->trackMadeGood.publish(positionTrackMadeGood);
     message->speedOverGround.publish(positionSpeedOverGround);
     message->faaModeIndicator.publish(positionFAAModeindicator);
+
+    messagesBridgedCounter++;
+}
+
+void NMEADataModelBridge::exportStats(uint32_t msElapsed) {
+    messagesBridgedCounter.update(nmeaDataModelMessagesBridged, nmeaDataModelMessageBridgeRate,
+                                  msElapsed);
 }

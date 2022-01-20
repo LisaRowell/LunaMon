@@ -22,6 +22,28 @@ void PassiveTimer::setSeconds(uint32_t seconds) {
     setMilliSeconds(seconds * msInSecond);
 }
 
+void PassiveTimer::setNow() {
+    setMilliSeconds(0);
+}
+
+void PassiveTimer::advanceMilliSeconds(uint32_t milliSeconds) {
+    // The algorithm we use for detection of a timer end is designed for system uptimes greater than
+    // the 50 days that it takes to wrap around a 32 bit millisecond counter and is based on seeing
+    // if the end time is first half of the 2^32 period and the current time is in the later.
+    // Because of this, we can't accept a timer period of greater than 25 days, give or take. This
+    // should not present a hardship for the average coder.
+    if (milliSeconds >= halfMilliTimerRange) {
+        fatalError("Attempting to advance a timer greater than 25 days.");
+    }
+
+    // This may wrap, but that's by design.
+    endTime += milliSeconds;
+}
+
+void PassiveTimer::advanceSeconds(uint32_t seconds) {
+    advanceMilliSeconds(seconds * msInSecond);
+}
+
 bool PassiveTimer::expired() {
     const uint32_t time = millis();
 
@@ -38,4 +60,14 @@ bool PassiveTimer::expired() {
 
 uint32_t PassiveTimer::timeInMilliSeconds() {
     return endTime;
+}
+
+uint32_t PassiveTimer::elapsedTime() {
+    uint32_t now = millis();
+
+    if (now >= endTime) {
+        return now - endTime;
+    } else {
+        return 0xffffffff - endTime + 1 + now;
+    }
 }

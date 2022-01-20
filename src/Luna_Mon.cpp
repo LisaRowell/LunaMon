@@ -12,14 +12,17 @@
 
 #include "NMEADataModelBridge/NMEADataModelBridge.h"
 
+#include "StatsManager/StatsManager.h"
+
 #include "Util/TimeConstants.h"
 
-NMEASource usbSerialNMEASource(Serial);
+StatsManager statsManager;
+NMEASource usbSerialNMEASource(Serial, usbNMEAMessages, usbNMEAMessageRate, statsManager);
 WiFiManager wifiManager;
-NMEAWiFiSource nmeaWiFiSource(wifiManager);
+NMEAWiFiSource nmeaWiFiSource(wifiManager, wifiNMEAMessages, wifiNMEAMessageRate, statsManager);
 MQTTBroker mqttBroker;
-DataModel dataModel;
-NMEADataModelBridge nmeaDataModelBridge;
+DataModel dataModel(statsManager);
+NMEADataModelBridge nmeaDataModelBridge(statsManager);
 
 void setup() {
     logger.setLevel(LOGGER_LEVEL_DEBUG);
@@ -47,6 +50,7 @@ void loop() {
     usbSerialNMEASource.service();
     nmeaWiFiSource.service();
     mqttBroker.service();
+    statsManager.service();
 
     uint32_t currentUpTime = millis() / msInSecond;
     if ((currentUpTime % 10 == 0) && (currentUpTime != controllerUpTime)) {
