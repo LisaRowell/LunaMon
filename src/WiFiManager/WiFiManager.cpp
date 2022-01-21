@@ -9,8 +9,9 @@
 
 #include <Arduino.h>
 #include <WiFiNINA.h>
+#include <Array.h>
 
-WiFiManager::WiFiManager() : connectionState(WIFI_CONNECTION_NEVER), numberClients(0) {
+WiFiManager::WiFiManager() : connectionState(WIFI_CONNECTION_NEVER), clients() {
 }
 
 void WiFiManager::begin() {
@@ -91,12 +92,11 @@ bool WiFiManager::connected() {
 }
 
 void WiFiManager::registerForNotifications(WiFiManagerClient *client) {
-    if (numberClients == maxClients) {
+    if (clients.full()) {
         fatalError("Attempt to add more than " + String(maxClients) + " WiFi clients.");
     }
 
-    clients[numberClients] = client;
-    numberClients++;
+    clients.push_back(client);
 
     // If, by chance, we're already connected to the network, make sure that the new client is
     // informed.
@@ -106,17 +106,13 @@ void WiFiManager::registerForNotifications(WiFiManagerClient *client) {
 }
 
 void WiFiManager::notifyWiFiConnected() {
-    unsigned clientIndex;
-    for (clientIndex = 0; clientIndex < numberClients; clientIndex++) {
-        WiFiManagerClient *client = clients[clientIndex];
+    for (WiFiManagerClient *client : clients) {
         client->wifiConnected();
     }
 }
 
 void WiFiManager::notifyWiFiDisconnected() {
-    unsigned clientIndex;
-    for (clientIndex = 0; clientIndex < numberClients; clientIndex++) {
-        WiFiManagerClient *client = clients[clientIndex];
+    for (WiFiManagerClient *client : clients) {
         client->wifiDisconnected();
     }
 }

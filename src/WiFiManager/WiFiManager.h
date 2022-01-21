@@ -7,6 +7,7 @@
 #include "Util/TimeConstants.h"
 
 #include <Arduino.h>
+#include <Array.h>
 
 class WiFiManager {
     private:
@@ -21,9 +22,8 @@ class WiFiManager {
         enum WiFiConnectionState connectionState;
         PassiveTimer connectionWaitTimer;
 
-        static const unsigned maxClients = 5;
-        unsigned numberClients;
-        WiFiManagerClient *clients[maxClients];
+        static const size_t maxClients = 5;
+        Array<WiFiManagerClient *, maxClients> clients;
 
         void verifyWiFiPresent();
         void checkFirmwareVersion();
