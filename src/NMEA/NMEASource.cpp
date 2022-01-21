@@ -21,19 +21,18 @@ NMEASource::NMEASource(Stream &stream, DataModelLeaf &messageCountDataModelLeaf,
       bufferPos(0),
       remaining(0),
       carriageReturnFound(false),
-      numberMessageHandlers(0),
+      messageHandlers(),
       messageCountDataModelLeaf(messageCountDataModelLeaf),
       messageRateDataModelLeaf(messageRateDataModelLeaf) {
     statsManager.addStatsHolder(this);
 }
 
 void NMEASource::addMessageHandler(NMEAMessageHandler &messageHandler) {
-    if (numberMessageHandlers == maxMessageHandlers) {
+    if (messageHandlers.full()) {
         fatalError("Too many message handles for NMEA source");
     }
 
-    messageHandlers[numberMessageHandlers] = &messageHandler;
-    numberMessageHandlers++;
+    messageHandlers.push_back(&messageHandler);
 }
 
 
@@ -147,9 +146,7 @@ void NMEASource::lineCompleted() {
     if (nmeaMessage != NULL) {
         nmeaMessage->log();
 
-        unsigned msgHandledIndex;
-        for (msgHandledIndex = 0; msgHandledIndex < numberMessageHandlers; msgHandledIndex++) {
-            NMEAMessageHandler *messageHandler = messageHandlers[msgHandledIndex];
+        for (NMEAMessageHandler *messageHandler : messageHandlers) {
             messageHandler->processMessage(nmeaMessage);
         }
 

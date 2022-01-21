@@ -13,6 +13,7 @@
 #include "Util/PassiveTimer.h"
 
 #include <Arduino.h>
+#include <Array.h>
 
 class NMEASource : public StatsHolder {
     private:
@@ -22,9 +23,8 @@ class NMEASource : public StatsHolder {
         unsigned remaining;
         bool carriageReturnFound;
         NMEALine inputLine;
-        static const unsigned maxMessageHandlers = 5;
-        NMEAMessageHandler *messageHandlers[maxMessageHandlers];
-        unsigned numberMessageHandlers;
+        static const size_t maxMessageHandlers = 5;
+        Array<NMEAMessageHandler *, maxMessageHandlers> messageHandlers;
         StatCounter messagesCounter;
         DataModelLeaf &messageCountDataModelLeaf;
         DataModelLeaf &messageRateDataModelLeaf;
