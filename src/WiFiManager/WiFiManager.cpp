@@ -145,18 +145,23 @@ void WiFiManager::checkFirmwareVersion() {
 
     const String minorVersion = firmwareVersion.substring(startMinorVersion, secondPeriodPos);
 
-    const int startBuildVersion = secondPeriodPos + 1;
-    if (startBuildVersion >= firmwareVersionLength) {
+    const int startReleaseVersion = secondPeriodPos + 1;
+    if (startReleaseVersion >= firmwareVersionLength) {
         malformedFirmwareVersion(firmwareVersion, "No release version");
     }
 
-    const String releaseVersion = firmwareVersion.substring(startBuildVersion, firmwareVersion.length());
+    const String releaseVersion = firmwareVersion.substring(startReleaseVersion,
+                                                            firmwareVersion.length());
 
     if (majorVersion < "1") {
         firmwareVersionError(firmwareVersion);
     } else if (majorVersion == "1") {
-        if (minorVersion < "1") {
+        if (minorVersion < "4") {
             firmwareVersionError(firmwareVersion);
+        } else if (minorVersion == "4") {
+            if (releaseVersion < "8") {
+                firmwareVersionError(firmwareVersion);
+            }
         }
     }
 
