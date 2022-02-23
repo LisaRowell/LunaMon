@@ -13,6 +13,17 @@ DataModelLeaf::DataModelLeaf(const char *name, DataModelElement *parent)
     }
 }
 
+bool DataModelLeaf::isSubscribed(DataModelSubscriber &subscriber) {
+    unsigned subscriberPos;
+    for (subscriberPos = 0; subscriberPos < maxDataModelSubscribers; subscriberPos++) {
+        if (subscribers[subscriberPos] == &subscriber) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 bool DataModelLeaf::addSubscriber(DataModelSubscriber &subscriber, uint32_t cookie) {
     unsigned subscriberPos;
     for (subscriberPos = 0; subscriberPos < maxDataModelSubscribers; subscriberPos++) {
@@ -24,6 +35,19 @@ bool DataModelLeaf::addSubscriber(DataModelSubscriber &subscriber, uint32_t cook
     }
 
     // This shouldn't happen if max sessions == max subscribers
+    return false;
+}
+
+bool DataModelLeaf::updateSubscriber(DataModelSubscriber &subscriber, uint32_t cookie) {
+    unsigned subscriberPos;
+    for (subscriberPos = 0; subscriberPos < maxDataModelSubscribers; subscriberPos++) {
+        if (subscribers[subscriberPos] == &subscriber) {
+            cookies[subscriberPos] = cookie;
+            return true;
+        }
+    }
+
+    // This shouldn't happen if the call was used as expected. Error?
     return false;
 }
 
@@ -44,7 +68,11 @@ void DataModelLeaf::unsubscribe(DataModelSubscriber &subscriber) {
 }
 
 bool DataModelLeaf::subscribe(DataModelSubscriber &subscriber, uint32_t cookie) {
-    return addSubscriber(subscriber, cookie);
+    if (isSubscribed(subscriber)) {
+        return updateSubscriber(subscriber, cookie);
+    } else {
+        return addSubscriber(subscriber, cookie);
+    }
 }
 
 bool DataModelLeaf::subscribeIfMatching(const char *topicFilter, DataModelSubscriber &subscriber,

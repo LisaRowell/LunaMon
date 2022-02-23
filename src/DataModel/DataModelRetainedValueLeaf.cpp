@@ -8,7 +8,7 @@ DataModelRetainedValueLeaf::DataModelRetainedValueLeaf(const char *name, DataMod
 }
 
 bool DataModelRetainedValueLeaf::subscribe(DataModelSubscriber &subscriber, uint32_t cookie) {
-    if (!addSubscriber(subscriber, cookie)) {
+    if (!DataModelLeaf::subscribe(subscriber, cookie)) {
         return false;
     }
 

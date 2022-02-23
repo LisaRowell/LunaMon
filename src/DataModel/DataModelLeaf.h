@@ -8,11 +8,14 @@ class DataModelSubscriber;
 #include <stdint.h>
 
 class DataModelLeaf : public DataModelElement {
-    protected:
+    private:
         DataModelSubscriber *subscribers[maxDataModelSubscribers];
         uint32_t cookies[maxDataModelSubscribers];
-
         bool addSubscriber(DataModelSubscriber &subscriber, uint32_t cookie);
+
+    protected:
+        bool isSubscribed(DataModelSubscriber &subscriber);
+        bool updateSubscriber(DataModelSubscriber &subscriber, uint32_t cookie);
         virtual bool subscribe(DataModelSubscriber &subscriber, uint32_t cookie);
         void unsubscribe(DataModelSubscriber &subscriber);
         void publishToSubscriber(DataModelSubscriber &subscriber, const char *value,
