@@ -1,9 +1,11 @@
 #ifndef DATA_MODEL_LEAF_H
 #define DATA_MODEL_LEAF_H
 
+class DataModelSubscriber;
+
 #include "DataModelElement.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 class DataModelLeaf : public DataModelElement {
     protected:

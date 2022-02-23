@@ -1,9 +1,9 @@
 #ifndef MQTT_CONNECT_ACK_MESSAGE_H
 #define MQTT_CONNECT_ACK_MESSAGE_H
 
-#include "MQTTConnection.h"
+class MQTTConnection;
 
-#include <Arduino.h>
+#include <stdint.h>
 
 #define MQTT_CONNACK_ACCEPTED                     0x00
 #define MQTT_CONNACK_REFUSED_PROTOCOL_VERSION     0x01

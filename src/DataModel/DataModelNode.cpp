@@ -1,7 +1,7 @@
 #include "DataModelNode.h"
 #include "DataModelElement.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 DataModelNode::DataModelNode(const char *name, DataModelElement *parent,
                              DataModelElement *children[])
@@ -10,7 +10,7 @@ DataModelNode::DataModelNode(const char *name, DataModelElement *parent,
 
 bool DataModelNode::subscribeAll(DataModelSubscriber &subscriber, uint32_t cookie) {
     unsigned childIndex;
-    for (childIndex = 0; children[childIndex] != NULL; childIndex++) {
+    for (childIndex = 0; children[childIndex] != nullptr; childIndex++) {
         DataModelElement *child = *children + childIndex;
         if (!child->subscribeAll(subscriber, cookie)) {
             return false;
@@ -47,7 +47,7 @@ bool DataModelNode::subscribeChildrenIfMatching(const char *topicFilter,
                                                 uint32_t cookie) {
     unsigned childIndex;
     bool atLeastOneMatch = false;
-    for (childIndex = 0; children[childIndex] != NULL; childIndex++) {
+    for (childIndex = 0; children[childIndex] != nullptr; childIndex++) {
         DataModelElement *child = children[childIndex];
         if (child->subscribeIfMatching(topicFilter, subscriber, cookie)) {
             atLeastOneMatch = true;
@@ -80,7 +80,7 @@ void DataModelNode::unsubscribeIfMatching(const char *topicFilter,
 void DataModelNode::unsubscribeChildrenIfMatching(const char *topicFilter,
                                                 DataModelSubscriber &subscriber) {
     unsigned childIndex;
-    for (childIndex = 0; children[childIndex] != NULL; childIndex++) {
+    for (childIndex = 0; children[childIndex] != nullptr; childIndex++) {
         DataModelElement *child = children[childIndex];
         child->unsubscribeIfMatching(topicFilter, subscriber);
     }
@@ -90,7 +90,7 @@ void DataModelNode::unsubscribeAll(DataModelSubscriber &subscriber) {
     //If we allowed intermediate nodes to hold values, we would need to do an unsubscribe here.
 
     unsigned childIndex;
-    for (childIndex = 0; children[childIndex] != NULL; childIndex++) {
+    for (childIndex = 0; children[childIndex] != nullptr; childIndex++) {
         DataModelElement *child = children[childIndex];
         child->unsubscribeAll(subscriber);
     }

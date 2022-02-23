@@ -1,19 +1,19 @@
 #ifndef NMEA_SOURCE_H
 #define NMEA_SOURCE_H
 
-#include "NMEALine.h"
-#include "NMEAMessageHandler.h"
+class NMEAMessageHandler;
+class DataModelLeaf;
+class StatsManager;
 
-#include "DataModel/DataModelLeaf.h"
+#include "NMEALine.h"
 
 #include "StatsManager/StatCounter.h"
 #include "StatsManager/StatsHolder.h"
-#include "StatsManager/StatsManager.h"
 
-#include "Util/PassiveTimer.h"
+#include <etl/vector.h>
+#include <Stream.h>
 
-#include <Arduino.h>
-#include <Array.h>
+using etl::vector;
 
 class NMEASource : public StatsHolder {
     private:
@@ -24,7 +24,7 @@ class NMEASource : public StatsHolder {
         bool carriageReturnFound;
         NMEALine inputLine;
         static const size_t maxMessageHandlers = 5;
-        Array<NMEAMessageHandler *, maxMessageHandlers> messageHandlers;
+        vector<NMEAMessageHandler *, maxMessageHandlers> messageHandlers;
         StatCounter messagesCounter;
         DataModelLeaf &messageCountDataModelLeaf;
         DataModelLeaf &messageRateDataModelLeaf;

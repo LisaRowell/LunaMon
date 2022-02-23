@@ -1,14 +1,13 @@
 #ifndef NMEA_WIFI_SOURCE_H
 #define NMEA_WIFI_SOURCE_H
 
+class WiFiManager;
+class DataModelLeaf;
+class StatsManager;
+
 #include "NMEA/NMEASource.h"
 
-#include "WiFiManager/WiFiManager.h"
 #include "WiFiManager/WiFiManagerClient.h"
-
-#include "DataModel/DataModelLeaf.h"
-
-#include "StatsManager/StatsManager.h"
 
 #include <WiFiNINA.h>
 

@@ -183,11 +183,11 @@ bool MQTTConnection::wasDisconnected() {
     return !wifiClient.connected();
 }
 
-IPAddress MQTTConnection::ipAddress() {
+const IPAddress &MQTTConnection::ipAddress() const {
     return remoteIPAddress;
 }
 
-uint16_t MQTTConnection::port() {
+uint16_t MQTTConnection::port() const {
     return remotePort;
 }
 

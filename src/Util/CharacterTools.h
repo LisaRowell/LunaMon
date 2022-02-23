@@ -1,7 +1,7 @@
 #ifndef CHARACTER_TOOLS_H
 #define CHARACTER_TOOLS_H
 
-#include <Arduino.h>
+#include <stdint.h>
 
 extern uint8_t decimalValue(char character);
 extern bool isUpperCaseHexidecimalDigit(char character);

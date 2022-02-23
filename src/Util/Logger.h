@@ -7,7 +7,10 @@
 
 #include "MQTT/MQTTString.h"
 
+#include <etl/string.h>
 #include <Arduino.h>
+
+using etl::istring;
 
 enum LoggerModule {
     LOGGER_MODULE_DATA_MODEL,
@@ -86,6 +89,7 @@ class Logger {
         Logger & operator << (const LogBase base);
         Logger & operator << (char character);
         Logger & operator << (const char *string);
+        Logger & operator << (const istring &string);
         Logger & operator << (const String &string);
         Logger & operator << (uint8_t value);
         Logger & operator << (uint16_t value);

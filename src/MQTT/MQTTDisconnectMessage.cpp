@@ -3,8 +3,6 @@
 
 #include "Util/Logger.h"
 
-#include <Arduino.h>
-
 MQTTDisconnectMessage::MQTTDisconnectMessage(MQTTMessage const &message) : MQTTMessage(message) {
 }
 

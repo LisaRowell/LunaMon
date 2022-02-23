@@ -1,9 +1,11 @@
 #ifndef DATA_MODEL_NODE_H
 #define DATA_MODEL_NODE_H
 
+class DataModelSubscriber;
+
 #include "DataModelElement.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 class DataModelNode : public DataModelElement {
     private:

@@ -1,7 +1,8 @@
 #include "DataModelUInt32Leaf.h"
 #include "DataModelLeaf.h"
 
-#include <Arduino.h>
+#include <stdint.h>
+#include <stdio.h>
 
 DataModelUInt32Leaf::DataModelUInt32Leaf(const char *name, DataModelElement *parent)
     : DataModelRetainedValueLeaf(name, parent) {

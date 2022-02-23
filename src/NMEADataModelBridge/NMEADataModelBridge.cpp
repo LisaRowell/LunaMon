@@ -19,7 +19,7 @@
 #include "Util/PassiveTimer.h"
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 NMEADataModelBridge::NMEADataModelBridge(StatsManager &statsManager) : messagesBridgedCounter() {
     statsManager.addStatsHolder(this);

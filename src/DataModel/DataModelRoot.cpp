@@ -5,7 +5,7 @@
 
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 DataModelRoot::DataModelRoot(DataModelElement **children) : DataModelNode(NULL, NULL, children) {
 }

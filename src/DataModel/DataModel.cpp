@@ -12,7 +12,7 @@
 #include "Util/Logger.h"
 #include "Util/Error.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 DataModelLeaf nmeaDataModelMessagesBridged("messages", &nmeaDataModelBridgeNode);
 DataModelLeaf nmeaDataModelMessageBridgeRate("messageRate", &nmeaDataModelBridgeNode);

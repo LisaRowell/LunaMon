@@ -7,9 +7,16 @@
 #include "Util/Error.h"
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <etl/vector.h>
+#include <etl/string.h>
+#include <etl/string_stream.h>
 #include <WiFiNINA.h>
-#include <Array.h>
+#include <stdint.h>
+
+using etl::vector;
+using etl::string;
+using etl::istring;
+using etl::string_stream;
 
 WiFiManager::WiFiManager() : connectionState(WIFI_CONNECTION_NEVER), clients() {
 }
@@ -93,7 +100,10 @@ bool WiFiManager::connected() {
 
 void WiFiManager::registerForNotifications(WiFiManagerClient *client) {
     if (clients.full()) {
-        fatalError("Attempt to add more than " + String(maxClients) + " WiFi clients.");
+        string<80> error;
+        string_stream errorStream(error);
+        errorStream << "Attempt to add more than " << maxClients << " WiFi clients.";
+        fatalError(error);
     }
 
     clients.push_back(client);
@@ -124,34 +134,35 @@ void WiFiManager::verifyWiFiPresent() {
 }
 
 void WiFiManager::checkFirmwareVersion() {
-    const String firmwareVersion = WiFi.firmwareVersion();
-    const int firmwareVersionLength = firmwareVersion.length();
+    const string<maxFirmwareVersionLength> firmwareVersion(WiFi.firmwareVersion());
+    const size_t firmwareVersionLength = firmwareVersion.length();
 
-    const int firstPeriodPos = firmwareVersion.indexOf('.');
-    if (firstPeriodPos < 0) {
+    const size_t firstPeriodPos = firmwareVersion.find('.');
+    if (firstPeriodPos == firmwareVersion.npos) {
         malformedFirmwareVersion(firmwareVersion, "No first period");
     }
 
-    const String majorVersion = firmwareVersion.substring(0, firstPeriodPos);
+    const string<maxFirmwareVersionLength> majorVersion(firmwareVersion, 0, firstPeriodPos);
 
-    const int startMinorVersion = firstPeriodPos + 1;
+    const size_t startMinorVersion = firstPeriodPos + 1;
     if (startMinorVersion >= firmwareVersionLength) {
         malformedFirmwareVersion(firmwareVersion, "Just major version");
     }
-    const int secondPeriodPos = firmwareVersion.indexOf('.', startMinorVersion);
-    if (secondPeriodPos < 0) {
+    const size_t secondPeriodPos = firmwareVersion.find('.', startMinorVersion);
+    if (secondPeriodPos == firmwareVersion.npos) {
         malformedFirmwareVersion(firmwareVersion, "No second period.");
     }
+    const size_t minorVersionLength = secondPeriodPos - startMinorVersion;
 
-    const String minorVersion = firmwareVersion.substring(startMinorVersion, secondPeriodPos);
+    const string<maxFirmwareVersionLength> minorVersion(firmwareVersion, startMinorVersion,
+                                                        minorVersionLength);
 
-    const int startReleaseVersion = secondPeriodPos + 1;
+    const size_t startReleaseVersion = secondPeriodPos + 1;
     if (startReleaseVersion >= firmwareVersionLength) {
         malformedFirmwareVersion(firmwareVersion, "No release version");
     }
 
-    const String releaseVersion = firmwareVersion.substring(startReleaseVersion,
-                                                            firmwareVersion.length());
+    const string<maxFirmwareVersionLength> releaseVersion(firmwareVersion, startReleaseVersion);
 
     if (majorVersion < "1") {
         firmwareVersionError(firmwareVersion);
@@ -168,10 +179,17 @@ void WiFiManager::checkFirmwareVersion() {
     logger << logDebugWiFiManager << "Firmware version: " << firmwareVersion << eol;
 }
 
-void WiFiManager::firmwareVersionError(const String firmwareVersion) {
-    fatalError("Insufficient firmware version, " + firmwareVersion + ", upgrade.");
+void WiFiManager::firmwareVersionError(const istring &firmwareVersion) {
+    string<80> error;
+    string_stream errorStream(error);
+    errorStream << "Insufficient firmware version, " << firmwareVersion << ", upgrade.";
+    fatalError(error);
 }
 
-void WiFiManager::malformedFirmwareVersion(const String firmwareVersion, const String explanation) {
-    fatalError("Malformed firmware version: " + firmwareVersion + " " + explanation);
+void WiFiManager::malformedFirmwareVersion(const istring &firmwareVersion,
+                                           const char *explanation) {
+    string<80> error;
+    string_stream errorStream(error);
+    errorStream << "Malformed firmware version: " << firmwareVersion << " " << explanation;
+    fatalError(error);
 }

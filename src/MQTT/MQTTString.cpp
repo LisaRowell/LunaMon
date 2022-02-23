@@ -1,6 +1,6 @@
 #include "MQTTString.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 uint16_t MQTTString::length() const {
     return lengthMSB * 256 + lengthLSB;

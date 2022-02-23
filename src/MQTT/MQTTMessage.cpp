@@ -3,7 +3,7 @@
 
 #include "Util/Error.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 MQTTMessage::MQTTMessage() : fixedHeader(NULL), length(0), fixedHdrSize(0), bytesAfterFixedHdr(0) {
 }

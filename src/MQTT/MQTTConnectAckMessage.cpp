@@ -3,7 +3,7 @@
 #include "MQTTMessage.h"
 #include "MQTTUtil.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 bool sendMQTTConnectAckMessage(MQTTConnection *connection, bool sessionPresent,
                                uint8_t returnCode) {

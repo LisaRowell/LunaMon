@@ -5,15 +5,17 @@
 
 #include "Util/PassiveTimer.h"
 
-#include <Arduino.h>
-#include <Array.h>
+#include <etl/vector.h>
+#include <stdint.h>
+
+using etl::vector;
 
 class StatsManager {
     private:
         const uint32_t statsUpdateTimeInterval = 10;
         PassiveTimer statsUpdateTimer;
         PassiveTimer lastHarvestTime;
-        Array<StatsHolder *, 10> statsHolders;
+        vector<StatsHolder *, 10> statsHolders;
 
     public:
         StatsManager();

@@ -1,7 +1,7 @@
 #ifndef MQTT_STRING_H
 #define MQTT_STRING_H
 
-#include <Arduino.h>
+#include <stdint.h>
 
 class Logger;
 

@@ -1,7 +1,7 @@
 #ifndef STATS_HOLDER_H
 #define STATS_HOLDER_H
 
-#include <Arduino.h>
+#include <stdint.h>
 
 class StatsHolder {
     public:

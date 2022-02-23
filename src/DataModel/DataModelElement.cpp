@@ -3,7 +3,7 @@
 
 #include "Util/Logger.h"
 
-#include "Arduino.h"
+#include "stdint.h"
 
 DataModelElement::DataModelElement(const char *name, DataModelElement *parent)
     : name(name), parent(parent) {

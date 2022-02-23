@@ -1,10 +1,11 @@
 #ifndef MQTT_CONNECT_MESSAGE_H
 #define MQTT_CONNECT_MESSAGE_H
 
-#include "MQTTMessage.h"
-#include "MQTTString.h"
+class MQTTString;
 
-#include <Arduino.h>
+#include "MQTTMessage.h"
+
+#include <stdint.h>
 
 struct MQTTConnectVariableHeader {
     uint8_t protocolNameLengthMSB;

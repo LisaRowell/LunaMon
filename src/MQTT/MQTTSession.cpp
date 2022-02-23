@@ -6,10 +6,10 @@
 
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 bool MQTTSession::isConnected() const {
-    return connection != NULL;
+    return connection != nullptr;
 }
 
 bool MQTTSession::matches(const char *clientID) const {
@@ -70,7 +70,7 @@ void MQTTSession::resetKeepAliveTimer() {
 
 // Returns true if the client is to be retained in hopes of the connection being reestablished.
 bool MQTTSession::disconnect() {
-    connection = NULL;
+    connection = nullptr;
 
     // If the connection was established with Clean Session set, then we don't retain state for the
     // client. Unsubscribe from all connections and return false indicating that the broker should

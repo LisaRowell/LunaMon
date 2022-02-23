@@ -1,7 +1,7 @@
 #ifndef PASSIVE_TIMER_H
 #define PASSIVE_TIMER_H
 
-#include <Arduino.h>
+#include <stdint.h>
 
 class PassiveTimer {
     private:

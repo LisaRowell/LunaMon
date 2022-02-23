@@ -1,9 +1,11 @@
 #include "StatCounter.h"
 
+#include "DataModel/DataModelLeaf.h"
+
 #include "Util/TimeConstants.h"
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 StatCounter::StatCounter() : count(0), lastIntervalCount(0) {
 }

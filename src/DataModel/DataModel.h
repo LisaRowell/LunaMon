@@ -1,21 +1,22 @@
 #ifndef DATA_MODEL_H
 #define DATA_MODEL_H
 
+class DataModelSubscriber;
+class StatsManager;
+
 #include "DataModelNode.h"
 #include "DataModelRoot.h"
 #include "DataModelUInt32Leaf.h"
 #include "DataModelStringLeaf.h"
-#include "DataModelSubscriber.h"
 
 #include "MQTT/MQTTSession.h"
 
 #include "StatsManager/StatCounter.h"
 #include "StatsManager/StatsHolder.h"
-#include "StatsManager/StatsManager.h"
 
 #include "Util/IPAddressTools.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 const size_t maxTCPPortTextLength = 5;
 const size_t maxConnectionDescriptionLength =

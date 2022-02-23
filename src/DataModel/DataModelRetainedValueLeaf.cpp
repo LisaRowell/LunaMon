@@ -1,7 +1,7 @@
 #include "DataModelRetainedValueLeaf.h"
 #include "DataModelLeaf.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 DataModelRetainedValueLeaf::DataModelRetainedValueLeaf(const char *name, DataModelElement *parent)
     : DataModelLeaf(name, parent), hasBeenSet(false) {

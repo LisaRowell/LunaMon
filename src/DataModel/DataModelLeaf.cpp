@@ -3,7 +3,7 @@
 
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 DataModelLeaf::DataModelLeaf(const char *name, DataModelElement *parent)
     : DataModelElement(name, parent) {

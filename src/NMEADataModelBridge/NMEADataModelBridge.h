@@ -1,21 +1,20 @@
 #ifndef NMEA_DATA_MODEL_BRIDGE_H
 #define NMEA_DATA_MODEL_BRIDGE_H
 
-#include "NMEA/NMEAMessageHandler.h"
-#include "NMEA/NMEAGGAMessage.h"
-#include "NMEA/NMEAGLLMessage.h"
-#include "NMEA/NMEAGSAMessage.h"
-#include "NMEA/NMEAGSTMessage.h"
-#include "NMEA/NMEARMCMessage.h"
-#include "NMEA/NMEAVTGMessage.h"
+class NMEAGGAMessage;
+class NMEAGLLMessage;
+class NMEAGSAMessage;
+class NMEAGSTMessage;
+class NMEARMCMessage;
+class NMEAVTGMessage;
+class StatsMaanger;
 
+#include "NMEA/NMEAMessageHandler.h"
+#
 #include "StatsManager/StatCounter.h"
 #include "StatsManager/StatsHolder.h"
-#include "StatsManager/StatsManager.h"
 
-#include "Util/PassiveTimer.h"
-
-#include <Arduino.h>
+#include <stdint.h>
 
 class NMEADataModelBridge : public NMEAMessageHandler, public StatsHolder {
     private:

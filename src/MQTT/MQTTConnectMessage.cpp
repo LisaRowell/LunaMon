@@ -4,7 +4,7 @@
 
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 MQTTConnectMessage::MQTTConnectMessage(MQTTMessage const &message) : MQTTMessage(message) {
 }

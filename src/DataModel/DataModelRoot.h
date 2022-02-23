@@ -3,7 +3,7 @@
 
 #include "DataModelNode.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 class DataModelRoot : public DataModelNode {
     private:

@@ -1,9 +1,9 @@
 #ifndef STAT_COUNTER_H
 #define STAT_COUNTER_H
 
-#include "DataModel/DataModelLeaf.h"
+class DataModelLeaf;
 
-#include <Arduino.h>
+#include <stdint.h>
 
 class StatCounter {
     private:

@@ -3,7 +3,7 @@
 
 #include "DataModelRetainedValueLeaf.h"
 
-#include <Arduino.h>
+#include <stddef.h>
 
 class DataModelStringLeaf : public DataModelRetainedValueLeaf {
    private:

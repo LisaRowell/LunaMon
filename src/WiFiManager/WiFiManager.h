@@ -1,13 +1,17 @@
 #ifndef WIFI_MANAGER_H
 #define WIFI_MANAGER_H
 
-#include "WiFiManagerClient.h"
+class WiFiManagerClient;
 
 #include "Util/PassiveTimer.h"
 #include "Util/TimeConstants.h"
 
-#include <Arduino.h>
-#include <Array.h>
+#include <etl/vector.h>
+#include <etl/string.h>
+#include <stdint.h>
+
+using etl::vector;
+using etl::istring;
 
 class WiFiManager {
     private:
@@ -17,13 +21,15 @@ class WiFiManager {
             WIFI_CONNECTION_CONNECTED
         };
 
+        static const size_t maxFirmwareVersionLength = 10;
+
         static const uint32_t connectionRetryTime = oneSecond;
 
         enum WiFiConnectionState connectionState;
         PassiveTimer connectionWaitTimer;
 
         static const size_t maxClients = 5;
-        Array<WiFiManagerClient *, maxClients> clients;
+        vector<WiFiManagerClient *, maxClients> clients;
 
         void verifyWiFiPresent();
         void checkFirmwareVersion();
@@ -33,8 +39,8 @@ class WiFiManager {
         void connectionEstablished();
         void notifyWiFiConnected();
         void notifyWiFiDisconnected();
-        void firmwareVersionError(const String firmwareVersion) __attribute__((noreturn));
-        void malformedFirmwareVersion(const String firmwareVersion, const String explanation)
+        void firmwareVersionError(const istring &firmwareVersion) __attribute__((noreturn));
+        void malformedFirmwareVersion(const istring &firmwareVersion, const char *explanation)
                 __attribute__((noreturn));
 
     public:

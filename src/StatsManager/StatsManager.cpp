@@ -6,8 +6,10 @@
 #include "Util/Logger.h"
 #include "Util/Error.h"
 
-#include <Arduino.h>
-#include <Array.h>
+#include <etl/vector.h>
+#include <stdint.h>
+
+using etl::vector;
 
 StatsManager::StatsManager() : statsHolders() {
     lastHarvestTime.setNow();
@@ -23,11 +25,9 @@ void StatsManager::addStatsHolder(StatsHolder *statsHolder) {
 }
 
 void StatsManager::removeStatsHolder(StatsHolder *statsHolder) {
-    for (unsigned statsHolderIndex = 0;
-         statsHolderIndex < statsHolders.size();
-         statsHolderIndex++) {
-        if (statsHolders[statsHolderIndex] == statsHolder) {
-            statsHolders.remove(statsHolderIndex);
+    for (auto iterator = statsHolders.begin(); iterator != statsHolders.end(); iterator++) {
+        if (*iterator == statsHolder) {
+            statsHolders.erase(iterator);
             return;
         }
     }

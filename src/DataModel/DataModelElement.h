@@ -1,9 +1,9 @@
 #ifndef DATA_MODEL_ELEMENT_H
 #define DATA_MODEL_ELEMENT_H
 
-#include "DataModelSubscriber.h"
+class DataModelSubscriber;
 
-#include <Arduino.h>
+#include <stdint.h>
 
 const unsigned maxDataModelSubscribers = 5;
 

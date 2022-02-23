@@ -2,8 +2,13 @@
 
 #include <Arduino.h>
 
-void fatalError(String errorMsg) {
+void fatalError(const char *errorMsg) {
     Serial.println(errorMsg);
+    errorExit();
+}
+
+void fatalError(const etl::istring &errorMsg) {
+    Serial.println(errorMsg.data());
     errorExit();
 }
 

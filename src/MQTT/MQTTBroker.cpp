@@ -20,7 +20,7 @@
 
 #include "WiFiManager/WiFiManager.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 MQTTBroker::MQTTBroker()
         : wifiIsConnected(false), wifiServer(portNumber), dataModelDebugNeedsUpdating(false) {

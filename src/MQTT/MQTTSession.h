@@ -1,15 +1,15 @@
 #ifndef MQTT_SESSION_H
 #define MQTT_SESSION_H
 
-#include "MQTTConnection.h"
-#include "MQTTString.h"
+class MQTTConnection;
+class MQTTBroker;
+class DataModelStringLeaf;
 
 #include "DataModel/DataModelSubscriber.h"
 
 #include "Util/PassiveTimer.h"
 
-#include <Arduino.h>
-#include <WiFiNINA.h>
+#include <stdint.h>
 
 //
 // MQTTSession
@@ -25,9 +25,6 @@ const unsigned maxMQTTClientIDLength = 23;
 // The time, in seconds that we wait before tearing down a Session that's lost it's Connection and
 // hasn't had a new one established.
 const uint16_t unconnectedSessionTearDownTime = 120;
-
-class MQTTConnection;
-class MQTTBroker;
 
 class MQTTSession : public DataModelSubscriber {
     private:

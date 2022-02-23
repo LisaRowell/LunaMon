@@ -1,9 +1,12 @@
 #ifndef ERROR_H
 #define ERROR_H
 
-#include <Arduino.h>
+#include <etl/string.h>
 
-extern void fatalError(String errorMsg) __attribute__((noreturn));
+using etl::istring;
+
+extern void fatalError(const char *errorMsg) __attribute__((noreturn));
+extern void fatalError(const istring &errorMsg) __attribute__((noreturn));
 extern void errorExit() __attribute__((noreturn));
 
 #endif

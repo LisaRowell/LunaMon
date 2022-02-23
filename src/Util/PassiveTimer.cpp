@@ -2,6 +2,7 @@
 #include "TimeConstants.h"
 #include "Error.h"
 
+#include <stdint.h>
 #include <Arduino.h>
 
 void PassiveTimer::setMilliSeconds(uint32_t milliSeconds) {

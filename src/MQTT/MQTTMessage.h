@@ -1,9 +1,9 @@
 #ifndef MQTT_MESSAGE_H
 #define MQTT_MESSAGE_H
 
-#include "MQTTString.h"
+class MQTTString;
 
-#include <Arduino.h>
+#include <stdint.h>
 
 struct MQTTFixedHeader {
     uint8_t typeAndFlags;
