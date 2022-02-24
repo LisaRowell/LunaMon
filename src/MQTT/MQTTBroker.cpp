@@ -23,7 +23,7 @@
 #include <stdint.h>
 
 MQTTBroker::MQTTBroker()
-        : wifiIsConnected(false), wifiServer(portNumber), dataModelDebugNeedsUpdating(false) {
+        : wifiIsConnected(false), wifiServer(portNumber) {
     unsigned connectionIndex;
     for (connectionIndex = 0; connectionIndex < maxMQTTSessions; connectionIndex++) {
         connectionValid[connectionIndex] = false;
@@ -35,6 +35,11 @@ MQTTBroker::MQTTBroker()
     }
 
     dataModelDebugNeedsUpdating = true;
+
+    sysBrokerClientsConnected = 0;
+    sysBrokerClientsDisconnected = 0;
+    sysBrokerClientsMaximum = 0;
+    sysBrokerClientsTotal = 0;
 }
 
 void MQTTBroker::begin(WiFiManager &wifiManager) {
@@ -404,7 +409,6 @@ MQTTSession *MQTTBroker::findAvailableSession() {
     for (sessionIndex = 0; sessionIndex < maxMQTTSessions; sessionIndex++) {
         if (!sessionValid[sessionIndex]) {
             sessionValid[sessionIndex] = true;
-            dataModelDebugNeedsUpdating = true;
             return &sessions[sessionIndex];
         }
     }
@@ -628,17 +632,23 @@ void MQTTBroker::updateConnectionDebugs() {
 }
 
 void MQTTBroker::updateSessionDebugs() {
-    uint32_t sessionCount = 0;
+    uint32_t connectedClients = 0;
+    uint32_t disconnectedClients = 0;
+
     unsigned sessionDebugPos = 0;
     unsigned sessionIndex;
     for (sessionIndex = 0; sessionIndex < maxMQTTSessions; sessionIndex++) {
         if (sessionValid[sessionIndex]) {
-            sessionCount++;
-
             MQTTSession &session = sessions[sessionIndex];
             DataModelStringLeaf *sessionDebug = mqttSessionDebugs[sessionDebugPos];
             session.updateSessionDebug(sessionDebug);
             sessionDebugPos++;
+
+            if (session.isConnected()) {
+                connectedClients++;
+            } else {
+                disconnectedClients++;
+            }
         }
     }
     for (; sessionDebugPos < maxMQTTSessions; sessionDebugPos++) {
@@ -647,9 +657,14 @@ void MQTTBroker::updateSessionDebugs() {
             *emptySessionDebug = "";
         }
     }
-    if (sessionCount != mqttSessionCount) {
-        mqttSessionCount = sessionCount;
+
+    sysBrokerClientsConnected.setIfChanged(connectedClients);
+    sysBrokerClientsDisconnected.setIfChanged(disconnectedClients);
+    if (connectedClients > sysBrokerClientsMaximum) {
+        sysBrokerClientsMaximum = connectedClients;
     }
+    const uint32_t totalClients = connectedClients + disconnectedClients;
+    sysBrokerClientsTotal.setIfChanged(totalClients);
 
     dataModelDebugNeedsUpdating = false;
 }

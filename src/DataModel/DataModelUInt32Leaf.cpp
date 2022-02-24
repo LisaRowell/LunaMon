@@ -16,6 +16,14 @@ DataModelUInt32Leaf & DataModelUInt32Leaf::operator = (const uint32_t value) {
     return *this;
 }
 
+void DataModelUInt32Leaf::setIfChanged(uint32_t value) {
+    if (!hasValue() || this->value != value) {
+        this->value = value;
+        updated();
+        *this << value;
+    }
+}
+
 DataModelUInt32Leaf DataModelUInt32Leaf::operator ++ (int) {
     value++;
     updated();

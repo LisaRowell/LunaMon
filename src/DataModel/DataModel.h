@@ -25,6 +25,17 @@ const size_t maxConnectionDescriptionLength =
 const size_t maxSessionDescriptionLength =
     maxMQTTClientIDLength + 2 + maxIPAddressTextLength + 1 + maxTCPPortTextLength + 1 + 1;
 
+extern DataModelUInt32Leaf sysBrokerClientsConnected;
+extern DataModelUInt32Leaf sysBrokerClientsDisconnected;
+extern DataModelUInt32Leaf sysBrokerClientsMaximum;
+extern DataModelUInt32Leaf sysBrokerClientsTotal;
+extern DataModelNode sysBrokerClientsNode;
+
+extern DataModelUInt32Leaf sysBrokerUptime;
+
+extern DataModelNode sysBrokerNode;
+extern DataModelNode sysNode;
+
 extern DataModelLeaf nmeaDataModelMessagesBridged;
 extern DataModelLeaf nmeaDataModelMessageBridgeRate;
 
@@ -51,7 +62,6 @@ extern DataModelNode mqttSessionsNode;
 extern DataModelStringLeaf *mqttConnectionDebugs[];
 extern DataModelNode mqttConnectionsNode;
 
-extern DataModelUInt32Leaf mqttSessionCount;
 extern DataModelUInt32Leaf mqttConnectionCount;
 
 extern DataModelNode mqttNode;
@@ -61,7 +71,6 @@ const unsigned errorDebugSlots = 5;
 extern DataModelStringLeaf *errorDebugs[];
 extern DataModelNode errorsNode;
 
-extern DataModelUInt32Leaf controllerUpTime;
 extern DataModelNode controllerIDNode;
 
 extern DataModelNode controllersNode;

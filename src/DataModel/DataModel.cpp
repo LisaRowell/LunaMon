@@ -14,6 +14,35 @@
 
 #include <stdint.h>
 
+DataModelUInt32Leaf sysBrokerClientsConnected("connected", &sysBrokerClientsNode);
+DataModelUInt32Leaf sysBrokerClientsDisconnected("disconnected", &sysBrokerClientsNode);
+DataModelUInt32Leaf sysBrokerClientsMaximum("maximum", &sysBrokerClientsNode);
+DataModelUInt32Leaf sysBrokerClientsTotal("total", &sysBrokerClientsNode);
+
+DataModelElement *sysBrokerClientsChildren[] = {
+    &sysBrokerClientsConnected,
+    &sysBrokerClientsDisconnected,
+    &sysBrokerClientsMaximum,
+    &sysBrokerClientsTotal,
+    NULL
+};
+DataModelNode sysBrokerClientsNode("clients", &sysBrokerNode, sysBrokerClientsChildren);
+
+DataModelUInt32Leaf sysBrokerUptime("uptime", &sysBrokerNode);
+
+DataModelElement *sysBrokerChildren[] = {
+    &sysBrokerClientsNode,
+    &sysBrokerUptime,
+    NULL
+};
+DataModelNode sysBrokerNode("broker", &sysNode, sysBrokerChildren);
+
+DataModelElement *sysNodeChildren[] = {
+    &sysBrokerNode,
+    NULL
+};
+DataModelNode sysNode("$SYS", &dataModelRoot, sysNodeChildren);
+
 DataModelLeaf nmeaDataModelMessagesBridged("messages", &nmeaDataModelBridgeNode);
 DataModelLeaf nmeaDataModelMessageBridgeRate("messageRate", &nmeaDataModelBridgeNode);
 
@@ -110,11 +139,9 @@ DataModelElement *mqttConnectionsNodeChildren[] = {
 };
 DataModelNode mqttConnectionsNode("connections", &mqttNode, mqttConnectionsNodeChildren);
 
-DataModelUInt32Leaf mqttSessionCount("sessionCount", &mqttNode);
 DataModelUInt32Leaf mqttConnectionCount("connectionCount", &mqttNode);
 
 DataModelElement *mqttNodeChildren[] = {
-    &mqttSessionCount,
     &mqttConnectionCount,
     &mqttConnectionsNode,
     &mqttSessionsNode,
@@ -146,11 +173,7 @@ DataModelElement *errorsNodeChildren[] = {
 };
 DataModelNode errorsNode("errors", &controllerIDNode, errorsNodeChildren);
 
-// Up time of this controller in seconds
-DataModelUInt32Leaf controllerUpTime("upTime", &controllerIDNode);
-
 DataModelElement *controllerIDNodeChildren[] = {
-    &controllerUpTime,
     &errorsNode,
     &mqttNode,
     &nmeaNode,
@@ -239,7 +262,12 @@ DataModelNode positionNode("position", &navigationNode, positionNodeChildren);
 DataModelElement *navigationNodeChildren[] = { &positionNode, NULL };
 DataModelNode navigationNode("navigation", &dataModelRoot, navigationNodeChildren);
 
-DataModelElement *topNodeChildren[] = { &electronicsNode, &navigationNode, NULL };
+DataModelElement *topNodeChildren[] = {
+    &sysNode,
+    &electronicsNode,
+    &navigationNode,
+    NULL
+};
 DataModelRoot dataModelRoot(topNodeChildren);
 
 DataModel::DataModel(StatsManager &statsManager) : root(dataModelRoot), leafUpdatesCounter() {
