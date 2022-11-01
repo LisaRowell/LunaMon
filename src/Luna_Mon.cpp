@@ -29,7 +29,7 @@ void setup() {
     logger.enableModuleDebug(LOGGER_MODULE_WIFI_MANAGER);
     logger.enableModuleDebug(LOGGER_MODULE_NMEA);
 
-    controllerUpTime = millis() / msInSecond;
+    sysBrokerUptime = millis() / msInSecond;
 
     usbSerialNMEASource.addMessageHandler(nmeaDataModelBridge);
     nmeaWiFiSource.addMessageHandler(nmeaDataModelBridge);
@@ -53,7 +53,7 @@ void loop() {
     statsManager.service();
 
     uint32_t currentUpTime = millis() / msInSecond;
-    if ((currentUpTime % 10 == 0) && (currentUpTime != controllerUpTime)) {
-        controllerUpTime = currentUpTime;
+    if ((currentUpTime % 10 == 0) && (currentUpTime != sysBrokerUptime)) {
+        sysBrokerUptime = currentUpTime;
     }
 }
