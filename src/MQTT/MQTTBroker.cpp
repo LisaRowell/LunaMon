@@ -636,8 +636,7 @@ void MQTTBroker::updateSessionDebugs() {
     uint32_t disconnectedClients = 0;
 
     unsigned sessionDebugPos = 0;
-    unsigned sessionIndex;
-    for (sessionIndex = 0; sessionIndex < maxMQTTSessions; sessionIndex++) {
+    for (unsigned sessionIndex = 0; sessionIndex < maxMQTTSessions; sessionIndex++) {
         if (sessionValid[sessionIndex]) {
             MQTTSession &session = sessions[sessionIndex];
             DataModelStringLeaf *sessionDebug = mqttSessionDebugs[sessionDebugPos];
