@@ -12,7 +12,11 @@
 #include "Util/Logger.h"
 #include "Util/Error.h"
 
+#include <etl/string.h>
+
 #include <stdint.h>
+
+using etl::string;
 
 DataModelUInt32Leaf sysBrokerClientsConnected("connected", &sysBrokerClientsNode);
 DataModelUInt32Leaf sysBrokerClientsDisconnected("disconnected", &sysBrokerClientsNode);
@@ -91,11 +95,16 @@ DataModelElement *nmeaNodeChildren[] = {
 };
 DataModelNode nmeaNode("nmea", &controllerIDNode, nmeaNodeChildren);
 
-DataModelStringLeaf mqttSession1("1", &mqttSessionsNode, maxSessionDescriptionLength);
-DataModelStringLeaf mqttSession2("2", &mqttSessionsNode, maxSessionDescriptionLength);
-DataModelStringLeaf mqttSession3("3", &mqttSessionsNode, maxSessionDescriptionLength);
-DataModelStringLeaf mqttSession4("4", &mqttSessionsNode, maxSessionDescriptionLength);
-DataModelStringLeaf mqttSession5("5", &mqttSessionsNode, maxSessionDescriptionLength);
+static string<maxSessionDescriptionLength> mqttSession1Buffer;
+DataModelStringLeaf mqttSession1("1", &mqttSessionsNode, mqttSession1Buffer);
+static string<maxSessionDescriptionLength> mqttSession2Buffer;
+DataModelStringLeaf mqttSession2("2", &mqttSessionsNode, mqttSession2Buffer);
+static string<maxSessionDescriptionLength> mqttSession3Buffer;
+DataModelStringLeaf mqttSession3("3", &mqttSessionsNode, mqttSession3Buffer);
+static string<maxSessionDescriptionLength> mqttSession4Buffer;
+DataModelStringLeaf mqttSession4("4", &mqttSessionsNode, mqttSession4Buffer);
+static string<maxSessionDescriptionLength> mqttSession5Buffer;
+DataModelStringLeaf mqttSession5("5", &mqttSessionsNode, mqttSession5Buffer);
 
 DataModelStringLeaf *mqttSessionDebugs[] = {
     &mqttSession1,
@@ -115,11 +124,16 @@ DataModelElement *mqttSessionsNodeChildren[] = {
 };
 DataModelNode mqttSessionsNode("sessions", &mqttNode, mqttSessionsNodeChildren);
 
-DataModelStringLeaf mqttConnection1("1", &mqttConnectionsNode, maxConnectionDescriptionLength);
-DataModelStringLeaf mqttConnection2("2", &mqttConnectionsNode, maxConnectionDescriptionLength);
-DataModelStringLeaf mqttConnection3("3", &mqttConnectionsNode, maxConnectionDescriptionLength);
-DataModelStringLeaf mqttConnection4("4", &mqttConnectionsNode, maxConnectionDescriptionLength);
-DataModelStringLeaf mqttConnection5("5", &mqttConnectionsNode, maxConnectionDescriptionLength);
+static string<maxConnectionDescriptionLength> mqttConnection1Buffer;
+DataModelStringLeaf mqttConnection1("1", &mqttConnectionsNode, mqttConnection1Buffer);
+static string<maxConnectionDescriptionLength> mqttConnection2Buffer;
+DataModelStringLeaf mqttConnection2("2", &mqttConnectionsNode, mqttConnection2Buffer);
+static string<maxConnectionDescriptionLength> mqttConnection3Buffer;
+DataModelStringLeaf mqttConnection3("3", &mqttConnectionsNode, mqttConnection3Buffer);
+static string<maxConnectionDescriptionLength> mqttConnection4Buffer;
+DataModelStringLeaf mqttConnection4("4", &mqttConnectionsNode, mqttConnection4Buffer);
+static string<maxConnectionDescriptionLength> mqttConnection5Buffer;
+DataModelStringLeaf mqttConnection5("5", &mqttConnectionsNode, mqttConnection5Buffer);
 
 DataModelStringLeaf *mqttConnectionDebugs[] = {
     &mqttConnection1,
@@ -149,11 +163,16 @@ DataModelElement *mqttNodeChildren[] = {
 };
 DataModelNode mqttNode("MQTT", &controllerIDNode, mqttNodeChildren);
 
-DataModelStringLeaf error1("1", &errorsNode, maxErrorLength);
-DataModelStringLeaf error2("2", &errorsNode, maxErrorLength);
-DataModelStringLeaf error3("3", &errorsNode, maxErrorLength);
-DataModelStringLeaf error4("4", &errorsNode, maxErrorLength);
-DataModelStringLeaf error5("5", &errorsNode, maxErrorLength);
+static string<maxErrorLength> error1Buffer;
+DataModelStringLeaf error1("1", &errorsNode, error1Buffer);
+static string<maxErrorLength> error2Buffer;
+DataModelStringLeaf error2("2", &errorsNode, error2Buffer);
+static string<maxErrorLength> error3Buffer;
+DataModelStringLeaf error3("3", &errorsNode, error3Buffer);
+static string<maxErrorLength> error4Buffer;
+DataModelStringLeaf error4("4", &errorsNode, error4Buffer);
+static string<maxErrorLength> error5Buffer;
+DataModelStringLeaf error5("5", &errorsNode, error5Buffer);
 
 DataModelStringLeaf *errorDebugs[errorDebugSlots] = {
     &error1,

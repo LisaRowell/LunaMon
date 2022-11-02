@@ -3,15 +3,18 @@
 
 #include "DataModelRetainedValueLeaf.h"
 
+#include <etl/string.h>
+
 #include <stddef.h>
 
+using etl::istring;
+
 class DataModelStringLeaf : public DataModelRetainedValueLeaf {
-   private:
-        char *string;
-        size_t maxLength;
+    private:
+        istring &value;
 
     public:
-        DataModelStringLeaf(const char *name, DataModelElement *parent, size_t length);
+        DataModelStringLeaf(const char *name, DataModelElement *parent, istring &buffer);
         DataModelStringLeaf & operator = (const char *newString);
         DataModelStringLeaf & operator = (const DataModelStringLeaf &otherLeaf);
         operator const char * () const;

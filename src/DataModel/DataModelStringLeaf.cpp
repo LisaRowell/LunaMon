@@ -2,22 +2,14 @@
 
 #include <stddef.h>
 
-DataModelStringLeaf::DataModelStringLeaf(const char *name, DataModelElement *parent, size_t length)
-    : DataModelRetainedValueLeaf(name, parent), maxLength(length) {
-    // Note about the following new: There's often cautions in the Arduino community about the use
-    // of new due to the risk of fragmentation in a small dynamic memory environment. The following
-    // new is not a concern in that regard since theses structures get allocated at start time and
-    // are never freed.
-    string = new char[length];
-    string[0] = 0;
+static char buffer[101];
+DataModelStringLeaf::DataModelStringLeaf(const char *name, DataModelElement *parent,
+                                         istring &buffer)
+    : DataModelRetainedValueLeaf(name, parent), value(buffer) {
 }
 
 DataModelStringLeaf & DataModelStringLeaf::operator = (const char *newString) {
-    unsigned strPos;
-    for (strPos = 0; strPos < maxLength - 1 && newString[strPos] != 0; strPos++) {
-        string[strPos]  = newString[strPos];
-    }
-    this->string[strPos] = 0;
+    value = newString;
 
     updated();
     *this << newString;
@@ -26,29 +18,24 @@ DataModelStringLeaf & DataModelStringLeaf::operator = (const char *newString) {
 }
 
 DataModelStringLeaf & DataModelStringLeaf::operator = (const DataModelStringLeaf &otherLeaf) {
-    unsigned strPos;
-    for (strPos = 0; strPos < maxLength - 1 && otherLeaf.string[strPos] != 0; strPos++) {
-        string[strPos]  = otherLeaf.string[strPos];
-    }
-    this->string[strPos] = 0;
-
+    this->value = otherLeaf.value;
     updated();
-    *this << string;
+    *this << value.c_str();
 
     return *this;
 }
 
 DataModelStringLeaf::operator const char * () const {
-    return string;
+    return value.c_str();
 }
 
 
 void DataModelStringLeaf::sendRetainedValue(DataModelSubscriber &subscriber) {
     if (hasValue()) {
-        publishToSubscriber(subscriber, string, true);
+        publishToSubscriber(subscriber, value.c_str(), true);
     }
 }
 
 bool DataModelStringLeaf::isEmptyStr() const {
-    return hasValue() && string[0] == 0;
+    return hasValue() && value.empty();
 }
