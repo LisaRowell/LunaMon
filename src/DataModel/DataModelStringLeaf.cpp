@@ -6,8 +6,8 @@ DataModelStringLeaf::DataModelStringLeaf(const char *name, DataModelElement *par
     : DataModelRetainedValueLeaf(name, parent), maxLength(length) {
     // Note about the following new: There's often cautions in the Arduino community about the use
     // of new due to the risk of fragmentation in a small dynamic memory environment. The following
-    // new is a concern in that regard since theses structures get allocated at start time and are
-    // never freed.
+    // new is not a concern in that regard since theses structures get allocated at start time and
+    // are never freed.
     string = new char[length];
     string[0] = 0;
 }
