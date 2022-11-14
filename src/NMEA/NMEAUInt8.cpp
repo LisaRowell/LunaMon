@@ -51,11 +51,11 @@ bool NMEAUInt8::hasValue() const {
     return valuePresent;
 }
 
-void NMEAUInt8::publish(DataModelLeaf &leaf) const {
+void NMEAUInt8::publish(DataModelUInt8Leaf &leaf) const {
     if (valuePresent) {
-        leaf << value;
+        leaf = value;
     } else {
-        leaf << "";
+        leaf.removeValue();
     }
 }
 

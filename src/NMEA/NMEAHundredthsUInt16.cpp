@@ -67,11 +67,8 @@ bool NMEAHundredthsUInt16::extract(NMEALine &nmeaLine, NMEATalker &talker, const
     return true;
 }
 
-void NMEAHundredthsUInt16::publish(DataModelLeaf &leaf) const {
-    char decimalStr[11];
-
-    snprintf(decimalStr, 11, "%u.%02u", wholeNumber, hundredths);
-    leaf << decimalStr;
+void NMEAHundredthsUInt16::publish(DataModelHundredthsUInt16Leaf &leaf) const {
+    leaf.set(wholeNumber, hundredths);
 }
 
 void NMEAHundredthsUInt16::log(Logger &logger) const {

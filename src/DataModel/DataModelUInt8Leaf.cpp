@@ -1,4 +1,4 @@
-#include "DataModelUInt32Leaf.h"
+#include "DataModelUInt8Leaf.h"
 #include "DataModelLeaf.h"
 
 #include <etl/string.h>
@@ -9,42 +9,42 @@
 using etl::string;
 using etl::to_string;
 
-DataModelUInt32Leaf::DataModelUInt32Leaf(const char *name, DataModelElement *parent)
+DataModelUInt8Leaf::DataModelUInt8Leaf(const char *name, DataModelElement *parent)
     : DataModelRetainedValueLeaf(name, parent) {
 }
 
-DataModelUInt32Leaf & DataModelUInt32Leaf::operator = (const uint32_t value) {
+DataModelUInt8Leaf & DataModelUInt8Leaf::operator = (const uint8_t value) {
     if (!hasValue() || this->value != value) {
         this->value = value;
         updated();
-        *this << value;
+        *this << (uint32_t)value;
     }
 
     return *this;
 }
 
-DataModelUInt32Leaf DataModelUInt32Leaf::operator ++ (int) {
+DataModelUInt8Leaf DataModelUInt8Leaf::operator ++ (int) {
     value++;
     updated();
-    *this << value;
+    *this << (uint32_t)value;
     return *this;
 }
 
-DataModelUInt32Leaf DataModelUInt32Leaf::operator -- (int) {
+DataModelUInt8Leaf DataModelUInt8Leaf::operator -- (int) {
     value--;
     updated();
-    *this << value;
+    *this << (uint32_t)value;
     return *this;
 }
 
-DataModelUInt32Leaf::operator uint32_t() const {
+DataModelUInt8Leaf::operator uint8_t() const {
     return value;
 }
 
 
-void DataModelUInt32Leaf::sendRetainedValue(DataModelSubscriber &subscriber) {
+void DataModelUInt8Leaf::sendRetainedValue(DataModelSubscriber &subscriber) {
     if (hasValue()) {
-        string<12> valueStr;
+        string<3> valueStr;
         to_string(value, valueStr);
         publishToSubscriber(subscriber, valueStr, true);
     }

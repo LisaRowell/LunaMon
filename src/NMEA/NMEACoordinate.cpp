@@ -1,11 +1,18 @@
 #include "NMEACoordinate.h"
 
-#include "DataModel/DataModelLeaf.h"
+#include "DataModel/DataModel.h"
+#include "DataModel/DataModelStringLeaf.h"
 
 #include "Util/CharacterTools.h"
 #include "Util/StringTools.h"
 
+#include <etl/string.h>
+#include <etl/string_stream.h>
+
 #include <Arduino.h>
+
+using etl::string;
+using etl::string_stream;
 
 bool NMEACoordinate::setDegrees(const String &string, unsigned startDegrees, unsigned endDegrees,
                                 uint8_t maxDegrees) {
@@ -59,16 +66,15 @@ void NMEACoordinate::snprint(char *string, size_t maxLength) const {
 
 // We publish coordinates as a string containing a signed, floating point number of degrees.
 // Clients are responsible for displaying the values in a way that matches the users preference.
-void NMEACoordinate::publish(DataModelLeaf &leaf, bool isPositive) const {
-    char string[40];
+void NMEACoordinate::publish(DataModelStringLeaf &leaf, bool isPositive) const {
+    string<coordinateLength> coordinateStr;
+    string_stream coordinateStream(coordinateStr);
 
-    float degreesFloat;
-    degreesFloat = (float)degrees + minutes / 60;
-    if (isPositive) {
-        snprintf(string, 40, "%f", degreesFloat);
-    } else {
-        snprintf(string, 40, "-%f", degreesFloat);
+    if (!isPositive) {
+        coordinateStream << "-";
     }
+    float coordinateFloat = degrees + minutes / 60;
+    coordinateStream << etl::setprecision(4) << coordinateFloat;
 
-    leaf << string;
+    leaf = coordinateStr;
 }

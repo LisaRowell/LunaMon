@@ -4,7 +4,13 @@
 #include "Util/StringTools.h"
 #include "Util/Logger.h"
 
+#include <etl/string.h>
+#include <etl/string_stream.h>
+
 #include <Arduino.h>
+
+using etl::string;
+using etl::string_stream;
 
 bool NMEADirection::set(const String &headingStr, bool optional) {
     const unsigned length = headingStr.length();
@@ -69,14 +75,11 @@ bool NMEADirection::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *
     return true;
 }
 
-void NMEADirection::publish(DataModelLeaf &leaf) const {
+void NMEADirection::publish(DataModelTenthsUInt16Leaf &leaf) const {
     if (valuePresent) {
-        char headingStr[10];
-
-        snprintf(headingStr, 10, "%u.%u", heading, tenths);
-        leaf << headingStr;
+        leaf.set(heading, tenths);
     } else {
-        leaf << "";
+        leaf.removeValue();
     }
 }
 

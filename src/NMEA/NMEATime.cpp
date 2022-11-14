@@ -2,12 +2,20 @@
 #include "NMEALine.h"
 #include "NMEATalker.h"
 
-#include "DataModel/DataModelLeaf.h"
+#include "DataModel/DataModelStringLeaf.h"
 
 #include "Util/Logger.h"
 #include "Util/StringTools.h"
 
+#include <etl/string.h>
+#include <etl/string_stream.h>
+
 #include <Arduino.h>
+
+using etl::string;
+using etl::string_stream;
+using etl::setw;
+using etl::setfill;
 
 bool NMEATime::set(const String &timeStr) {
     if (timeStr.length() < 6) {
@@ -62,14 +70,16 @@ bool NMEATime::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgTy
     return true;
 }
 
-void NMEATime::publish(DataModelLeaf &leaf) const {
+void NMEATime::publish(DataModelStringLeaf &leaf) const {
     char secondFractionStr[12];
     buildSecondsFactionString(secondFractionStr);
 
-    char timeStr[40];
-    snprintf(timeStr, 40, "%02u:%02u:%02u%s", hours, minutes, seconds, secondFractionStr);
+    string<40> timeStr;
+    string_stream timeStrStream(timeStr);
+    timeStrStream << setfill('0') << setw(2) << hours << setw(1) << ":" << setw(2) << minutes
+                  << setw(1) << ":" << setw(2) << seconds << setw(0) << secondFractionStr;
 
-    leaf << timeStr;
+    leaf = timeStr;
 }
 
 void NMEATime::buildSecondsFactionString(char *string) const {

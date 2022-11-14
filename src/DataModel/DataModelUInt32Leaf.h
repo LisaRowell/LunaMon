@@ -12,7 +12,6 @@ class DataModelUInt32Leaf : public DataModelRetainedValueLeaf {
     public:
         DataModelUInt32Leaf(const char *name, DataModelElement *parent);
         DataModelUInt32Leaf & operator = (const uint32_t value);
-        void setIfChanged(uint32_t value);
         DataModelUInt32Leaf operator ++ (int);
         DataModelUInt32Leaf operator -- (int);
         operator uint32_t() const;

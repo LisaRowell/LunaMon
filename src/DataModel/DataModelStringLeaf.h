@@ -15,11 +15,13 @@ class DataModelStringLeaf : public DataModelRetainedValueLeaf {
 
     public:
         DataModelStringLeaf(const char *name, DataModelElement *parent, istring &buffer);
+        DataModelStringLeaf & operator = (const istring &newString);
         DataModelStringLeaf & operator = (const char *newString);
         DataModelStringLeaf & operator = (const DataModelStringLeaf &otherLeaf);
         operator const char * () const;
         virtual void sendRetainedValue(DataModelSubscriber &subscriber) override;
         bool isEmptyStr() const;
+        size_t maxLength() const;
 };
 
 #endif

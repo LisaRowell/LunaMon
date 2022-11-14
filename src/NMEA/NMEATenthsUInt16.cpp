@@ -81,14 +81,11 @@ bool NMEATenthsUInt16::hasValue() const {
     return valuePresent;
 }
 
-void NMEATenthsUInt16::publish(DataModelLeaf &leaf) const {
+void NMEATenthsUInt16::publish(DataModelTenthsUInt16Leaf &leaf) const {
     if (valuePresent) {
-        char decimalStr[11];
-
-        snprintf(decimalStr, 11, "%u.%u", wholeNumber, tenths);
-        leaf << decimalStr;
+        leaf.set(wholeNumber, tenths);
     } else {
-        leaf << "";
+        leaf.removeValue();
     }
 }
 

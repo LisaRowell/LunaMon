@@ -2,7 +2,12 @@
 #include "DataModelNode.h"
 #include "DataModelElement.h"
 #include "DataModelRoot.h"
+#include "DataModelUInt16Leaf.h"
 #include "DataModelUInt32Leaf.h"
+#include "DataModelTenthsUInt16Leaf.h"
+#include "DataModelTenthsInt16Leaf.h"
+#include "DataModelHundredthsUInt8Leaf.h"
+#include "DataModelHundredthsUInt16Leaf.h"
 #include "DataModelStringLeaf.h"
 #include "Config.h"
 
@@ -208,41 +213,56 @@ DataModelNode controllersNode("controllers", &electronicsNode, controllersNodeCh
 DataModelElement *electronicsNodeChildren[] = { &controllersNode, NULL };
 DataModelNode electronicsNode("electronics", &dataModelRoot, electronicsNodeChildren);
 
-DataModelLeaf positionLatitude("latitude", &positionNode);
-DataModelLeaf positionLongitude("longitude", &positionNode);
-DataModelLeaf positionTime("time", &positionNode);
-DataModelLeaf positionDataValid("dataValid", &positionNode);
-DataModelLeaf positionFAAModeindicator("faaModeIndicator", &positionNode);
-DataModelLeaf positionSpeedOverGround("speedOverGround", &positionNode);
-DataModelLeaf positionTrackMadeGood("trackMadeGood", &positionNode);
-DataModelLeaf positionDate("date", &positionNode);
-DataModelLeaf positionMagneticVariation("magneticVariation", &positionNode);
-DataModelLeaf positionGPSQuality("gpsQuality", &positionNode);
-DataModelLeaf positionNumberSatellites("numberSatellites", &positionNode);
-DataModelLeaf positionHorizontalDilutionOfPrecision("horizontalDilutionOfPrecision", &positionNode);
-DataModelLeaf positionAntennaAltitude("antennaAltitude", &positionNode);
-DataModelLeaf positionGeoidalSeparation("geoidalSeparation", &positionNode);
-DataModelLeaf positionGPSDataAge("gpsDataAge", &positionNode);
-DataModelLeaf positionDifferentialReferenceStation("differentialReferenceStation", &positionNode);
-DataModelLeaf positionSatelliteSelectionMode("satelliteSelectionMode", &positionNode);
-DataModelLeaf positionFixMode("fixMode", &positionNode);
-DataModelLeaf positionActiveSatellites("activeSatellites", &positionNode);
-DataModelLeaf positionPDOP("pdop", &positionNode);
-DataModelLeaf positionHDOP("hdop", &positionNode);
-DataModelLeaf positionVDOP("vdop", &positionNode);
-DataModelLeaf positionStandardDeviationOfRangeInputsRMS("standardDeviationOfRangeInputsRMS",
-                                                        &positionNode);
-DataModelLeaf positionStandardDeviationOfSemiMajorAxis("standardDeviationOfSemiMajorAxis",
-                                                       &positionNode);
-DataModelLeaf positionStandardDeviationOfSemiMinorAxis("standardDeviationOfSemiMinorAxis",
-                                                       &positionNode);
-DataModelLeaf positionOrientationOfSemiMajorAxis("orientationOfSemiMajorAxis", &positionNode);
-DataModelLeaf positionStandardDeviationOfLatitudeError("standardDeviationOfLatitudeError",
-                                                       &positionNode);
-DataModelLeaf positionStandardDeviationOfLongitudeError("standardDeviationOfLongitudeError",
-                                                        &positionNode);
-DataModelLeaf positionStandardDeviationOfAltitudeError("standardDeviationOfAltitudeError",
-                                                       &positionNode);
+string<coordinateLength> positionLatitudeBuffer;
+DataModelStringLeaf positionLatitude("latitude", &positionNode, positionLatitudeBuffer);
+string<coordinateLength> positionLongitudeBuffer;
+DataModelStringLeaf positionLongitude("longitude", &positionNode, positionLongitudeBuffer);
+string<timeLength> positionTimeBuffer;
+DataModelStringLeaf positionTime("time", &positionNode, positionTimeBuffer);
+DataModelUInt32Leaf positionDataValid("dataValid", &positionNode);
+string<15> faaModeIndicatorBuffer;
+DataModelStringLeaf positionFAAModeindicator("faaModeIndicator", &positionNode,
+                                             faaModeIndicatorBuffer);
+DataModelTenthsUInt16Leaf positionSpeedOverGround("speedOverGround", &positionNode);
+DataModelTenthsUInt16Leaf positionTrackMadeGood("trackMadeGood", &positionNode);
+string<dateLength> positionDateBuffer;
+DataModelStringLeaf positionDate("date", &positionNode, positionDateBuffer);
+DataModelTenthsInt16Leaf positionMagneticVariation("magneticVariation", &positionNode);
+string<20> positionGPSQualityBuffer;
+DataModelStringLeaf positionGPSQuality("gpsQuality", &positionNode, positionGPSQualityBuffer);
+DataModelUInt16Leaf positionNumberSatellites("numberSatellites", &positionNode);
+DataModelHundredthsUInt16Leaf positionHorizontalDilutionOfPrecision("horizontalDilutionOfPrecision",
+                                                                    &positionNode);
+DataModelTenthsInt16Leaf positionAntennaAltitude("antennaAltitude", &positionNode);
+DataModelTenthsInt16Leaf positionGeoidalSeparation("geoidalSeparation", &positionNode);
+DataModelTenthsUInt16Leaf positionGPSDataAge("gpsDataAge", &positionNode);
+DataModelUInt16Leaf positionDifferentialReferenceStation("differentialReferenceStation",
+                                                         &positionNode);
+string<9> positionSatelliteSelectionModeBuffer;
+DataModelStringLeaf positionSatelliteSelectionMode("satelliteSelectionMode", &positionNode,
+                                                   positionSatelliteSelectionModeBuffer);
+string<4> positionFixModeBuffer;
+DataModelStringLeaf positionFixMode("fixMode", &positionNode, positionFixModeBuffer);
+string<activeSatellitesLength> positionActiveSatellitesBuffer;
+DataModelStringLeaf positionActiveSatellites("activeSatellites", &positionNode,
+                                             positionActiveSatellitesBuffer);
+DataModelHundredthsUInt8Leaf positionPDOP("pdop", &positionNode);
+DataModelHundredthsUInt8Leaf positionHDOP("hdop", &positionNode);
+DataModelHundredthsUInt8Leaf positionVDOP("vdop", &positionNode);
+DataModelTenthsUInt16Leaf
+    positionStandardDeviationOfRangeInputsRMS("standardDeviationOfRangeInputsRMS", &positionNode);
+DataModelTenthsUInt16Leaf
+    positionStandardDeviationOfSemiMajorAxis("standardDeviationOfSemiMajorAxis", &positionNode);
+DataModelTenthsUInt16Leaf
+    positionStandardDeviationOfSemiMinorAxis("standardDeviationOfSemiMinorAxis", &positionNode);
+DataModelTenthsUInt16Leaf positionOrientationOfSemiMajorAxis("orientationOfSemiMajorAxis",
+                                                             &positionNode);
+DataModelTenthsUInt16Leaf
+    positionStandardDeviationOfLatitudeError("standardDeviationOfLatitudeError", &positionNode);
+DataModelTenthsUInt16Leaf
+    positionStandardDeviationOfLongitudeError("standardDeviationOfLongitudeError", &positionNode);
+DataModelTenthsUInt16Leaf
+    positionStandardDeviationOfAltitudeError("standardDeviationOfAltitudeError", &positionNode);
 
 DataModelElement *positionNodeChildren[] = {
     &positionLatitude,

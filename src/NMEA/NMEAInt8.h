@@ -4,7 +4,7 @@
 #include "NMEALine.h"
 #include "NMEATalker.h"
 
-#include "DataModel/DataModelLeaf.h"
+#include "DataModel/DataModelInt8Leaf.h"
 
 #include "Util/LoggableItem.h"
 #include "Util/Logger.h"
@@ -22,7 +22,7 @@ class NMEAInt8 : public LoggableItem {
                      const char *fieldName, bool optional = false, int8_t minValue = -128,
                      int8_t maxValue = 127);
         bool hasValue() const;
-        void publish(DataModelLeaf &leaf) const;
+        void publish(DataModelInt8Leaf &leaf) const;
         virtual void log(Logger &logger) const override;
 };
 

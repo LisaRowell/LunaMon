@@ -30,7 +30,7 @@ class NMEAFAAModeIndicator : public LoggableItem {
         NMEAFAAModeIndicator();
         bool set(String &faaModeStr);
         bool hasValue() const;
-        void publish(DataModelLeaf &leaf) const;
+        void publish(DataModelStringLeaf &leaf) const;
         virtual void log(Logger &logger) const override;
 };
 

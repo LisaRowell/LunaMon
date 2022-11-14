@@ -2,7 +2,7 @@
 #include "NMEALine.h"
 #include "NMEATalker.h"
 
-#include "DataModel/DataModelLeaf.h"
+#include "DataModel/DataModelStringLeaf.h"
 
 #include "Util/Logger.h"
 
@@ -37,14 +37,14 @@ bool NMEARadioChannelCode::extract(NMEALine &nmeaLine, NMEATalker &talker, const
     return true;
 }
 
-void NMEARadioChannelCode::publish(DataModelLeaf &leaf) const {
+void NMEARadioChannelCode::publish(DataModelStringLeaf &leaf) const {
     switch (radioChannelCode) {
         case RADIO_CHANNEL_87B:
-            leaf << "87B";
+            leaf = "87B";
             break;
 
         case RADIO_CHANNEL_88B:
-            leaf << "88B";
+            leaf = "88B";
     }
 }
 

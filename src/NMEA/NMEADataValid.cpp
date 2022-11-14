@@ -2,7 +2,7 @@
 #include "NMEALine.h"
 #include "NMEATalker.h"
 
-#include "DataModel/DataModelLeaf.h"
+#include "DataModel/DataModelUInt32Leaf.h"
 
 #include "Util/Logger.h"
 
@@ -39,11 +39,11 @@ bool NMEADataValid::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *
     return true;
 }
 
-void NMEADataValid::publish(DataModelLeaf &leaf) const {
+void NMEADataValid::publish(DataModelUInt32Leaf &leaf) const {
     if (valid) {
-        leaf << "1";
+        leaf = 1;
     } else {
-        leaf << "0";
+        leaf = 0;
     }
 }
 

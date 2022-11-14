@@ -60,11 +60,11 @@ uint16_t NMEAUInt16::getValue() const {
     return value;
 }
 
-void NMEAUInt16::publish(DataModelLeaf &leaf) const {
+void NMEAUInt16::publish(DataModelUInt16Leaf &leaf) const {
     if (valuePresent) {
-        leaf << value;
+        leaf = value;
     } else {
-        leaf << "";
+        leaf.removeValue();
     }
 }
 

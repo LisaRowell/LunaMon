@@ -74,53 +74,53 @@ bool NMEAFAAModeIndicator::hasValue() const {
     return faaMode != FAA_MODE_NONE;
 }
 
-void NMEAFAAModeIndicator::publish(DataModelLeaf &leaf) const {
+void NMEAFAAModeIndicator::publish(DataModelStringLeaf &leaf) const {
     switch (faaMode) {
         case FAA_MODE_NONE:
             break;
 
         case FAA_MODE_AUTONOMOUS:
-            leaf << "Autonomous";
+            leaf = "Autonomous";
             break;
 
         case FAA_MODE_CAUTION:
-            leaf << "Caution";
+            leaf = "Caution";
             break;
 
         case FAA_MODE_DIFFERENTIAL:
-            leaf << "Differential";
+            leaf = "Differential";
             break;
 
         case FAA_MODE_ESTIMATED:
-            leaf << "Estimated";
+            leaf = "Estimated";
             break;
 
         case FAA_MODE_RTK_FLOAT:
-            leaf << "RTK Float";
+            leaf = "RTK Float";
             break;
 
         case FAA_MODE_MANUAL:
-            leaf << "Manual";
+            leaf = "Manual";
             break;
 
         case FAA_MODE_DATA_NOT_VALID:
-            leaf << "Data Not Valid";
+            leaf = "Data Not Valid";
             break;
 
         case FAA_MODE_PRECISE:
-            leaf << "Precise";
+            leaf = "Precise";
             break;
 
         case FAA_MODE_RTK_INTEGER:
-            leaf << "RTK Integer";
+            leaf = "RTK Integer";
             break;
 
         case FAA_MODE_SIMULATED:
-            leaf << "Simulated";
+            leaf = "Simulated";
             break;
 
         case FAA_MODE_UNSAFE:
-            leaf << "Unsafe";
+            leaf = "Unsafe";
     }
 }
 

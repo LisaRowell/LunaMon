@@ -2,7 +2,7 @@
 #include "NMEALine.h"
 #include "NMEATalker.h"
 
-#include "DataModel/DataModelLeaf.h"
+#include "DataModel/DataModelStringLeaf.h"
 
 #include "Util/CharacterTools.h"
 #include "Util/Logger.h"
@@ -43,42 +43,42 @@ bool NMEAGPSQuality::extract(NMEALine &nmeaLine, NMEATalker &talker, const char 
     return true;
 }
 
-void NMEAGPSQuality::publish(DataModelLeaf &leaf) const {
+void NMEAGPSQuality::publish(DataModelStringLeaf &leaf) const {
     switch (gpsQuality) {
         case GPS_QUALITY_FIX_NOT_AVAILABLE:
-            leaf << "Fix Not Available";
+            leaf = "Fix Not Available";
             break;
 
         case GPS_QUALITY_GPS_FIX:
-            leaf << "GPS Fix";
+            leaf = "GPS Fix";
             break;
 
         case GPS_QUALITY_DIFFERENTIAL_GPS_FIX:
-            leaf << "Differential GPS Fix";
+            leaf = "Differential GPS Fix";
             break;
 
         case GPS_QUALITY_PPS_FIX:
-            leaf << "PPS Fix";
+            leaf = "PPS Fix";
             break;
 
         case GPS_QUALITY_REAL_TIME_KINEMATIC:
-            leaf << "Real Time Kinematic";
+            leaf = "Real Time Kinematic";
             break;
 
         case GPS_QUALITY_FLOAT_RTK:
-            leaf << "Float RTK";
+            leaf = "Float RTK";
             break;
 
         case GPS_QUALITY_ESTIMATED:
-            leaf << "Estimated";
+            leaf = "Estimated";
             break;
 
         case GPS_QUALITY_MANUAL_INPUT_MODE:
-            leaf << "Manual Input Mode";
+            leaf = "Manual Input Mode";
             break;
 
         case GPS_QUALITY_SIMULATED_MODE:
-            leaf << "Simulated Mode";
+            leaf = "Simulated Mode";
     }
 }
 

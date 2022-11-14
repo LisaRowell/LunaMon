@@ -5,7 +5,15 @@
 #include "Util/StringTools.h"
 #include "Util/Logger.h"
 
+#include <etl/string.h>
+#include <etl/string_stream.h>
+
 #include <Arduino.h>
+
+using etl::string;
+using etl::string_stream;
+using etl::setw;
+using etl::setfill;
 
 bool NMEADate::set(const String &dateStr) {
     const unsigned length = dateStr.length();
@@ -54,15 +62,16 @@ bool NMEADate::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgTy
     return true;
 }
 
-void NMEADate::publish(DataModelLeaf &leaf) const {
+void NMEADate::publish(DataModelStringLeaf &leaf) const {
     if (hasValue) {
         // We use the US format of mm/dd/yyyyy.
-        char dateStr[14];
-
-        snprintf(dateStr, 14, "%02u/%02u/%u", month, day, year);
-        leaf << dateStr;
+        string<dateLength> dateStr;
+        string_stream dateStrStream(dateStr);
+        dateStrStream << setfill('0') << setw(2) << month << setw(1) << "/" << setw(2) << day
+                      << setw(1) << "/" << setw(4) << year;        
+        leaf = dateStr;
     } else {
-        leaf << "";
+        leaf.removeValue();
     }
 }
 

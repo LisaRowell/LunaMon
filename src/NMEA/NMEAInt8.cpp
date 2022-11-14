@@ -46,11 +46,8 @@ bool NMEAInt8::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgTy
     return true;
 }
 
-void NMEAInt8::publish(DataModelLeaf &leaf) const {
-    char decimalStr[5];
-
-    snprintf(decimalStr, 5, "%d", value);
-    leaf << decimalStr;
+void NMEAInt8::publish(DataModelInt8Leaf &leaf) const {
+    leaf = value;
 }
 
 void NMEAInt8::log(Logger &logger) const {

@@ -2,7 +2,7 @@
 #include "NMEALine.h"
 #include "NMEATalker.h"
 
-#include "DataModel/DataModelLeaf.h"
+#include "DataModel/DataModelStringLeaf.h"
 
 #include "Util/Logger.h"
 
@@ -55,7 +55,7 @@ bool NMEALatitude::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *m
 }
 
 
-void NMEALatitude::publish(DataModelLeaf &leaf) const {
+void NMEALatitude::publish(DataModelStringLeaf &leaf) const {
     switch (northOrSouth) {
         case NORTH:
             NMEACoordinate::publish(leaf, true);

@@ -19,7 +19,13 @@
 #include "Util/PassiveTimer.h"
 #include "Util/Logger.h"
 
+#include <etl/string.h>
+#include <etl/string_stream.h>
+
 #include <stdint.h>
+
+using etl::string;
+using etl::string_stream;
 
 NMEADataModelBridge::NMEADataModelBridge(StatsManager &statsManager) : messagesBridgedCounter() {
     statsManager.addStatsHolder(this);
@@ -96,31 +102,27 @@ void NMEADataModelBridge::bridgeNMEAGLLMessage(NMEAGLLMessage *message) {
 
 void NMEADataModelBridge::bridgeNMEAGSAMessage(NMEAGSAMessage *message) {
     if (message->automaticMode) {
-        positionSatelliteSelectionMode << "Automatic";
+        positionSatelliteSelectionMode = "Automatic";
     } else {
-        positionSatelliteSelectionMode << "Manual";
+        positionSatelliteSelectionMode = "Manual";
     }
     message->gpsFixMode.publish(positionFixMode);
 
-    char activeSatellites[73];
-    activeSatellites[0] = 0;
-    unsigned satelliteIndex;
-    for (satelliteIndex = 0; satelliteIndex < 12; satelliteIndex++) {
+    string<activeSatellitesLength> activeSatellitesStr;
+    string_stream activeSatellitesStrStream(activeSatellitesStr);
+    bool firstInList = true;
+    for (unsigned satelliteIndex = 0; satelliteIndex < 12; satelliteIndex++) {
         if (message->satelliteIDs[satelliteIndex].hasValue()) {
-            char satelliteText[7];
-            if (satelliteIndex < 11) {
-                snprintf(satelliteText, 7, "%u,", message->satelliteIDs[satelliteIndex].getValue());
+            if (!firstInList) {
+                activeSatellitesStrStream << ",";
             } else {
-                snprintf(satelliteText, 7, "%u", message->satelliteIDs[satelliteIndex].getValue());
+                firstInList = false;
             }
-            strncat(activeSatellites, satelliteText, 72);
-        } else {
-            if (satelliteIndex < 11) {
-                strncat(activeSatellites, ",", 72);
-            }
+            activeSatellitesStrStream << message->satelliteIDs[satelliteIndex].getValue();
         }
     }
-    positionActiveSatellites << activeSatellites;
+
+    positionActiveSatellites = activeSatellitesStr;
 
     message->pdop.publish(positionPDOP);
     message->hdop.publish(positionHDOP);

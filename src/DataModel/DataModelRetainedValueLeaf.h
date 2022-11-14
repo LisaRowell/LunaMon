@@ -15,6 +15,9 @@ class DataModelRetainedValueLeaf : public DataModelLeaf {
         void updated();
         bool hasValue() const;
         virtual void sendRetainedValue(DataModelSubscriber &subscriber) = 0;
+
+    public:
+        void removeValue();
 };
 
 #endif

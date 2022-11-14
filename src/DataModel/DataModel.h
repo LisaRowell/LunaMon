@@ -6,7 +6,12 @@ class StatsManager;
 
 #include "DataModelNode.h"
 #include "DataModelRoot.h"
+#include "DataModelUInt16Leaf.h"
 #include "DataModelUInt32Leaf.h"
+#include "DataModelTenthsUInt16Leaf.h"
+#include "DataModelTenthsInt16Leaf.h"
+#include "DataModelHundredthsUInt8Leaf.h"
+#include "DataModelHundredthsUInt16Leaf.h"
 #include "DataModelStringLeaf.h"
 
 #include "MQTT/MQTTSession.h"
@@ -77,35 +82,39 @@ extern DataModelNode controllersNode;
 
 extern DataModelNode electronicsNode;
 
-extern DataModelLeaf positionLatitude;
-extern DataModelLeaf positionLongitude;
-extern DataModelLeaf positionTime;
-extern DataModelLeaf positionDataValid;
-extern DataModelLeaf positionFAAModeindicator;
-extern DataModelLeaf positionSpeedOverGround;
-extern DataModelLeaf positionTrackMadeGood;
-extern DataModelLeaf positionDate;
-extern DataModelLeaf positionMagneticVariation;
-extern DataModelLeaf positionGPSQuality;
-extern DataModelLeaf positionNumberSatellites;
-extern DataModelLeaf positionHorizontalDilutionOfPrecision;
-extern DataModelLeaf positionAntennaAltitude;
-extern DataModelLeaf positionGeoidalSeparation;
-extern DataModelLeaf positionGPSDataAge;
-extern DataModelLeaf positionDifferentialReferenceStation;
-extern DataModelLeaf positionSatelliteSelectionMode;
-extern DataModelLeaf positionFixMode;
-extern DataModelLeaf positionActiveSatellites;
-extern DataModelLeaf positionPDOP;
-extern DataModelLeaf positionHDOP;
-extern DataModelLeaf positionVDOP;
-extern DataModelLeaf positionStandardDeviationOfRangeInputsRMS;
-extern DataModelLeaf positionStandardDeviationOfSemiMajorAxis;
-extern DataModelLeaf positionStandardDeviationOfSemiMinorAxis;
-extern DataModelLeaf positionOrientationOfSemiMajorAxis;
-extern DataModelLeaf positionStandardDeviationOfLatitudeError;
-extern DataModelLeaf positionStandardDeviationOfLongitudeError;
-extern DataModelLeaf positionStandardDeviationOfAltitudeError;
+constexpr size_t coordinateLength = 40;
+extern DataModelStringLeaf positionLatitude;
+extern DataModelStringLeaf positionLongitude;
+constexpr size_t timeLength = 40;
+extern DataModelStringLeaf positionTime;
+extern DataModelUInt32Leaf positionDataValid;
+extern DataModelStringLeaf positionFAAModeindicator;
+extern DataModelTenthsUInt16Leaf positionSpeedOverGround;
+extern DataModelTenthsUInt16Leaf positionTrackMadeGood;
+constexpr size_t dateLength = 10;
+extern DataModelStringLeaf positionDate;
+extern DataModelTenthsInt16Leaf positionMagneticVariation;
+extern DataModelStringLeaf positionGPSQuality;
+extern DataModelUInt16Leaf positionNumberSatellites;
+extern DataModelHundredthsUInt16Leaf positionHorizontalDilutionOfPrecision;
+extern DataModelTenthsInt16Leaf positionAntennaAltitude;
+extern DataModelTenthsInt16Leaf positionGeoidalSeparation;
+extern DataModelTenthsUInt16Leaf positionGPSDataAge;
+extern DataModelUInt16Leaf positionDifferentialReferenceStation;
+extern DataModelStringLeaf positionSatelliteSelectionMode;
+extern DataModelStringLeaf positionFixMode;
+constexpr size_t activeSatellitesLength = 72;
+extern DataModelStringLeaf positionActiveSatellites;
+extern DataModelHundredthsUInt8Leaf positionPDOP;
+extern DataModelHundredthsUInt8Leaf positionHDOP;
+extern DataModelHundredthsUInt8Leaf positionVDOP;
+extern DataModelTenthsUInt16Leaf positionStandardDeviationOfRangeInputsRMS;
+extern DataModelTenthsUInt16Leaf positionStandardDeviationOfSemiMajorAxis;
+extern DataModelTenthsUInt16Leaf positionStandardDeviationOfSemiMinorAxis;
+extern DataModelTenthsUInt16Leaf positionOrientationOfSemiMajorAxis;
+extern DataModelTenthsUInt16Leaf positionStandardDeviationOfLatitudeError;
+extern DataModelTenthsUInt16Leaf positionStandardDeviationOfLongitudeError;
+extern DataModelTenthsUInt16Leaf positionStandardDeviationOfAltitudeError;
 
 extern DataModelNode positionNode;
 

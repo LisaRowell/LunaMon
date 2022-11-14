@@ -2,12 +2,16 @@
 #include "NMEALine.h"
 #include "NMEATalker.h"
 
-#include "DataModel/DataModelLeaf.h"
+#include "DataModel/DataModelStringLeaf.h"
 
 #include "Util/CharacterTools.h"
 #include "Util/Logger.h"
 
+#include <etl/string.h>
+
 #include <Arduino.h>
+
+using etl::string;
 
 bool NMEAGPSFixMode::set(String &gpsFixModeStr) {
     if (gpsFixModeStr.length() != 1) {
@@ -43,18 +47,18 @@ bool NMEAGPSFixMode::extract(NMEALine &nmeaLine, NMEATalker &talker, const char 
     return true;
 }
 
-void NMEAGPSFixMode::publish(DataModelLeaf &leaf) const {
+void NMEAGPSFixMode::publish(DataModelStringLeaf &leaf) const {
     switch (gpsFixMode) {
         case GPS_FIX_MODE_NO_FIX:
-            leaf << "None";
+            leaf = "None";
             break;
 
         case GPS_FIX_MODE_2D:
-            leaf << "2D";
+            leaf = "2D";
             break;
 
         case GPS_FIX_MODE_3D:
-            leaf << "3D";
+            leaf = "3D";
     }
 }
 

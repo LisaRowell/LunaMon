@@ -657,13 +657,13 @@ void MQTTBroker::updateSessionDebugs() {
         }
     }
 
-    sysBrokerClientsConnected.setIfChanged(connectedClients);
-    sysBrokerClientsDisconnected.setIfChanged(disconnectedClients);
+    sysBrokerClientsConnected = connectedClients;
+    sysBrokerClientsDisconnected = disconnectedClients;
     if (connectedClients > sysBrokerClientsMaximum) {
         sysBrokerClientsMaximum = connectedClients;
     }
     const uint32_t totalClients = connectedClients + disconnectedClients;
-    sysBrokerClientsTotal.setIfChanged(totalClients);
+    sysBrokerClientsTotal = totalClients;
 
     dataModelDebugNeedsUpdating = false;
 }

@@ -78,14 +78,11 @@ bool NMEAMagneticVariation::extract(NMEALine &nmeaLine, NMEATalker &talker, cons
     return true;
 }
 
-void NMEAMagneticVariation::publish(DataModelLeaf &leaf) const {
+void NMEAMagneticVariation::publish(DataModelTenthsInt16Leaf &leaf) const {
     if (hasValue) {
-        char magneticVariationStr[11];
-
-        snprintf(magneticVariationStr, 11, "%d.%u", direction, tenths);
-        leaf << magneticVariationStr;
+        leaf.set(direction, tenths);
     } else {
-        leaf << "";
+        leaf.removeValue();
     }
 }
 

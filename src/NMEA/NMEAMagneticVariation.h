@@ -4,7 +4,7 @@
 #include "NMEA/NMEALine.h"
 #include "NMEA/NMEATalker.h"
 
-#include "DataModel/DataModelLeaf.h"
+#include "DataModel/DataModelTenthsInt16Leaf.h"
 
 #include "Util/Logger.h"
 #include "Util/LoggableItem.h"
@@ -20,7 +20,7 @@ class NMEAMagneticVariation : public LoggableItem {
     public:
         bool set(const String &directionStr, const String &eastOrWestStr);
         bool extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType);
-        void publish(DataModelLeaf &leaf) const;
+        void publish(DataModelTenthsInt16Leaf &leaf) const;
         virtual void log(Logger &logger) const override;
 };
 

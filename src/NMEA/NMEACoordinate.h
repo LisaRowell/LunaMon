@@ -1,7 +1,7 @@
 #ifndef NMEA_COORDINATE_H
 #define NMEA_COORDINATE_H
 
-#include "DataModel/DataModelLeaf.h"
+#include "DataModel/DataModelStringLeaf.h"
 
 #include <Arduino.h>
 
@@ -14,7 +14,7 @@ class NMEACoordinate {
                         uint8_t maxDegrees);
         bool setMinutes(const String &string, unsigned startMinutes);
         void snprint(char *string, size_t maxLength) const;
-        void publish(DataModelLeaf &leaf, bool isPositive) const;
+        void publish(DataModelStringLeaf &leaf, bool isPositive) const;
 };
 
 #endif

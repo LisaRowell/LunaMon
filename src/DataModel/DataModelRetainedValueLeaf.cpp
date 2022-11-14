@@ -1,7 +1,11 @@
 #include "DataModelRetainedValueLeaf.h"
 #include "DataModelLeaf.h"
 
+#include <etl/string.h>
+
 #include <stdint.h>
+
+using etl::string;
 
 DataModelRetainedValueLeaf::DataModelRetainedValueLeaf(const char *name, DataModelElement *parent)
     : DataModelLeaf(name, parent), hasBeenSet(false) {
@@ -17,10 +21,19 @@ bool DataModelRetainedValueLeaf::subscribe(DataModelSubscriber &subscriber, uint
     return true;
 }
 
-bool DataModelRetainedValueLeaf::hasValue() const {
-    return hasBeenSet;
-}
-
 void DataModelRetainedValueLeaf::updated() {
     hasBeenSet = true;
+}
+
+void DataModelRetainedValueLeaf::removeValue() {
+    if (hasBeenSet) {
+        string<1> emptyStr;
+
+        *this << emptyStr;
+        hasBeenSet = false;
+    }
+}
+
+bool DataModelRetainedValueLeaf::hasValue() const {
+    return hasBeenSet;
 }

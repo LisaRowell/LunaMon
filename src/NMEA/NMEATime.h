@@ -24,7 +24,7 @@ class NMEATime : public LoggableItem {
     public:
         bool set(const String &timeStr);
         bool extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType);
-        void publish(DataModelLeaf &leaf) const;
+        void publish(DataModelStringLeaf &leaf) const;
         virtual void log(Logger &logger) const override;
 };
 
