@@ -19,6 +19,4 @@ extern bool extractInt8FromString(const String &string, unsigned start, unsigned
 extern bool convertTwoDigitDecimalString(const String &string, uint8_t &value,
                                          uint8_t maxValue = 99);
 
-extern bool isEmptyString(const char *string);
-
 #endif

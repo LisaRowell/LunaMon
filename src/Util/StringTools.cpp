@@ -163,7 +163,3 @@ bool convertTwoDigitDecimalString(const String &string, uint8_t &value, uint8_t 
 
     return true;
 }
-
-bool isEmptyString(const char *string) {
-    return *string == 0;
-}

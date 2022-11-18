@@ -1,7 +1,11 @@
 #ifndef MQTT_STRING_H
 #define MQTT_STRING_H
 
+#include <etl/string.h>
+
 #include <stdint.h>
+
+using etl::istring;
 
 class Logger;
 
@@ -16,6 +20,7 @@ class MQTTString {
         uint32_t size() const;
         // Returns false if too long to copy. maxLength is max in source and does not include nil.
         bool copyTo(char *cString, unsigned maxLength) const;
+        bool copyTo(istring &destString) const;
 
     friend Logger;
 };

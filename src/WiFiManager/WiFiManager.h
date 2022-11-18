@@ -28,7 +28,7 @@ class WiFiManager {
         enum WiFiConnectionState connectionState;
         PassiveTimer connectionWaitTimer;
 
-        static const size_t maxClients = 5;
+        static constexpr size_t maxClients = 5;
         vector<WiFiManagerClient *, maxClients> clients;
 
         void verifyWiFiPresent();

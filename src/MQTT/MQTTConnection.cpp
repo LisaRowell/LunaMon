@@ -6,8 +6,14 @@
 #include "Util/IPAddressTools.h"
 #include "Util/Logger.h"
 
+#include <etl/string.h>
+#include <etl/string_stream.h>
+
 #include <Arduino.h>
 #include <WiFiNINA.h>
+
+using etl::string;
+using etl::string_stream;
 
 void MQTTConnection::begin(WiFiClient &wifiClient) {
     this->wifiClient = wifiClient;
@@ -192,19 +198,19 @@ uint16_t MQTTConnection::port() const {
 }
 
 void MQTTConnection::updateConnectionDebug(DataModelStringLeaf *debug) {
+    string<maxConnectionDescriptionLength> connectionDebug;
+    string_stream connectionDebugStream(connectionDebug);
+
     char connectionIPAddressStr[maxIPAddressTextLength];
     ipAddressToStr(connectionIPAddressStr, remoteIPAddress);
 
-    char connectionDebug[maxConnectionDescriptionLength];
+    connectionDebugStream << connectionIPAddressStr << ":" << remotePort;
+
     if (hasSession()) {
-        snprintf(connectionDebug, maxConnectionDescriptionLength, "%s:%u (%s)",
-                 connectionIPAddressStr, remotePort, mqttSession->name());
-    } else {
-        snprintf(connectionDebug, maxConnectionDescriptionLength, "%s:%u", connectionIPAddressStr,
-                 remotePort);
+        connectionDebugStream << " (" << mqttSession->name() << ")";
     }
 
-    if (strcmp(connectionDebug, *debug) != 0) {
+    if (debug->compare(connectionDebug) != 0) {
         *debug = connectionDebug;
     }
 }

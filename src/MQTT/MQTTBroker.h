@@ -9,7 +9,11 @@ class WiFiManager;
 
 #include "WiFiManager/WiFiManagerClient.h"
 
+#include <etl/string.h>
+
 #include <WiFiNINA.h>
+
+using etl::istring;
 
 const unsigned maxMQTTSessions = 5;
 
@@ -48,7 +52,7 @@ class MQTTBroker : WiFiManagerClient {
         void serviceWiFiClientWithData(WiFiClient &wifiClient);
         MQTTConnection *findExistingConnection(WiFiClient &wifiClient);
         MQTTConnection *newConnection(WiFiClient &wifiClient);
-        MQTTSession *findMatchingSession(const char *clientID);
+        MQTTSession *findMatchingSession(const istring &clientID);
         MQTTSession *findAvailableSession();
         void refuseIncomingWiFiClient(WiFiClient &wifiClient);
         void messageReceived(MQTTConnection *connection, MQTTMessage &message);

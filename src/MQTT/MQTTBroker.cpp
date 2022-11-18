@@ -20,7 +20,14 @@
 
 #include "WiFiManager/WiFiManager.h"
 
+#include <etl/string.h>
+#include <etl/string_stream.h>
+
 #include <stdint.h>
+
+using etl::string;
+using etl::istring;
+using etl::string_stream;
 
 MQTTBroker::MQTTBroker()
         : wifiIsConnected(false), wifiServer(portNumber) {
@@ -335,8 +342,8 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
     }
 
     const MQTTString *clientIDStr = connectMessage.clientID();
-    char clientID[maxMQTTClientIDLength + 1];
-    if (!clientIDStr->copyTo(clientID, maxMQTTClientIDLength)) {
+    string<maxMQTTClientIDLength> clientID;
+    if (!clientIDStr->copyTo(clientID)) {
         logger << logWarning << "MQTT CONNECT message with too long of a Client ID:" << *clientIDStr
                << eol;
         sendMQTTConnectAckMessage(connection, false, MQTT_CONNACK_REFUSED_IDENTIFIER_REJECTED);
@@ -347,11 +354,13 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
     // is allowed by the spec iff the clean session flag is set. We give such connections a name
     // based on their IP address and TCP port so that we can better debug things. It's best to
     // configure the offending application and have it provide sonmething useful...
-    if (isEmptyString(clientID)) {
+    if (clientID.empty()) {
+        string_stream clientIDStream(clientID);
+    
         char connectionIPAddressStr[maxIPAddressTextLength];
         ipAddressToStr(connectionIPAddressStr, connection->ipAddress());
-        snprintf(clientID, maxMQTTClientIDLength, "%s:%u", connectionIPAddressStr,
-                 connection->port());
+
+        clientIDStream << connectionIPAddressStr << ":" << connection->port();
     }
 
     uint16_t keepAliveTime = connectMessage.keepAliveSec();
@@ -390,7 +399,7 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
     }
 }
 
-MQTTSession *MQTTBroker::findMatchingSession(const char *clientID) {
+MQTTSession *MQTTBroker::findMatchingSession(const istring &clientID) {
     unsigned sessionIndex;
     for (sessionIndex = 0; sessionIndex < maxMQTTSessions; sessionIndex++) {
         if (sessionValid[sessionIndex]) {

@@ -19,6 +19,7 @@ class DataModelStringLeaf : public DataModelRetainedValueLeaf {
         DataModelStringLeaf & operator = (const char *newString);
         DataModelStringLeaf & operator = (const DataModelStringLeaf &otherLeaf);
         operator const char * () const;
+        int compare(const istring &otherString) const;
         virtual void sendRetainedValue(DataModelSubscriber &subscriber) override;
         bool isEmptyStr() const;
         size_t maxLength() const;

@@ -9,7 +9,11 @@ class DataModelStringLeaf;
 
 #include "Util/PassiveTimer.h"
 
+#include <etl/string.h>
 #include <stdint.h>
+
+using etl::string;
+using etl::istring;
 
 //
 // MQTTSession
@@ -29,7 +33,7 @@ const uint16_t unconnectedSessionTearDownTime = 120;
 class MQTTSession : public DataModelSubscriber {
     private:
         bool cleanSession;
-        char clientID[maxMQTTClientIDLength + 1];
+        string<maxMQTTClientIDLength> clientID;
         MQTTConnection *connection;
         uint16_t keepAliveTime;
         PassiveTimer keepAliveTimer;
@@ -39,14 +43,14 @@ class MQTTSession : public DataModelSubscriber {
 
     public:
         bool isConnected() const;
-        bool matches(const char *clientID) const;
-        void begin(bool cleanSession, const char *clientID, MQTTConnection *connection,
+        bool matches(const istring &clientID) const;
+        void begin(bool cleanSession, const istring &clientID, MQTTConnection *connection,
                    uint16_t keepAliveTime);
         void reconnect(bool newCleanSession, MQTTConnection *connection, uint16_t keepAliveTime);
         bool disconnect();
         void service(MQTTBroker *broker);
         void resetKeepAliveTimer();
-        virtual const char *name() const override;
+        virtual const istring &name() const override;
         virtual void publish(const char *topic, const char *value, bool retainedValue) override;
         void updateSessionDebug(DataModelStringLeaf *debug);
 };

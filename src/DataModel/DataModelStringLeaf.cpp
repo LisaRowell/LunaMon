@@ -1,6 +1,10 @@
 #include "DataModelStringLeaf.h"
 
+#include <etl/string.h>
+
 #include <stddef.h>
+
+using etl::istring;
 
 DataModelStringLeaf::DataModelStringLeaf(const char *name, DataModelElement *parent,
                                          istring &buffer)
@@ -41,6 +45,9 @@ DataModelStringLeaf::operator const char * () const {
     return value.c_str();
 }
 
+int DataModelStringLeaf::compare(const istring &otherString) const {
+    return value.compare(otherString);
+}
 
 void DataModelStringLeaf::sendRetainedValue(DataModelSubscriber &subscriber) {
     if (hasValue()) {

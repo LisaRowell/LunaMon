@@ -6,23 +6,30 @@
 
 #include "Util/Logger.h"
 
+#include <etl/string.h>
+#include <etl/string_stream.h>
+
 #include <stdint.h>
+
+using etl::string;
+using etl::istring;
+using etl::string_stream;
 
 bool MQTTSession::isConnected() const {
     return connection != nullptr;
 }
 
-bool MQTTSession::matches(const char *clientID) const {
-    return strcmp(clientID, MQTTSession::clientID) == 0;
+bool MQTTSession::matches(const istring &clientID) const {
+    return this->clientID.compare(clientID) == 0;
 }
 
-void MQTTSession::begin(bool cleanSession, const char *clientID, MQTTConnection *connection,
+void MQTTSession::begin(bool cleanSession, const istring &clientID, MQTTConnection *connection,
                         uint16_t keepAliveTime) {
-    MQTTSession::cleanSession = cleanSession;
-    strcpy(MQTTSession::clientID, clientID);
-    MQTTSession::connection = connection;
+    this->cleanSession = cleanSession;
+    this->clientID = clientID;
+    this->connection = connection;
 
-    MQTTSession::keepAliveTime = keepAliveTime;
+    this->keepAliveTime = keepAliveTime;
     resetKeepAliveTimer();
 
     logger << logDebugMQTT << "Established new session for Client ID '" << clientID
@@ -89,7 +96,7 @@ void MQTTSession::unsubscribeAll() {
     dataModel.unsubscribeAll(*this);
 }
 
-const char *MQTTSession::name() const {
+const istring &MQTTSession::name() const {
     return clientID;
 }
 
@@ -101,18 +108,20 @@ void MQTTSession::publish(const char *topic, const char *value, bool retainedVal
 }
 
 void MQTTSession::updateSessionDebug(DataModelStringLeaf *debug) {
-    char sessionDebug[maxSessionDescriptionLength];
+    string<maxSessionDescriptionLength> sessionDebug;
+    string_stream sessionDebugStream(sessionDebug);
+
     if (connection) {
         char connectionIPAddressStr[maxIPAddressTextLength];
         ipAddressToStr(connectionIPAddressStr, connection->ipAddress());
 
-        snprintf(sessionDebug, maxSessionDescriptionLength, "%s (%s:%u)",
-                 clientID, connectionIPAddressStr, connection->port());
+        sessionDebugStream << clientID << " (" << connectionIPAddressStr << ":"
+                           << connection->port() << ")";
     } else {
-        snprintf(sessionDebug, maxSessionDescriptionLength, "%s", clientID);
+        sessionDebugStream << clientID;
     }
 
-    if (strcmp(sessionDebug, *debug) != 0) {
+    if (debug->compare(sessionDebug) != 0) {
         *debug = sessionDebug;
     }
 }
