@@ -52,7 +52,7 @@ class MQTTSession : public DataModelSubscriber {
         void resetKeepAliveTimer();
         virtual const istring &name() const override;
         virtual void publish(const char *topic, const char *value, bool retainedValue) override;
-        void updateSessionDebug(DataModelStringLeaf *debug);
+        void updateSessionDebug(DataModelStringLeaf &debug);
 };
 
 #endif

@@ -197,7 +197,7 @@ uint16_t MQTTConnection::port() const {
     return remotePort;
 }
 
-void MQTTConnection::updateConnectionDebug(DataModelStringLeaf *debug) {
+void MQTTConnection::updateConnectionDebug(DataModelStringLeaf &debug) {
     string<maxConnectionDescriptionLength> connectionDebug;
     string_stream connectionDebugStream(connectionDebug);
 
@@ -210,7 +210,5 @@ void MQTTConnection::updateConnectionDebug(DataModelStringLeaf *debug) {
         connectionDebugStream << " (" << mqttSession->name() << ")";
     }
 
-    if (debug->compare(connectionDebug) != 0) {
-        *debug = connectionDebug;
-    }
+    debug = connectionDebug;
 }

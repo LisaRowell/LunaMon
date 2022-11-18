@@ -50,7 +50,7 @@ class MQTTConnection {
         MQTTSession *session();
         const IPAddress &ipAddress() const;
         uint16_t port() const;
-        void updateConnectionDebug(DataModelStringLeaf *debug);
+        void updateConnectionDebug(DataModelStringLeaf &debug);
 };
 
 #endif

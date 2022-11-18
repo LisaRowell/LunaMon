@@ -107,7 +107,7 @@ void MQTTSession::publish(const char *topic, const char *value, bool retainedVal
     sendMQTTPublishMessage(connection, topic, value, false, 0, retainedValue, 0);
 }
 
-void MQTTSession::updateSessionDebug(DataModelStringLeaf *debug) {
+void MQTTSession::updateSessionDebug(DataModelStringLeaf &debug) {
     string<maxSessionDescriptionLength> sessionDebug;
     string_stream sessionDebugStream(sessionDebug);
 
@@ -121,7 +121,5 @@ void MQTTSession::updateSessionDebug(DataModelStringLeaf *debug) {
         sessionDebugStream << clientID;
     }
 
-    if (debug->compare(sessionDebug) != 0) {
-        *debug = sessionDebug;
-    }
+    debug = sessionDebug;
 }
