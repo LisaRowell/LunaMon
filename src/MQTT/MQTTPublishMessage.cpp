@@ -4,7 +4,7 @@
 
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 bool sendMQTTPublishMessage(MQTTConnection *connection, const char *topic, const char *value,
                             bool dup, uint8_t qosLevel, bool retain,

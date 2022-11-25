@@ -5,8 +5,8 @@
 
 #include "DataModel/DataModelStringLeaf.h"
 
-#include <Arduino.h>
 #include <WiFiNINA.h>
+#include <stdint.h>
 
 class MQTTSession;
 

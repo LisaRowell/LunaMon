@@ -3,7 +3,7 @@
 
 #include "MQTTConnection.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 #define MQTT_PUBLISH_FLAGS_DUP_MASK    0x08
 #define MQTT_PUBLISH_FLAGS_QOS_MASK    0x06

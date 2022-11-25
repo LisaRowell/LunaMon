@@ -9,8 +9,8 @@
 #include <etl/string.h>
 #include <etl/string_stream.h>
 
-#include <Arduino.h>
 #include <WiFiNINA.h>
+#include <stdint.h>
 
 using etl::string;
 using etl::string_stream;

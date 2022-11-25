@@ -4,7 +4,7 @@
 #include "MQTTMessage.h"
 #include "MQTTString.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 struct MQTTUnsubscribeVariableHeader {
     uint8_t packetIdMSB;

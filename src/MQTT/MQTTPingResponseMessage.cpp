@@ -1,7 +1,7 @@
 #include "MQTTPingResponseMessage.h"
 #include "MQTTUtil.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 bool sendMQTTPingResponseMessage(MQTTConnection *connection) {
     MQTTFixedHeader fixedHeader;

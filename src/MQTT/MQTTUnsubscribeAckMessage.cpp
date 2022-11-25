@@ -2,7 +2,7 @@
 #include "MQTTConnection.h"
 #include "MQTTUtil.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 bool sendMQTTUnsubscribeAckMessage(MQTTConnection *connection, uint16_t packetId) {
     MQTTFixedHeader fixedHeader;
