@@ -1,15 +1,14 @@
 #ifndef NMEA_LINE_H
 #define NMEA_LINE_H
 
+#include <etl/string.h>
 #include <Arduino.h>
 
 const unsigned maxNMEALineLength = 82;
 
 class NMEALine {
     private:
-        bool overflowed;
-        char buffer[maxNMEALineLength + 1];
-        unsigned length;
+        etl::string<maxNMEALineLength> line;
         unsigned position;
         unsigned remaining;
         // This flag is used to indentify the lines which are in the encapsulated encoding scheme

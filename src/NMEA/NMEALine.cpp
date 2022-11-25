@@ -5,53 +5,34 @@
 
 #include <Arduino.h>
 
-NMEALine::NMEALine() {
-    overflowed = false;
-    length = 0;
+NMEALine::NMEALine() : line() {
     position = 0;
     remaining = 0;
 }
 
-NMEALine::NMEALine(String &inputString) {
-    overflowed = false;
+NMEALine::NMEALine(String &inputString) : line() {
     inputString.trim();
 
-    inputString.toCharArray(buffer, maxNMEALineLength);
-    length = inputString.length();
+    line.initialize_free_space();
+    inputString.toCharArray(line.data(), maxNMEALineLength);
+    line.trim_to_terminator();
     position = 0;
-    remaining = length;
+    remaining = line.size();
 }
 
 void NMEALine::reset() {
-    overflowed = false;
-    buffer[0] = 0;
-    length = 0;
+    line.clear();
     position = 0;
     remaining = 0;
 }
 
 void NMEALine::append(const char *srcBuffer, unsigned start, unsigned end) {
-    if (overflowed) {
-        return;
-    }
-
-    const unsigned addedCharacters = end - start;
-    if (remaining + addedCharacters > maxNMEALineLength) {
-        overflowed = true;
-        return;
-    }
-
-    unsigned srcPos;
-    for (srcPos = start; srcPos < end; srcPos++) {
-        buffer[length] = srcBuffer[srcPos];
-        length++;
-    }
-    buffer[length] = 0;
-    remaining = length;
+    line.append(srcBuffer + start, end - start);
+    remaining = line.size();
 }
 
 bool NMEALine::isEmpty() {
-    return length == 0;
+    return line.empty();
 }
 
 bool NMEALine::isEncapsulatedData() {
@@ -82,7 +63,7 @@ bool NMEALine::sanityCheck() {
     }
 
     if (!checkParity()) {
-        logger << logWarning << "NMEA line with bad parity: " << buffer << eol;
+        logger << logWarning << "NMEA line with bad parity: " << line << eol;
         return false;
     }
     stripParity();
@@ -95,7 +76,7 @@ bool NMEALine::extractChar(char &character) {
         return false;
     }
 
-    character = buffer[position];
+    character = line[position];
     position++;
     remaining--;
 
@@ -108,7 +89,7 @@ String NMEALine::bufferSubstring(unsigned start, unsigned end) {
     unsigned bufferPos;
 
     for (bufferPos = start, wordPos = 0; bufferPos < end; bufferPos++, wordPos++) {
-        word[wordPos] = buffer[bufferPos];
+        word[wordPos] = line[bufferPos];
     }
     word[wordPos] = 0;
 
@@ -120,7 +101,7 @@ bool NMEALine::extractWord(String &word) {
     unsigned left;
 
     for (pos = position, left = remaining; left > 0; pos++, left--) {
-        if (buffer[pos] == ',') {
+        if (line[pos] == ',') {
             word = bufferSubstring(position, pos);
             position = pos + 1;
             remaining = left - 1;
@@ -145,19 +126,19 @@ void NMEALine::stripParity() {
 }
 
 bool NMEALine::checkParity() {
-    unsigned checksumPos = length - 3;
-    if (buffer[checksumPos] != '*') {
+    unsigned checksumPos = line.size() - 3;
+    if (line[checksumPos] != '*') {
         return false;
     }
 
     uint8_t checksum = 0;
     unsigned pos;
     for (pos = 1; pos < checksumPos; pos++) {
-        checksum = checksum ^ buffer[pos];
+        checksum = checksum ^ line[pos];
     }
 
-    const uint8_t firstChecksumChar = buffer[checksumPos + 1];
-    const uint8_t secondChecksumChar = buffer[checksumPos + 2];
+    const uint8_t firstChecksumChar = line[checksumPos + 1];
+    const uint8_t secondChecksumChar = line[checksumPos + 2];
     if (!isUpperCaseHexidecimalDigit(firstChecksumChar) ||
         !isUpperCaseHexidecimalDigit(secondChecksumChar)) {
         return false;
@@ -169,11 +150,5 @@ bool NMEALine::checkParity() {
 }
 
 void NMEALine::logLine() {
-    logger << logDebugNMEA;
-    unsigned pos;
-    for (pos = 0; pos < length; pos++) {
-        logger << buffer[pos];
-    }
-
-    logger << eol;
+    logger << logDebugNMEA << line << eol;
 }
