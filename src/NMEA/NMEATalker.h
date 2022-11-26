@@ -4,14 +4,15 @@
 #include "Util/LoggableItem.h"
 #include "Util/Logger.h"
 
+#include <etl/string.h>
 #include <Arduino.h>
 
 class NMEATalker : public LoggableItem {
     private:
-        char talkerCode[2];
+        etl::string<2> talkerCode;
 
     public:
-        NMEATalker(String &talkerCode);
+        NMEATalker(const etl::istring &talkerCode);
         const char *name() const;
         virtual void log(Logger &logger) const override;
 };

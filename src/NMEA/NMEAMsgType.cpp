@@ -2,9 +2,9 @@
 
 #include "Util/Error.h"
 
-#include <Arduino.h>
+#include <etl/string.h>
 
-enum NMEAMsgType parseNMEAMsgType(String &msgTypeStr) {
+enum NMEAMsgType parseNMEAMsgType(const etl::istring &msgTypeStr) {
     if (msgTypeStr == "GGA") {
         return NMEA_MSG_TYPE_GGA;
     } else if (msgTypeStr == "GLL") {

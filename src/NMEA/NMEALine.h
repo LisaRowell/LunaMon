@@ -29,6 +29,7 @@ class NMEALine {
         bool sanityCheck();
         bool extractChar(char &character);
         bool extractWord(String &word);
+        bool extractWord(etl::istring &word);
         void logLine();
 };
 

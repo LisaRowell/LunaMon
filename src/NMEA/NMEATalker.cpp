@@ -3,6 +3,7 @@
 #include "Util/Logger.h"
 #include "Util/Error.h"
 
+#include <etl/string.h>
 #include <Arduino.h>
 
 typedef struct {
@@ -128,14 +129,13 @@ static const TalkerTableEntry talkerTable[] = {
     { "", NULL }
 };
 
-NMEATalker::NMEATalker (String &talkerCode) {
+NMEATalker::NMEATalker(const etl::istring &talkerCode) {
 
-    if (talkerCode.length() != 2) {
+    if (talkerCode.truncated() || talkerCode.size() != 2) {
         fatalError("Bad parsing of the NMEA Talker Code");
     }
 
-    this->talkerCode[0] = talkerCode.charAt(0);
-    this->talkerCode[1] = talkerCode.charAt(1);
+    this->talkerCode = talkerCode;
 }
 
 const char *NMEATalker::name() const {

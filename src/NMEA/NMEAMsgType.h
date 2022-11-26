@@ -1,7 +1,7 @@
 #ifndef NMEA_MSG_TYPE_H
 #define NMEA_MSG_TYPE_H
 
-#include <Arduino.h>
+#include <etl/string.h>
 
 enum NMEAMsgType {
     NMEA_MSG_TYPE_UNKNOWN,
@@ -17,7 +17,7 @@ enum NMEAMsgType {
     NMEA_MSG_TYPE_VTG
 };
 
-enum NMEAMsgType parseNMEAMsgType(String &msgTypeStr);
+enum NMEAMsgType parseNMEAMsgType(const etl::istring &msgTypeStr);
 const char *nmeaMsgTypeName(NMEAMsgType msgType);
 
 #endif

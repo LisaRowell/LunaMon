@@ -3,6 +3,7 @@
 #include "Util/CharacterTools.h"
 #include "Util/Logger.h"
 
+#include <stddef.h>
 #include <Arduino.h>
 
 NMEALine::NMEALine() : line() {
@@ -112,6 +113,30 @@ bool NMEALine::extractWord(String &word) {
 
     if (pos != position) {
         word = bufferSubstring(position, pos);
+        position = pos;
+        remaining = 0;
+
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool NMEALine::extractWord(etl::istring &word) {
+    size_t pos;
+    size_t left;
+    for (pos = position, left = remaining; left > 0; left--) {
+        if (line[pos] == ',') {
+            word.assign(line, position, pos - position);
+            position = pos + 1;
+            remaining = left - 1;
+
+            return true;
+        }
+    }
+
+    if (pos != position) {
+        word.assign(line, position, pos - position + 1);
         position = pos;
         remaining = 0;
 
