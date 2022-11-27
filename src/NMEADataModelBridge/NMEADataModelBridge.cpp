@@ -159,6 +159,7 @@ void NMEADataModelBridge::bridgeNMEARMCMessage(NMEARMCMessage *message) {
 void NMEADataModelBridge::bridgeNMEAVTGMessage(NMEAVTGMessage *message) {
     message->trackMadeGood.publish(positionTrackMadeGood);
     message->speedOverGround.publish(positionSpeedOverGround);
+    message->courseOverGroundMagnetic.publish(positionCourseOverGround);
     message->faaModeIndicator.publish(positionFAAModeindicator);
 
     messagesBridgedCounter++;

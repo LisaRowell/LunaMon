@@ -224,6 +224,7 @@ string<15> faaModeIndicatorBuffer;
 DataModelStringLeaf positionFAAModeindicator("faaModeIndicator", &positionNode,
                                              faaModeIndicatorBuffer);
 DataModelTenthsUInt16Leaf positionSpeedOverGround("speedOverGround", &positionNode);
+DataModelTenthsUInt16Leaf positionCourseOverGround("courseOverGround", &positionNode);
 DataModelTenthsUInt16Leaf positionTrackMadeGood("trackMadeGood", &positionNode);
 string<dateLength> positionDateBuffer;
 DataModelStringLeaf positionDate("date", &positionNode, positionDateBuffer);
@@ -271,6 +272,7 @@ DataModelElement *positionNodeChildren[] = {
     &positionDataValid,
     &positionFAAModeindicator,
     &positionSpeedOverGround,
+    &positionCourseOverGround,
     &positionTrackMadeGood,
     &positionDate,
     &positionMagneticVariation,

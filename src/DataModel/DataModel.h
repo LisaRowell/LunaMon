@@ -90,6 +90,7 @@ extern DataModelStringLeaf positionTime;
 extern DataModelUInt32Leaf positionDataValid;
 extern DataModelStringLeaf positionFAAModeindicator;
 extern DataModelTenthsUInt16Leaf positionSpeedOverGround;
+extern DataModelTenthsUInt16Leaf positionCourseOverGround;
 extern DataModelTenthsUInt16Leaf positionTrackMadeGood;
 constexpr size_t dateLength = 10;
 extern DataModelStringLeaf positionDate;
