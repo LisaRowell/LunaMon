@@ -8,9 +8,6 @@
 
 #include <stdint.h>
 
-using etl::string;
-using etl::to_string;
-
 DataModelLeaf::DataModelLeaf(const char *name, DataModelElement *parent)
     : DataModelElement(name, parent) {
     unsigned subscriberPos;
@@ -104,7 +101,7 @@ bool DataModelLeaf::subscribeAll(DataModelSubscriber &subscriber, uint32_t cooki
     return subscribe(subscriber, cookie);
 }
 
-DataModelLeaf & DataModelLeaf::operator << (const istring &value) {
+DataModelLeaf & DataModelLeaf::operator << (const etl::istring &value) {
     unsigned subscriberIndex;
     for (subscriberIndex = 0; subscriberIndex < maxDataModelSubscribers; subscriberIndex++) {
         DataModelSubscriber *subscriber = subscribers[subscriberIndex];
@@ -121,14 +118,14 @@ DataModelLeaf & DataModelLeaf::operator << (const istring &value) {
 }
 
 DataModelLeaf & DataModelLeaf::operator << (uint32_t value) {
-    string<12> valueStr;
-    to_string(value, valueStr);
+    etl::string<12> valueStr;
+    etl::to_string(value, valueStr);
     *this << valueStr;
 
     return *this;
 }
 
-void DataModelLeaf::publishToSubscriber(DataModelSubscriber &subscriber, const istring &value,
+void DataModelLeaf::publishToSubscriber(DataModelSubscriber &subscriber, const etl::istring &value,
                                         bool retainedValue) {
     char topic[maxTopicNameLength];
     buildTopicName(topic);

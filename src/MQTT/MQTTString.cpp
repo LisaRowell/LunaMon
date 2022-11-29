@@ -1,5 +1,7 @@
 #include "MQTTString.h"
 
+#include <etl/string.h>
+
 #include <stdint.h>
 
 uint16_t MQTTString::length() const {
@@ -27,7 +29,7 @@ bool MQTTString::copyTo(char *cString, unsigned maxLength) const {
 }
 
 // Returns false if too long to copy. maxLength is max in source and does not include nil.
-bool MQTTString::copyTo(istring &destString) const {
+bool MQTTString::copyTo(etl::istring &destString) const {
     const uint16_t length = this->length();
     if (length > destString.max_size()) {
         return false;

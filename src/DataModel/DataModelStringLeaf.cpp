@@ -4,14 +4,12 @@
 
 #include <stddef.h>
 
-using etl::istring;
-
 DataModelStringLeaf::DataModelStringLeaf(const char *name, DataModelElement *parent,
-                                         istring &buffer)
+                                         etl::istring &buffer)
     : DataModelRetainedValueLeaf(name, parent), value(buffer) {
 }
 
-DataModelStringLeaf & DataModelStringLeaf::operator = (const istring &newString) {
+DataModelStringLeaf & DataModelStringLeaf::operator = (const etl::istring &newString) {
     if (!hasValue() || value.compare(newString) != 0) {
         value = newString;
         updated();
@@ -45,7 +43,7 @@ DataModelStringLeaf::operator const char * () const {
     return value.c_str();
 }
 
-int DataModelStringLeaf::compare(const istring &otherString) const {
+int DataModelStringLeaf::compare(const etl::istring &otherString) const {
     return value.compare(otherString);
 }
 

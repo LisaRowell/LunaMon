@@ -5,8 +5,6 @@
 
 #include <stdint.h>
 
-using etl::string;
-
 DataModelRetainedValueLeaf::DataModelRetainedValueLeaf(const char *name, DataModelElement *parent)
     : DataModelLeaf(name, parent), hasBeenSet(false) {
 }
@@ -27,7 +25,7 @@ void DataModelRetainedValueLeaf::updated() {
 
 void DataModelRetainedValueLeaf::removeValue() {
     if (hasBeenSet) {
-        string<1> emptyStr;
+        etl::string<1> emptyStr;
 
         *this << emptyStr;
         hasBeenSet = false;

@@ -7,19 +7,17 @@
 
 #include <stddef.h>
 
-using etl::istring;
-
 class DataModelStringLeaf : public DataModelRetainedValueLeaf {
     private:
-        istring &value;
+        etl::istring &value;
 
     public:
-        DataModelStringLeaf(const char *name, DataModelElement *parent, istring &buffer);
-        DataModelStringLeaf & operator = (const istring &newString);
+        DataModelStringLeaf(const char *name, DataModelElement *parent, etl::istring &buffer);
+        DataModelStringLeaf & operator = (const etl::istring &newString);
         DataModelStringLeaf & operator = (const char *newString);
         DataModelStringLeaf & operator = (const DataModelStringLeaf &otherLeaf);
         operator const char * () const;
-        int compare(const istring &otherString) const;
+        int compare(const etl::istring &otherString) const;
         virtual void sendRetainedValue(DataModelSubscriber &subscriber) override;
         bool isEmptyStr() const;
         size_t maxLength() const;

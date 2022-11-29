@@ -7,9 +7,8 @@
 #include "Util/Error.h"
 
 #include <etl/vector.h>
-#include <stdint.h>
 
-using etl::vector;
+#include <stdint.h>
 
 StatsManager::StatsManager() : statsHolders() {
     lastHarvestTime.setNow();

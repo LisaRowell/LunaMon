@@ -73,7 +73,7 @@ bool NMEADate::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgTy
 void NMEADate::publish(DataModelStringLeaf &leaf) const {
     if (hasValue) {
         // We use the US format of mm/dd/yyyyy.
-        string<dateLength> dateStr;
+        etl::string<dateLength> dateStr;
         etl::string_stream dateStrStream(dateStr);
         dateStrStream << etl::setfill('0') << etl::setw(2) << month << etl::setw(1) << "/"
                       << etl::setw(2) << day << etl::setw(1) << "/" << etl::setw(4) << year;        

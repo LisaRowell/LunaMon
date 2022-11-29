@@ -13,11 +13,6 @@
 #include <WiFiNINA.h>
 #include <stdint.h>
 
-using etl::vector;
-using etl::string;
-using etl::istring;
-using etl::string_stream;
-
 WiFiManager::WiFiManager() : connectionState(WIFI_CONNECTION_NEVER), clients() {
 }
 
@@ -100,8 +95,8 @@ bool WiFiManager::connected() {
 
 void WiFiManager::registerForNotifications(WiFiManagerClient *client) {
     if (clients.full()) {
-        string<80> error;
-        string_stream errorStream(error);
+        etl::string<80> error;
+        etl::string_stream errorStream(error);
         errorStream << "Attempt to add more than " << maxClients << " WiFi clients.";
         fatalError(error);
     }
@@ -134,7 +129,7 @@ void WiFiManager::verifyWiFiPresent() {
 }
 
 void WiFiManager::checkFirmwareVersion() {
-    const string<maxFirmwareVersionLength> firmwareVersion(WiFi.firmwareVersion());
+    const etl::string<maxFirmwareVersionLength> firmwareVersion(WiFi.firmwareVersion());
     const size_t firmwareVersionLength = firmwareVersion.length();
 
     const size_t firstPeriodPos = firmwareVersion.find('.');
@@ -142,7 +137,7 @@ void WiFiManager::checkFirmwareVersion() {
         malformedFirmwareVersion(firmwareVersion, "No first period");
     }
 
-    const string<maxFirmwareVersionLength> majorVersion(firmwareVersion, 0, firstPeriodPos);
+    const etl::string<maxFirmwareVersionLength> majorVersion(firmwareVersion, 0, firstPeriodPos);
 
     const size_t startMinorVersion = firstPeriodPos + 1;
     if (startMinorVersion >= firmwareVersionLength) {
@@ -154,7 +149,7 @@ void WiFiManager::checkFirmwareVersion() {
     }
     const size_t minorVersionLength = secondPeriodPos - startMinorVersion;
 
-    const string<maxFirmwareVersionLength> minorVersion(firmwareVersion, startMinorVersion,
+    const etl::string<maxFirmwareVersionLength> minorVersion(firmwareVersion, startMinorVersion,
                                                         minorVersionLength);
 
     const size_t startReleaseVersion = secondPeriodPos + 1;
@@ -162,7 +157,7 @@ void WiFiManager::checkFirmwareVersion() {
         malformedFirmwareVersion(firmwareVersion, "No release version");
     }
 
-    const string<maxFirmwareVersionLength> releaseVersion(firmwareVersion, startReleaseVersion);
+    const etl::string<maxFirmwareVersionLength> releaseVersion(firmwareVersion, startReleaseVersion);
 
     if (majorVersion < "1") {
         firmwareVersionError(firmwareVersion);
@@ -179,17 +174,17 @@ void WiFiManager::checkFirmwareVersion() {
     logger << logDebugWiFiManager << "Firmware version: " << firmwareVersion << eol;
 }
 
-void WiFiManager::firmwareVersionError(const istring &firmwareVersion) {
-    string<80> error;
-    string_stream errorStream(error);
+void WiFiManager::firmwareVersionError(const etl::istring &firmwareVersion) {
+    etl::string<80> error;
+    etl::string_stream errorStream(error);
     errorStream << "Insufficient firmware version, " << firmwareVersion << ", upgrade.";
     fatalError(error);
 }
 
-void WiFiManager::malformedFirmwareVersion(const istring &firmwareVersion,
+void WiFiManager::malformedFirmwareVersion(const etl::istring &firmwareVersion,
                                            const char *explanation) {
-    string<80> error;
-    string_stream errorStream(error);
+    etl::string<80> error;
+    etl::string_stream errorStream(error);
     errorStream << "Malformed firmware version: " << firmwareVersion << " " << explanation;
     fatalError(error);
 }

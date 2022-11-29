@@ -25,10 +25,6 @@
 
 #include <stdint.h>
 
-using etl::string;
-using etl::istring;
-using etl::string_stream;
-
 MQTTBroker::MQTTBroker()
         : wifiIsConnected(false), wifiServer(portNumber) {
     unsigned connectionIndex;
@@ -342,7 +338,7 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
     }
 
     const MQTTString *clientIDStr = connectMessage.clientID();
-    string<maxMQTTClientIDLength> clientID;
+    etl::string<maxMQTTClientIDLength> clientID;
     if (!clientIDStr->copyTo(clientID)) {
         logger << logWarning << "MQTT CONNECT message with too long of a Client ID:" << *clientIDStr
                << eol;
@@ -355,7 +351,7 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
     // based on their IP address and TCP port so that we can better debug things. It's best to
     // configure the offending application and have it provide sonmething useful...
     if (clientID.empty()) {
-        string_stream clientIDStream(clientID);
+        etl::string_stream clientIDStream(clientID);
     
         char connectionIPAddressStr[maxIPAddressTextLength];
         ipAddressToStr(connectionIPAddressStr, connection->ipAddress());
@@ -399,7 +395,7 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
     }
 }
 
-MQTTSession *MQTTBroker::findMatchingSession(const istring &clientID) {
+MQTTSession *MQTTBroker::findMatchingSession(const etl::istring &clientID) {
     unsigned sessionIndex;
     for (sessionIndex = 0; sessionIndex < maxMQTTSessions; sessionIndex++) {
         if (sessionValid[sessionIndex]) {

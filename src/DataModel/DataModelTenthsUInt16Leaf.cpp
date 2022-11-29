@@ -6,11 +6,6 @@
 
 #include <stdint.h>
 
-using etl::string;
-using etl::string_stream;
-using etl::setfill;
-using etl::setw;
-
 constexpr size_t maxStringLength = 7;
 
 DataModelTenthsUInt16Leaf::DataModelTenthsUInt16Leaf(const char *name, DataModelElement *parent)
@@ -22,8 +17,8 @@ void DataModelTenthsUInt16Leaf::set(uint16_t wholeNumber, uint8_t tenths) {
         this->wholeNumber = wholeNumber;
         this->tenths = tenths;
         updated();
-        string<maxStringLength> valueStr;
-        string_stream valueStrStream(valueStr);
+        etl::string<maxStringLength> valueStr;
+        etl::string_stream valueStrStream(valueStr);
         valueStrStream << wholeNumber << "." << tenths;
         *this << valueStr;
     }
@@ -31,8 +26,8 @@ void DataModelTenthsUInt16Leaf::set(uint16_t wholeNumber, uint8_t tenths) {
 
 void DataModelTenthsUInt16Leaf::sendRetainedValue(DataModelSubscriber &subscriber) {
     if (hasValue()) {
-        string<maxStringLength> valueStr;
-        string_stream valueStrStream(valueStr);
+        etl::string<maxStringLength> valueStr;
+        etl::string_stream valueStrStream(valueStr);
         valueStrStream << wholeNumber << "." << tenths;
         publishToSubscriber(subscriber, valueStr, true);
     }

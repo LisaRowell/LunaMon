@@ -21,8 +21,6 @@
 
 #include <stdint.h>
 
-using etl::string;
-
 DataModelUInt32Leaf sysBrokerClientsConnected("connected", &sysBrokerClientsNode);
 DataModelUInt32Leaf sysBrokerClientsDisconnected("disconnected", &sysBrokerClientsNode);
 DataModelUInt32Leaf sysBrokerClientsMaximum("maximum", &sysBrokerClientsNode);
@@ -100,15 +98,15 @@ DataModelElement *nmeaNodeChildren[] = {
 };
 DataModelNode nmeaNode("nmea", &controllerIDNode, nmeaNodeChildren);
 
-static string<maxSessionDescriptionLength> mqttSession1Buffer;
+static etl::string<maxSessionDescriptionLength> mqttSession1Buffer;
 DataModelStringLeaf mqttSession1("1", &mqttSessionsNode, mqttSession1Buffer);
-static string<maxSessionDescriptionLength> mqttSession2Buffer;
+static etl::string<maxSessionDescriptionLength> mqttSession2Buffer;
 DataModelStringLeaf mqttSession2("2", &mqttSessionsNode, mqttSession2Buffer);
-static string<maxSessionDescriptionLength> mqttSession3Buffer;
+static etl::string<maxSessionDescriptionLength> mqttSession3Buffer;
 DataModelStringLeaf mqttSession3("3", &mqttSessionsNode, mqttSession3Buffer);
-static string<maxSessionDescriptionLength> mqttSession4Buffer;
+static etl::string<maxSessionDescriptionLength> mqttSession4Buffer;
 DataModelStringLeaf mqttSession4("4", &mqttSessionsNode, mqttSession4Buffer);
-static string<maxSessionDescriptionLength> mqttSession5Buffer;
+static etl::string<maxSessionDescriptionLength> mqttSession5Buffer;
 DataModelStringLeaf mqttSession5("5", &mqttSessionsNode, mqttSession5Buffer);
 
 DataModelStringLeaf *mqttSessionDebugs[] = {
@@ -129,15 +127,15 @@ DataModelElement *mqttSessionsNodeChildren[] = {
 };
 DataModelNode mqttSessionsNode("sessions", &mqttNode, mqttSessionsNodeChildren);
 
-static string<maxConnectionDescriptionLength> mqttConnection1Buffer;
+static etl::string<maxConnectionDescriptionLength> mqttConnection1Buffer;
 DataModelStringLeaf mqttConnection1("1", &mqttConnectionsNode, mqttConnection1Buffer);
-static string<maxConnectionDescriptionLength> mqttConnection2Buffer;
+static etl::string<maxConnectionDescriptionLength> mqttConnection2Buffer;
 DataModelStringLeaf mqttConnection2("2", &mqttConnectionsNode, mqttConnection2Buffer);
-static string<maxConnectionDescriptionLength> mqttConnection3Buffer;
+static etl::string<maxConnectionDescriptionLength> mqttConnection3Buffer;
 DataModelStringLeaf mqttConnection3("3", &mqttConnectionsNode, mqttConnection3Buffer);
-static string<maxConnectionDescriptionLength> mqttConnection4Buffer;
+static etl::string<maxConnectionDescriptionLength> mqttConnection4Buffer;
 DataModelStringLeaf mqttConnection4("4", &mqttConnectionsNode, mqttConnection4Buffer);
-static string<maxConnectionDescriptionLength> mqttConnection5Buffer;
+static etl::string<maxConnectionDescriptionLength> mqttConnection5Buffer;
 DataModelStringLeaf mqttConnection5("5", &mqttConnectionsNode, mqttConnection5Buffer);
 
 DataModelStringLeaf *mqttConnectionDebugs[] = {
@@ -168,15 +166,15 @@ DataModelElement *mqttNodeChildren[] = {
 };
 DataModelNode mqttNode("MQTT", &controllerIDNode, mqttNodeChildren);
 
-static string<maxErrorLength> error1Buffer;
+static etl::string<maxErrorLength> error1Buffer;
 DataModelStringLeaf error1("1", &errorsNode, error1Buffer);
-static string<maxErrorLength> error2Buffer;
+static etl::string<maxErrorLength> error2Buffer;
 DataModelStringLeaf error2("2", &errorsNode, error2Buffer);
-static string<maxErrorLength> error3Buffer;
+static etl::string<maxErrorLength> error3Buffer;
 DataModelStringLeaf error3("3", &errorsNode, error3Buffer);
-static string<maxErrorLength> error4Buffer;
+static etl::string<maxErrorLength> error4Buffer;
 DataModelStringLeaf error4("4", &errorsNode, error4Buffer);
-static string<maxErrorLength> error5Buffer;
+static etl::string<maxErrorLength> error5Buffer;
 DataModelStringLeaf error5("5", &errorsNode, error5Buffer);
 
 DataModelStringLeaf *errorDebugs[errorDebugSlots] = {
@@ -213,23 +211,23 @@ DataModelNode controllersNode("controllers", &electronicsNode, controllersNodeCh
 DataModelElement *electronicsNodeChildren[] = { &controllersNode, NULL };
 DataModelNode electronicsNode("electronics", &dataModelRoot, electronicsNodeChildren);
 
-string<coordinateLength> positionLatitudeBuffer;
+etl::string<coordinateLength> positionLatitudeBuffer;
 DataModelStringLeaf positionLatitude("latitude", &positionNode, positionLatitudeBuffer);
-string<coordinateLength> positionLongitudeBuffer;
+etl::string<coordinateLength> positionLongitudeBuffer;
 DataModelStringLeaf positionLongitude("longitude", &positionNode, positionLongitudeBuffer);
-string<timeLength> positionTimeBuffer;
+etl::string<timeLength> positionTimeBuffer;
 DataModelStringLeaf positionTime("time", &positionNode, positionTimeBuffer);
 DataModelUInt32Leaf positionDataValid("dataValid", &positionNode);
-string<15> faaModeIndicatorBuffer;
+etl::string<15> faaModeIndicatorBuffer;
 DataModelStringLeaf positionFAAModeindicator("faaModeIndicator", &positionNode,
                                              faaModeIndicatorBuffer);
 DataModelTenthsUInt16Leaf positionSpeedOverGround("speedOverGround", &positionNode);
 DataModelTenthsUInt16Leaf positionCourseOverGround("courseOverGround", &positionNode);
 DataModelTenthsUInt16Leaf positionTrackMadeGood("trackMadeGood", &positionNode);
-string<dateLength> positionDateBuffer;
+etl::string<dateLength> positionDateBuffer;
 DataModelStringLeaf positionDate("date", &positionNode, positionDateBuffer);
 DataModelTenthsInt16Leaf positionMagneticVariation("magneticVariation", &positionNode);
-string<20> positionGPSQualityBuffer;
+etl::string<20> positionGPSQualityBuffer;
 DataModelStringLeaf positionGPSQuality("gpsQuality", &positionNode, positionGPSQualityBuffer);
 DataModelUInt16Leaf positionNumberSatellites("numberSatellites", &positionNode);
 DataModelHundredthsUInt16Leaf positionHorizontalDilutionOfPrecision("horizontalDilutionOfPrecision",
@@ -239,12 +237,12 @@ DataModelTenthsInt16Leaf positionGeoidalSeparation("geoidalSeparation", &positio
 DataModelTenthsUInt16Leaf positionGPSDataAge("gpsDataAge", &positionNode);
 DataModelUInt16Leaf positionDifferentialReferenceStation("differentialReferenceStation",
                                                          &positionNode);
-string<9> positionSatelliteSelectionModeBuffer;
+etl::string<9> positionSatelliteSelectionModeBuffer;
 DataModelStringLeaf positionSatelliteSelectionMode("satelliteSelectionMode", &positionNode,
                                                    positionSatelliteSelectionModeBuffer);
-string<4> positionFixModeBuffer;
+etl::string<4> positionFixModeBuffer;
 DataModelStringLeaf positionFixMode("fixMode", &positionNode, positionFixModeBuffer);
-string<activeSatellitesLength> positionActiveSatellitesBuffer;
+etl::string<activeSatellitesLength> positionActiveSatellitesBuffer;
 DataModelStringLeaf positionActiveSatellites("activeSatellites", &positionNode,
                                              positionActiveSatellitesBuffer);
 DataModelHundredthsUInt8Leaf positionPDOP("pdop", &positionNode);

@@ -8,14 +8,12 @@
 #include <etl/vector.h>
 #include <stdint.h>
 
-using etl::vector;
-
 class StatsManager {
     private:
         const uint32_t statsUpdateTimeInterval = 10;
         PassiveTimer statsUpdateTimer;
         PassiveTimer lastHarvestTime;
-        vector<StatsHolder *, 10> statsHolders;
+        etl::vector<StatsHolder *, 10> statsHolders;
 
     public:
         StatsManager();

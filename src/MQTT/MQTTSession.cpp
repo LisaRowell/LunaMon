@@ -11,19 +11,15 @@
 
 #include <stdint.h>
 
-using etl::string;
-using etl::istring;
-using etl::string_stream;
-
 bool MQTTSession::isConnected() const {
     return connection != nullptr;
 }
 
-bool MQTTSession::matches(const istring &clientID) const {
+bool MQTTSession::matches(const etl::istring &clientID) const {
     return this->clientID.compare(clientID) == 0;
 }
 
-void MQTTSession::begin(bool cleanSession, const istring &clientID, MQTTConnection *connection,
+void MQTTSession::begin(bool cleanSession, const etl::istring &clientID, MQTTConnection *connection,
                         uint16_t keepAliveTime) {
     this->cleanSession = cleanSession;
     this->clientID = clientID;
@@ -96,7 +92,7 @@ void MQTTSession::unsubscribeAll() {
     dataModel.unsubscribeAll(*this);
 }
 
-const istring &MQTTSession::name() const {
+const etl::istring &MQTTSession::name() const {
     return clientID;
 }
 
@@ -108,8 +104,8 @@ void MQTTSession::publish(const char *topic, const char *value, bool retainedVal
 }
 
 void MQTTSession::updateSessionDebug(DataModelStringLeaf &debug) {
-    string<maxSessionDescriptionLength> sessionDebug;
-    string_stream sessionDebugStream(sessionDebug);
+    etl::string<maxSessionDescriptionLength> sessionDebug;
+    etl::string_stream sessionDebugStream(sessionDebug);
 
     if (connection) {
         char connectionIPAddressStr[maxIPAddressTextLength];

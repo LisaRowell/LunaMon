@@ -12,9 +12,6 @@
 #include <WiFiNINA.h>
 #include <stdint.h>
 
-using etl::string;
-using etl::string_stream;
-
 void MQTTConnection::begin(WiFiClient &wifiClient) {
     this->wifiClient = wifiClient;
     mqttSession = NULL;
@@ -198,8 +195,8 @@ uint16_t MQTTConnection::port() const {
 }
 
 void MQTTConnection::updateConnectionDebug(DataModelStringLeaf &debug) {
-    string<maxConnectionDescriptionLength> connectionDebug;
-    string_stream connectionDebugStream(connectionDebug);
+    etl::string<maxConnectionDescriptionLength> connectionDebug;
+    etl::string_stream connectionDebugStream(connectionDebug);
 
     char connectionIPAddressStr[maxIPAddressTextLength];
     ipAddressToStr(connectionIPAddressStr, remoteIPAddress);

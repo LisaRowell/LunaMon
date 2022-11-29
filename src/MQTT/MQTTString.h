@@ -5,8 +5,6 @@
 
 #include <stdint.h>
 
-using etl::istring;
-
 class Logger;
 
 class MQTTString {
@@ -20,7 +18,7 @@ class MQTTString {
         uint32_t size() const;
         // Returns false if too long to copy. maxLength is max in source and does not include nil.
         bool copyTo(char *cString, unsigned maxLength) const;
-        bool copyTo(istring &destString) const;
+        bool copyTo(etl::istring &destString) const;
 
     friend Logger;
 };

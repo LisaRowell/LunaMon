@@ -6,9 +6,6 @@
 
 #include <stdint.h>
 
-using etl::string;
-using etl::to_string;
-
 DataModelUInt16Leaf::DataModelUInt16Leaf(const char *name, DataModelElement *parent)
     : DataModelRetainedValueLeaf(name, parent) {
 }
@@ -44,8 +41,8 @@ DataModelUInt16Leaf::operator uint16_t() const {
 
 void DataModelUInt16Leaf::sendRetainedValue(DataModelSubscriber &subscriber) {
     if (hasValue()) {
-        string<3> valueStr;
-        to_string(value, valueStr);
+        etl::string<3> valueStr;
+        etl::to_string(value, valueStr);
         publishToSubscriber(subscriber, valueStr, true);
     }
 }

@@ -9,8 +9,6 @@ class DataModelSubscriber;
 
 #include <stdint.h>
 
-using etl::istring;
-
 class DataModelLeaf : public DataModelElement {
     private:
         DataModelSubscriber *subscribers[maxDataModelSubscribers];
@@ -22,7 +20,7 @@ class DataModelLeaf : public DataModelElement {
         bool updateSubscriber(DataModelSubscriber &subscriber, uint32_t cookie);
         virtual bool subscribe(DataModelSubscriber &subscriber, uint32_t cookie);
         void unsubscribe(DataModelSubscriber &subscriber);
-        void publishToSubscriber(DataModelSubscriber &subscriber, const istring &value,
+        void publishToSubscriber(DataModelSubscriber &subscriber, const etl::istring &value,
                                  bool retainedValue);
 
     public:
@@ -33,7 +31,7 @@ class DataModelLeaf : public DataModelElement {
         virtual void unsubscribeIfMatching(const char *topicFilter,
                                            DataModelSubscriber &subscriber) override;
         virtual void unsubscribeAll(DataModelSubscriber &subscriber) override;
-        DataModelLeaf & operator << (const istring &value);
+        DataModelLeaf & operator << (const etl::istring &value);
         DataModelLeaf & operator << (uint32_t value);
 };
 

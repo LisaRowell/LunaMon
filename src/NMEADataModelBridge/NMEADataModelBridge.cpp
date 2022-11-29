@@ -24,9 +24,6 @@
 
 #include <stdint.h>
 
-using etl::string;
-using etl::string_stream;
-
 NMEADataModelBridge::NMEADataModelBridge(StatsManager &statsManager) : messagesBridgedCounter() {
     statsManager.addStatsHolder(this);
 }
@@ -108,8 +105,8 @@ void NMEADataModelBridge::bridgeNMEAGSAMessage(NMEAGSAMessage *message) {
     }
     message->gpsFixMode.publish(positionFixMode);
 
-    string<activeSatellitesLength> activeSatellitesStr;
-    string_stream activeSatellitesStrStream(activeSatellitesStr);
+    etl::string<activeSatellitesLength> activeSatellitesStr;
+    etl::string_stream activeSatellitesStrStream(activeSatellitesStr);
     bool firstInList = true;
     for (unsigned satelliteIndex = 0; satelliteIndex < 12; satelliteIndex++) {
         if (message->satelliteIDs[satelliteIndex].hasValue()) {

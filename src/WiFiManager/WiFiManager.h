@@ -10,9 +10,6 @@ class WiFiManagerClient;
 #include <etl/string.h>
 #include <stdint.h>
 
-using etl::vector;
-using etl::istring;
-
 class WiFiManager {
     private:
         enum WiFiConnectionState {
@@ -29,7 +26,7 @@ class WiFiManager {
         PassiveTimer connectionWaitTimer;
 
         static constexpr size_t maxClients = 5;
-        vector<WiFiManagerClient *, maxClients> clients;
+        etl::vector<WiFiManagerClient *, maxClients> clients;
 
         void verifyWiFiPresent();
         void checkFirmwareVersion();
@@ -39,8 +36,8 @@ class WiFiManager {
         void connectionEstablished();
         void notifyWiFiConnected();
         void notifyWiFiDisconnected();
-        void firmwareVersionError(const istring &firmwareVersion) __attribute__((noreturn));
-        void malformedFirmwareVersion(const istring &firmwareVersion, const char *explanation)
+        void firmwareVersionError(const etl::istring &firmwareVersion) __attribute__((noreturn));
+        void malformedFirmwareVersion(const etl::istring &firmwareVersion, const char *explanation)
                 __attribute__((noreturn));
 
     public:
