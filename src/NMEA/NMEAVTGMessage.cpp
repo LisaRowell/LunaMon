@@ -1,6 +1,5 @@
 #include "NMEAVTGMessage.h"
 #include "NMEATenthsUInt16.h"
-#include "NMEADirection.h"
 #include "NMEAFAAModeIndicator.h"
 #include "NMEATalker.h"
 #include "NMEALine.h"
@@ -9,7 +8,7 @@
 #include "Util/PlacementNew.h"
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
 
 NMEAVTGMessage::NMEAVTGMessage(NMEATalker &talker) : NMEAMessage(talker) {
 }
@@ -26,27 +25,24 @@ bool NMEAVTGMessage::parse(NMEALine &nmeaLine) {
 
     // There are two forms of this sentence, one with "T", "M", "N", "K" after each field, and one
     // with out.
-    String secondWord;
-    if (!nmeaLine.extractWord(secondWord)) {
+    etl::string_view secondWordView;
+    if (!nmeaLine.getWord(secondWordView)) {
         logger << logError << talker << " VTG message missing second field" << eol;
         return false;
     }
 
-    bool oldForm;
-    if (secondWord != "T") {
-        oldForm = true;
-    } else {
-        oldForm = false;
-        if (!nmeaLine.extractWord(secondWord)) {
-            logger << logError << talker << " VTG message missing Course Over Ground, Magnetic"
+    bool oldForm = !wordIsT(secondWordView);
+    if (!oldForm) {
+        if (!nmeaLine.getWord(secondWordView)) {
+            logger << logError << talker << " VTG message missing Course Over Ground, Magnetic "
                    << eol;
             return false;
         }
     }
 
-    if (!courseOverGroundMagnetic.set(secondWord, true)) {
+    if (!courseOverGroundMagnetic.set(secondWordView, true)) {
         logger << logError << talker << " VTG message with a bad Course Over Ground, Magentic"
-               << eol;
+               << "'" << secondWordView << "'" << eol;
         return false;
     }
 
@@ -76,17 +72,23 @@ bool NMEAVTGMessage::parse(NMEALine &nmeaLine) {
         }
     }
 
-    String faaModeIndicatorStr;
-    if (nmeaLine.extractWord(faaModeIndicatorStr)) {
-        if (!faaModeIndicator.set(faaModeIndicatorStr)) {
-            logger << logWarning << talker << " VTG message with bad FAA Mode Indicator field '"
-                   << faaModeIndicatorStr << "'" << eol;
-            return false;
-        }
+    if (!faaModeIndicator.extract(nmeaLine, talker, "VTG")) {
+        return false;
     }
 
-
     return true;
+}
+
+bool NMEAVTGMessage::wordIsT(const etl::string_view &word) {
+    if (word.size() == 1) {
+        if (word.front() == 'T') {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
 }
 
 enum NMEAMsgType NMEAVTGMessage::type() const {

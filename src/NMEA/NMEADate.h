@@ -9,7 +9,9 @@
 #include "Util/Logger.h"
 #include "Util/LoggableItem.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
+
+#include <stddef.h>
 
 class NMEADate : public LoggableItem {
     private:
@@ -18,8 +20,9 @@ class NMEADate : public LoggableItem {
         uint8_t month;
         uint8_t day;
 
+        bool set(const etl::string_view &dateView);
+
     public:
-        bool set(const String &dateStr);
         bool extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType);
         void publish(DataModelStringLeaf &leaf) const;
         virtual void log(Logger &logger) const override;

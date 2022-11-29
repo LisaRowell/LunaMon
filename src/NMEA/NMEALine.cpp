@@ -3,12 +3,13 @@
 #include "Util/CharacterTools.h"
 #include "Util/Logger.h"
 
+#include <etl/string.h>
+#include <etl/string_view.h>
+
 #include <stddef.h>
 #include <Arduino.h>
 
-NMEALine::NMEALine() : line() {
-    position = 0;
-    remaining = 0;
+NMEALine::NMEALine() : line(), remaining(){
 }
 
 NMEALine::NMEALine(String &inputString) : line() {
@@ -17,19 +18,18 @@ NMEALine::NMEALine(String &inputString) : line() {
     line.initialize_free_space();
     inputString.toCharArray(line.data(), maxNMEALineLength);
     line.trim_to_terminator();
-    position = 0;
-    remaining = line.size();
+
+    remaining = line;
 }
 
 void NMEALine::reset() {
     line.clear();
-    position = 0;
-    remaining = 0;
+    remaining = line;
 }
 
 void NMEALine::append(const char *srcBuffer, unsigned start, unsigned end) {
     line.append(srcBuffer + start, end - start);
-    remaining = line.size();
+    remaining = line;
 }
 
 bool NMEALine::isEmpty() {
@@ -73,81 +73,39 @@ bool NMEALine::sanityCheck() {
 }
 
 bool NMEALine::extractChar(char &character) {
-    if (remaining < 1) {
+    if (remaining.empty()) {
         return false;
     }
 
-    character = line[position];
-    position++;
-    remaining--;
+    character = remaining.front();
+    remaining.remove_prefix(1);
 
     return true;
 }
 
-String NMEALine::bufferSubstring(unsigned start, unsigned end) {
-    char word[maxNMEALineLength];
-    unsigned wordPos;
-    unsigned bufferPos;
-
-    for (bufferPos = start, wordPos = 0; bufferPos < end; bufferPos++, wordPos++) {
-        word[wordPos] = line[bufferPos];
-    }
-    word[wordPos] = 0;
-
-    return String(word);
-}
-
-bool NMEALine::extractWord(String &word) {
-    unsigned pos;
-    unsigned left;
-
-    for (pos = position, left = remaining; left > 0; pos++, left--) {
-        if (line[pos] == ',') {
-            word = bufferSubstring(position, pos);
-            position = pos + 1;
-            remaining = left - 1;
-
-            return true;
-        }
-    }
-
-    if (pos != position) {
-        word = bufferSubstring(position, pos);
-        position = pos;
-        remaining = 0;
-
-        return true;
-    } else {
+bool NMEALine::getWord(etl::string_view &word) {
+    if (remaining.empty()) {
         return false;
     }
+
+    size_t commaPos = remaining.find(',');
+    if (commaPos == remaining.npos) {
+        word.assign(remaining.begin(), remaining.end());
+        remaining.remove_prefix(remaining.size());
+    } else {
+        word.assign(remaining.begin(), remaining.begin() + commaPos);
+        remaining.remove_prefix(commaPos + 1);
+    }
+
+    return true;
 }
 
-bool NMEALine::extractWord(etl::istring &word) {
-    size_t pos;
-    size_t left;
-    for (pos = position, left = remaining; left > 0; left--) {
-        if (line[pos] == ',') {
-            word.assign(line, position, pos - position);
-            position = pos + 1;
-            remaining = left - 1;
-
-            return true;
-        }
-    }
-
-    if (pos != position) {
-        word.assign(line, position, pos - position + 1);
-        position = pos;
-        remaining = 0;
-
-        return true;
-    } else {
-        return false;
-    }
+bool NMEALine::atEndOfLine() {
+    return remaining.empty();
 }
 
 void NMEALine::stripParity() {
-    remaining -= 3;
+    remaining.remove_suffix(3);
 }
 
 bool NMEALine::checkParity() {

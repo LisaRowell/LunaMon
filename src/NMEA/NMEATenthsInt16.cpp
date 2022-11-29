@@ -1,66 +1,83 @@
 #include "NMEATenthsInt16.h"
 
 #include "Util/Logger.h"
-#include "Util/CharacterTools.h"
-#include "Util/StringTools.h"
+#include "Util/Error.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
+#include <etl/to_arithmetic.h>
 
-bool NMEATenthsInt16::set(const String &decimalStr) {
-    const unsigned length = decimalStr.length();
-    if (length == 0) {
-        return false;
-    }
-
-    const int periodPos = decimalStr.indexOf(".");
-    if (periodPos < 0) {
-        if (!extractInt16FromString(decimalStr, 0, length, integer)) {
+bool NMEATenthsInt16::set(const etl::string_view &valueView, bool optional) {
+    if (valueView.size() == 0) {
+        if (!optional) {
+            valuePresent = false;
             return false;
         }
-        tenths = 0;
-    } else {
-        if (periodPos != 0) {
-            if (!extractInt16FromString(decimalStr, 0, periodPos, integer)) {
-                return false;
-            }
-        } else {
-            integer = 0;
-        }
-
-        const unsigned charactersAfterPeriod = length - periodPos - 1;
-        if (charactersAfterPeriod) {
-            const unsigned decimalStart = periodPos + 1;
-            const unsigned placesToRead = min((unsigned)2, charactersAfterPeriod);
-            const unsigned decimalEnd = decimalStart + placesToRead;
-            uint16_t decimalPortion;
-            if (!extractUInt16FromString(decimalStr, decimalStart, decimalEnd, decimalPortion)) {
-                return false;
-            }
-            if (placesToRead > 1) {
-                tenths = (decimalPortion + 5) / 10;
-            } else {
-                tenths = decimalPortion;
-            }
-        } else {
-            tenths = 0;
-        }
+        valuePresent = false;
+        return true;
     }
 
+    etl::string_view integerView;
+    size_t periodPos = valueView.find('.');
+    if (periodPos == valueView.npos) {
+        integerView = etl::string_view(valueView);
+    } else {
+        integerView = etl::string_view(valueView.begin(), periodPos);
+    }
+    etl::to_arithmetic_result<int16_t> integerResult = etl::to_arithmetic<int16_t>(integerView);
+    if (!integerResult.has_value()) {
+        valuePresent = false;
+        return false;
+    }
+    integer = integerResult.value();
+
+    if (periodPos != valueView.npos && valueView.length() > periodPos + 1) {
+        etl::string_view decimalView(valueView.begin() + periodPos, valueView.end());
+        decimalView.remove_prefix(1);
+        if (decimalView.length() > 2) {
+            decimalView.remove_suffix(decimalView.length() - 2);
+        }
+        etl::to_arithmetic_result<uint8_t> decimalResult;
+        decimalResult = etl::to_arithmetic<uint8_t>(decimalView);
+        if (!decimalResult.has_value()) {
+            valuePresent = false;
+            return false;
+        }
+        switch (decimalView.length()) {
+            case 1:
+                tenths = decimalResult.value();
+                break;
+            case 2:
+                tenths = (decimalResult.value() + 5) / 10;
+                break;
+            default:
+                fatalError("Bad parsing of TenthsInt16");
+        }
+    } else {
+        tenths = 0;
+    }
+
+    valuePresent = true;
     return true;
 }
 
 bool NMEATenthsInt16::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType,
-                              const char *fieldName) {
-    String decimalStr;
-    if (!nmeaLine.extractWord(decimalStr)) {
-        logger << logWarning << talker << " " << msgType << " message missing " << fieldName
-               << " field" << eol;
-        return false;
+                              const char *fieldName, bool optional) {
+    etl::string_view valueView;
+    if (!nmeaLine.getWord(valueView)) {
+        if (!optional) {
+            logger << logWarning << talker << " " << msgType << " message missing " << fieldName
+                   << " field" << eol;
+            valuePresent = false;
+            return false;
+        }
+
+        valuePresent = false;
+        return true;
     }
 
-    if (!set(decimalStr)) {
+    if (!set(valueView, optional)) {
         logger << logWarning << talker << " " << msgType << " message with bad " << fieldName
-               << " field '" << decimalStr << "'" << eol;
+               << " field '" << valueView << "'" << eol;
         return false;
     }
 
@@ -68,9 +85,17 @@ bool NMEATenthsInt16::extract(NMEALine &nmeaLine, NMEATalker &talker, const char
 }
 
 void NMEATenthsInt16::publish(DataModelTenthsInt16Leaf &leaf) const {
-    leaf.set(integer, tenths);
+    if (valuePresent) {
+        leaf.set(integer, tenths);
+    } else {
+        leaf.removeValue();
+    }
 }
 
 void NMEATenthsInt16::log(Logger &logger) const {
-    logger << integer << "." << tenths;
+    if (valuePresent) {
+        logger << integer << "." << tenths;
+    } else {
+        logger << "NA";
+    }
 }

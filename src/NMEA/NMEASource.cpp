@@ -13,10 +13,7 @@
 #include "Util/Logger.h"
 #include "Util/Error.h"
 
-#include <etl/vector.h>
 #include <Stream.h>
-
-using etl::vector;
 
 NMEASource::NMEASource(Stream &stream, DataModelLeaf &messageCountDataModelLeaf,
                        DataModelLeaf &messageRateDataModelLeaf, StatsManager &statsManager)

@@ -4,7 +4,6 @@
 #include "NMEALatitude.h"
 #include "NMEALongitude.h"
 #include "NMEATenthsUInt16.h"
-#include "NMEADirection.h"
 #include "NMEADate.h"
 #include "NMEAMagneticVariation.h"
 #include "NMEAFAAModeIndicator.h"
@@ -14,8 +13,6 @@
 
 #include "Util/PlacementNew.h"
 #include "Util/Logger.h"
-
-#include <Arduino.h>
 
 NMEARMCMessage::NMEARMCMessage(NMEATalker &talker) : NMEAMessage(talker) {
 }
@@ -58,13 +55,8 @@ bool NMEARMCMessage::parse(NMEALine &nmeaLine) {
         return false;
     }
 
-    String faaModeIndicatorStr;
-    if (nmeaLine.extractWord(faaModeIndicatorStr)) {
-        if (!faaModeIndicator.set(faaModeIndicatorStr)) {
-            logger << logWarning << talker << " RMC message with bad FAA Mode Indicator field '"
-                   << faaModeIndicatorStr << "'" << eol;
-            return false;
-        }
+    if (!faaModeIndicator.extract(nmeaLine, talker, "RMC")) {
+        return false;
     }
 
     return true;

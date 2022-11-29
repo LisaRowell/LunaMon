@@ -5,14 +5,18 @@
 #include "NMEATalker.h"
 #include "NMEALine.h"
 
-#include <Arduino.h>
+#include <etl/string.h>
+
+#include <stdint.h>
 
 class NMEATXTMessage : public NMEAMessage {
     private:
         uint8_t totalSentences;
         uint8_t sentenceNumber;
         uint8_t textIdentifier;
-        char text[maxNMEALineLength];
+        etl::string<maxNMEALineLength> text;
+
+        bool getTwoDigitField(NMEALine &nmeaLine, uint8_t &value, const char *fieldName);
 
     public:
         NMEATXTMessage(NMEATalker &talker);

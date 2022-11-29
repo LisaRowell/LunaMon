@@ -5,7 +5,6 @@
 #include "Util/Logger.h"
 
 #include <etl/string.h>
-#include <Arduino.h>
 
 class NMEATalker : public LoggableItem {
     private:

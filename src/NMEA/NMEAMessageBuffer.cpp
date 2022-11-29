@@ -10,7 +10,7 @@
 #include "NMEAVDMVDOMessage.h"
 #include "NMEAVTGMessage.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 #define MAX(a,b) (((a)>(b))?(a):(b))
 

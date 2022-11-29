@@ -5,19 +5,24 @@
 #include "Util/StringTools.h"
 #include "Util/Error.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
 
-bool NMEAUInt16::set(const String &valueStr, bool optional, uint16_t maxValue) {
-    const unsigned length = valueStr.length();
+#include <stdint.h>
+#include <stddef.h>
+
+bool NMEAUInt16::set(const etl::string_view &valueView, bool optional, uint16_t maxValue) {
+    const size_t length = valueView.size();
     if (length == 0) {
         if (!optional) {
+            valuePresent = false;
             return false;
         }
         valuePresent = false;
         return true;
     }
 
-    if (!extractUInt16FromString(valueStr, 0, length, value, maxValue)) {
+    if (!extractUInt16FromStringView(valueView, 0, length, value, maxValue)) {
+        valuePresent = false;
         return false;
     }
 
@@ -27,11 +32,12 @@ bool NMEAUInt16::set(const String &valueStr, bool optional, uint16_t maxValue) {
 
 bool NMEAUInt16::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType,
                          const char *fieldName, bool optional, uint16_t maxValue) {
-    String decimalStr;
-    if (!nmeaLine.extractWord(decimalStr)) {
+    etl::string_view valueView;
+    if (!nmeaLine.getWord(valueView)) {
         if (!optional) {
             logger << logWarning << talker << " " << msgType << " message missing " << fieldName
                    << " field" << eol;
+            valuePresent = false;
             return false;
         }
 
@@ -39,9 +45,9 @@ bool NMEAUInt16::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msg
         return true;
     }
 
-    if (!set(decimalStr, optional, maxValue)) {
+    if (!set(valueView, optional, maxValue)) {
         logger << logWarning << talker << " " << msgType << " message with bad " << fieldName
-               << " field '" << decimalStr << "'" << eol;
+               << " field '" << valueView << "'" << eol;
         return false;
     }
 

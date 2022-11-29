@@ -6,48 +6,55 @@
 
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
 
-bool NMEALongitude::set(const String &string, const String &eastOrWestStr) {
-    if (string.length() < 5) {
+bool NMEALongitude::set(const etl::string_view &longitudeView,
+                        const etl::string_view &eastOrWestView) {
+    if (longitudeView.size() < 5) {
         return false;
     }
 
-    if (!setDegrees(string, 0, 3, 180)) {
+    etl::string_view degreesView(longitudeView.data(), 3);
+    if (!setDegrees(degreesView, 180)) {
         return false;
     }
 
-    if (!setMinutes(string, 3)) {
+    etl::string_view minutesView(longitudeView.begin() + 3, longitudeView.end());
+    if (!setMinutes(minutesView)) {
         return false;
     }
 
-    if (eastOrWestStr == "E") {
-        eastOrWest = EAST;
-    } else if (eastOrWestStr == "W") {
-        eastOrWest = WEST;
-    } else {
+    if (eastOrWestView.size() != 1) {
         return false;
     }
-
-    return true;
+    switch (eastOrWestView.front()) {
+        case 'E':
+            eastOrWest = EAST;
+            return true;
+        case 'W':
+            eastOrWest = WEST;
+            return true;
+        default:
+            return false;
+    }
 }
 
 bool NMEALongitude::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType) {
-    String longitudeStr;
-    if (!nmeaLine.extractWord(longitudeStr)) {
+    etl::string_view longitudeView;
+    if (!nmeaLine.getWord(longitudeView)) {
         logger << logWarning << talker << " " << msgType << " message missing longitude" << eol;
         return false;
     }
 
-    String eastOrWestStr;
-    if (!nmeaLine.extractWord(eastOrWestStr)) {
+    etl::string_view eastOrWestView;
+    if (!nmeaLine.getWord(eastOrWestView)) {
         logger << logWarning << talker << " " << msgType << " message missing E/W" << eol;
         return false;
     }
 
-    if (!set(longitudeStr, eastOrWestStr)) {
+    if (!set(longitudeView, eastOrWestView)) {
         logger << logWarning << talker << " " << msgType << " message with bad longitude '"
-               << longitudeStr << "' '" << eastOrWestStr << "'" << eol;
+               << longitudeView << "' '" << eastOrWestView << "'" << eol;
         return false;
     }
 

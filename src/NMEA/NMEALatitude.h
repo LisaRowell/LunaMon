@@ -10,7 +10,7 @@
 #include "Util/LoggableItem.h"
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
 
 enum NorthOrSouth {
     NORTH,
@@ -21,8 +21,9 @@ class NMEALatitude : public NMEACoordinate, public LoggableItem {
     private:
         enum NorthOrSouth northOrSouth;
 
+        bool set(const etl::string_view &latitudeView, const etl::string_view &northOrSouthView);
+
     public:
-        bool set(const String &string, const String &northOrSouthStr);
         bool extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType);
         void publish(DataModelStringLeaf &leaf) const;
         virtual void log(Logger &logger) const override;

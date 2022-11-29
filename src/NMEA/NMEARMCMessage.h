@@ -7,7 +7,6 @@
 #include "NMEALatitude.h"
 #include "NMEALongitude.h"
 #include "NMEATenthsUInt16.h"
-#include "NMEADirection.h"
 #include "NMEADate.h"
 #include "NMEAMagneticVariation.h"
 #include "NMEAFAAModeIndicator.h"
@@ -21,7 +20,7 @@ class NMEARMCMessage : public NMEAMessage {
         NMEALatitude latitude;
         NMEALongitude longitude;
         NMEATenthsUInt16 speedOverGround;
-        NMEADirection trackMadeGood;
+        NMEATenthsUInt16 trackMadeGood;
         NMEADate date;
         NMEAMagneticVariation magneticVariation;
         NMEAFAAModeIndicator faaModeIndicator;

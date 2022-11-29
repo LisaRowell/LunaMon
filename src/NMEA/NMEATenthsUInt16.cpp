@@ -1,53 +1,62 @@
 #include "NMEATenthsUInt16.h"
 
 #include "Util/Logger.h"
-#include "Util/CharacterTools.h"
-#include "Util/StringTools.h"
+#include "Util/Error.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
+#include <etl/to_arithmetic.h>
+#include <etl/string.h>
+#include <etl/string_stream.h>
 
-bool NMEATenthsUInt16::set(const String &decimalStr, bool optional) {
-    const unsigned length = decimalStr.length();
-    if (length == 0) {
+bool NMEATenthsUInt16::set(const etl::string_view &valueView, bool optional) {
+    if (valueView.size() == 0) {
         if (!optional) {
+            valuePresent = false;
             return false;
         }
         valuePresent = false;
         return true;
     }
 
-    const int periodPos = decimalStr.indexOf(".");
-    if (periodPos < 0) {
-        if (!extractUInt16FromString(decimalStr, 0, length, wholeNumber)) {
+    etl::string_view wholeNumberView;
+    size_t periodPos = valueView.find('.');
+    if (periodPos == valueView.npos) {
+        wholeNumberView = etl::string_view(valueView);
+    } else {
+        wholeNumberView = etl::string_view(valueView.begin(), periodPos);
+    }
+    etl::to_arithmetic_result<uint16_t> wholeNumberResult;
+    wholeNumberResult = etl::to_arithmetic<uint16_t>(wholeNumberView);
+    if (!wholeNumberResult.has_value()) {
+        valuePresent = false;
+        return false;
+    }
+    wholeNumber = wholeNumberResult.value();
+
+    if (periodPos != valueView.npos && valueView.length() > periodPos + 1) {
+        etl::string_view decimalView(valueView.begin() + periodPos, valueView.end());
+        decimalView.remove_prefix(1);
+        if (decimalView.length() > 2) {
+            decimalView.remove_suffix(decimalView.length() - 2);
+        }
+        etl::to_arithmetic_result<uint8_t> decimalResult;
+        decimalResult = etl::to_arithmetic<uint8_t>(decimalView);
+        if (!decimalResult.has_value()) {
+            valuePresent = false;
             return false;
         }
-        tenths = 0;
+        switch (decimalView.length()) {
+            case 1:
+                tenths = decimalResult.value();
+                break;
+            case 2:
+                tenths = (decimalResult.value() + 5) / 10;
+                break;
+            default:
+                fatalError("Bad parsing of TenthsUint16");
+        }
     } else {
-        if (periodPos != 0) {
-            if (!extractUInt16FromString(decimalStr, 0, periodPos, wholeNumber)) {
-                return false;
-            }
-        } else {
-            wholeNumber = 0;
-        }
-
-        const unsigned charactersAfterPeriod = length - periodPos - 1;
-        if (charactersAfterPeriod) {
-            const unsigned decimalStart = periodPos + 1;
-            const unsigned placesToRead = min((unsigned)2, charactersAfterPeriod);
-            const unsigned decimalEnd = decimalStart + placesToRead;
-            uint16_t decimalPortion;
-            if (!extractUInt16FromString(decimalStr, decimalStart, decimalEnd, decimalPortion)) {
-                return false;
-            }
-            if (placesToRead > 1) {
-                tenths = (decimalPortion + 5) / 10;
-            } else {
-                tenths = decimalPortion;
-            }
-        } else {
-            tenths = 0;
-        }
+        tenths = 0;
     }
 
     valuePresent = true;
@@ -56,8 +65,8 @@ bool NMEATenthsUInt16::set(const String &decimalStr, bool optional) {
 
 bool NMEATenthsUInt16::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType,
                                const char *fieldName, bool optional) {
-    String decimalStr;
-    if (!nmeaLine.extractWord(decimalStr)) {
+    etl::string_view valueView;
+    if (!nmeaLine.getWord(valueView)) {
         if (!optional) {
             logger << logWarning << talker << " " << msgType << " message missing " << fieldName
                    << " field" << eol;
@@ -68,9 +77,9 @@ bool NMEATenthsUInt16::extract(NMEALine &nmeaLine, NMEATalker &talker, const cha
         return true;
     }
 
-    if (!set(decimalStr, optional)) {
+    if (!set(valueView, optional)) {
         logger << logWarning << talker << " " << msgType << " message with bad " << fieldName
-               << " field '" << decimalStr << "'" << eol;
+               << " field '" << valueView << "'" << eol;
         return false;
     }
 

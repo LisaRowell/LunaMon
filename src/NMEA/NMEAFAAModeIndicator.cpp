@@ -4,22 +4,22 @@
 
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
 
 NMEAFAAModeIndicator::NMEAFAAModeIndicator() : faaMode(FAA_MODE_NONE) {
 }
 
-bool NMEAFAAModeIndicator::set(String &faaModeStr) {
-    if (faaModeStr.length() == 0) {
+bool NMEAFAAModeIndicator::set(etl::string_view &faaModeView) {
+    if (faaModeView.size() == 0) {
         faaMode = FAA_MODE_NONE;
         return true;
     }
 
-    if (faaModeStr.length() > 1) {
+    if (faaModeView.size() > 1) {
         return false;
     }
 
-    const char faaModeChar = faaModeStr.charAt(0);
+    const char faaModeChar = faaModeView.front();
     switch (faaModeChar) {
         case 'A':
             faaMode = FAA_MODE_AUTONOMOUS;
@@ -68,6 +68,20 @@ bool NMEAFAAModeIndicator::set(String &faaModeStr) {
         default:
             return false;
     }
+}
+
+bool NMEAFAAModeIndicator::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType) {
+    etl::string_view faaModeIndicatorView;
+    if (nmeaLine.getWord(faaModeIndicatorView)) {
+        if (!set(faaModeIndicatorView)) {
+            logger << logWarning << talker << " " << msgType
+                   << " message with bad FAA Mode Indicator field '" << faaModeIndicatorView << "'"
+                   << eol;
+            return false;
+        }
+    }
+
+    return true;
 }
 
 bool NMEAFAAModeIndicator::hasValue() const {

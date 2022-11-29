@@ -4,7 +4,6 @@
 #include "NMEAMessage.h"
 #include "NMEATime.h"
 #include "NMEATenthsUInt16.h"
-#include "NMEADirection.h"
 #include "NMEATalker.h"
 #include "NMEALine.h"
 
@@ -14,7 +13,7 @@ class NMEAGSTMessage : public NMEAMessage {
         NMEATenthsUInt16 standardDeviationOfRangeInputsRMS;
         NMEATenthsUInt16 standardDeviationOfSemiMajorAxis;
         NMEATenthsUInt16 standardDeviationOfSemiMinorAxis;
-        NMEADirection orientationOfSemiMajorAxis;
+        NMEATenthsUInt16 orientationOfSemiMajorAxis;
         NMEATenthsUInt16 standardDeviationOfLatitudeError;
         NMEATenthsUInt16 standardDeviationOfLongitudeError;
         NMEATenthsUInt16 standardDeviationOfAltitudeError;

@@ -9,7 +9,7 @@
 #include "Util/LoggableItem.h"
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
 
 class NMEARadioChannelCode : public LoggableItem {
     private:
@@ -19,8 +19,9 @@ class NMEARadioChannelCode : public LoggableItem {
         };
         RadioChannelCode radioChannelCode;
 
+        bool set(const etl::string_view &radioChannelCodeView);
+
     public:
-        bool set(String &radioChannelCodeStr);
         bool extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType);
         void publish(DataModelStringLeaf &leaf) const;
         virtual void log(Logger &logger) const override;

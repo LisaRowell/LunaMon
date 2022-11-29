@@ -9,7 +9,7 @@
 #include "Util/LoggableItem.h"
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
 
 class NMEAGPSFixMode : public LoggableItem {
     private:
@@ -20,8 +20,9 @@ class NMEAGPSFixMode : public LoggableItem {
         };
         GPSFixMode gpsFixMode;
 
+        bool set(etl::string_view &gpsQualityStr);
+
     public:
-        bool set(String &gpsQualityStr);
         bool extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType);
         void publish(DataModelStringLeaf &leaf) const;
         virtual void log(Logger &logger) const override;

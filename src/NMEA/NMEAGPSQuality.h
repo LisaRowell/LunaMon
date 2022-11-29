@@ -9,7 +9,7 @@
 #include "Util/LoggableItem.h"
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
 
 class NMEAGPSQuality : public LoggableItem {
     private:
@@ -26,8 +26,9 @@ class NMEAGPSQuality : public LoggableItem {
         };
         GPSQuality gpsQuality;
 
+        bool set(etl::string_view &gpsQualityView);
+
     public:
-        bool set(String &gpsQualityStr);
         bool extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType);
         void publish(DataModelStringLeaf &leaf) const;
         virtual void log(Logger &logger) const override;

@@ -9,15 +9,16 @@
 #include "Util/LoggableItem.h"
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
 
 class NMEADataValid : public LoggableItem {
     private:
         bool valid;
 
+        bool set(etl::string_view &dataValidView);
+
     public:
         NMEADataValid();
-        bool set(String &validStr);
         bool extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType);
         void publish(DataModelUInt32Leaf &leaf) const;
         virtual void log(Logger &logger) const override;

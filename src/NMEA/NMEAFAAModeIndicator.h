@@ -1,12 +1,15 @@
 #ifndef NMEA_FAA_MODE_INDICATOR_H
 #define NMEA_FAA_MODE_INDICATOR_H
 
+#include "NMEA/NMEALine.h"
+#include "NMEA/NMEATalker.h"
+
 #include "DataModel/DataModelLeaf.h"
 
 #include "Util/LoggableItem.h"
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
 
 class NMEAFAAModeIndicator : public LoggableItem {
     private:
@@ -26,9 +29,11 @@ class NMEAFAAModeIndicator : public LoggableItem {
         };
         FAAMode faaMode;
 
+        bool set(etl::string_view &faaModeView);
+
     public:
         NMEAFAAModeIndicator();
-        bool set(String &faaModeStr);
+        bool extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType);
         bool hasValue() const;
         void publish(DataModelStringLeaf &leaf) const;
         virtual void log(Logger &logger) const override;

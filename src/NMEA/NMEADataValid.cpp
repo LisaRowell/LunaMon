@@ -6,33 +6,40 @@
 
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
 
 NMEADataValid::NMEADataValid() : valid(false) {
 }
 
-bool NMEADataValid::set(String &validStr) {
-    if (validStr == "A") {
-        valid = true;
-        return true;
-    } else if (validStr == "V") {
-        valid = false;
-        return true;
-    } else {
+bool NMEADataValid::set(etl::string_view &dataValidView) {
+    if (dataValidView.size() != 1) {
         return false;
+    }
+
+    switch (dataValidView.front()) {
+        case 'A':
+            valid = true;
+            return true;
+
+        case 'V':
+            valid = false;
+            return true;
+
+        default:
+            return false;
     }
 }
 
 bool NMEADataValid::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType) {
-    String dataValidStr;
-    if (!nmeaLine.extractWord(dataValidStr)) {
+    etl::string_view dataValidView;
+    if (!nmeaLine.getWord(dataValidView)) {
         logger << logWarning << talker << " " << msgType << " message missing Data Valid field"
                << eol;
         return false;
     }
-    if (!set(dataValidStr)) {
+    if (!set(dataValidView)) {
         logger << logWarning << talker << " " << msgType << " message with bad Data Valid field '"
-               << dataValidStr << "'" << eol;
+               << dataValidView << "'" << eol;
         return false;
     }
 

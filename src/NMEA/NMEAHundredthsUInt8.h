@@ -9,15 +9,18 @@
 #include "Util/LoggableItem.h"
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
+
+#include <stdint.h>
 
 class NMEAHundredthsUInt8 : public LoggableItem {
     private:
         uint8_t wholeNumber;
         uint8_t hundredths;
 
+        bool set(const etl::string_view &decimalString);
+
     public:
-        bool set(const String &decimalString);
         bool extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType,
                      const char *fieldName);
         void publish(DataModelHundredthsUInt8Leaf &leaf) const;

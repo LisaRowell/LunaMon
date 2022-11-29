@@ -3,23 +3,18 @@
 #include "NMEATalker.h"
 #include "NMEAUInt16.h"
 #include "NMEAInt8.h"
-#include "NMEADirection.h"
+#include "NMEATenthsUInt16.h"
 #include "NMEAUInt8.h"
 
 #include "Util/Logger.h"
 
-#include <Arduino.h>
-
 bool NMEAGSVSatelitteInfo::extract(NMEALine &nmeaLine, NMEATalker &talker, bool &endOfInput) {
-    String idStr;
-    if (!nmeaLine.extractWord(idStr)) {
+    if (nmeaLine.atEndOfLine()) {
         endOfInput = true;
         return true;
     }
 
-    if (!id.set(idStr, false, 0xffff)) {
-        logger << logWarning << talker << " GSV message with bad Satelitte ID field '" << idStr
-               << "'" << eol;
+    if (!id.extract(nmeaLine, talker, "GSV", "Satelitte ID")) {
         return false;
     }
 

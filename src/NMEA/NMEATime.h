@@ -9,7 +9,9 @@
 #include "Util/LoggableItem.h"
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
+
+#include <stdint.h>
 
 class NMEATime : public LoggableItem {
     private:
@@ -21,8 +23,9 @@ class NMEATime : public LoggableItem {
 
         void buildSecondsFactionString(char *string) const;
 
+        bool set(const etl::string_view &timeView);
+
     public:
-        bool set(const String &timeStr);
         bool extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType);
         void publish(DataModelStringLeaf &leaf) const;
         virtual void log(Logger &logger) const override;

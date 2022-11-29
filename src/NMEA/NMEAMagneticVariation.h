@@ -9,7 +9,7 @@
 #include "Util/Logger.h"
 #include "Util/LoggableItem.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
 
 class NMEAMagneticVariation : public LoggableItem {
     private:
@@ -17,8 +17,9 @@ class NMEAMagneticVariation : public LoggableItem {
         uint8_t tenths;
         bool hasValue;
 
+        bool set(const etl::string_view &directionView, const etl::string_view &eastOrWestView);
+
     public:
-        bool set(const String &directionStr, const String &eastOrWestStr);
         bool extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType);
         void publish(DataModelTenthsInt16Leaf &leaf) const;
         virtual void log(Logger &logger) const override;

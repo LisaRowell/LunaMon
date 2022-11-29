@@ -4,7 +4,6 @@
 #include "Util/Error.h"
 
 #include <etl/string.h>
-#include <Arduino.h>
 
 typedef struct {
     const char code[3];

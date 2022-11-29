@@ -9,43 +9,35 @@
 
 #include <etl/string.h>
 #include <etl/string_stream.h>
+#include <etl/string_view.h>
 
-#include <Arduino.h>
-
-using etl::string;
-using etl::string_stream;
-using etl::setw;
-using etl::setfill;
-
-bool NMEATime::set(const String &timeStr) {
-    if (timeStr.length() < 6) {
+bool NMEATime::set(const etl::string_view &timeView) {
+    if (timeView.size() < 6) {
         return false;
     }
 
-    if (!extractUInt8FromString(timeStr, 0, 2, hours, 23)) {
+    etl::string_view hoursView(timeView.begin(), 2);
+    if (!extractUInt8FromStringView(timeView, 0, 2, hours, 23)) {
         return false;
     }
 
-    if (!extractUInt8FromString(timeStr, 2, 4, minutes, 59)) {
+    if (!extractUInt8FromStringView(timeView, 2, 2, minutes, 59)) {
         return false;
     }
 
-    if (!extractUInt8FromString(timeStr, 4, 6, seconds, 59)) {
+    if (!extractUInt8FromStringView(timeView, 4, 2, seconds, 59)) {
         return false;
     }
 
-    if (timeStr.length() > 6) {
-        if (timeStr.charAt(6) != '.') {
+    if (timeView.size() > 6) {
+        if (timeView[6] != '.') {
             return false;
         }
 
-        const unsigned startSecondFraction = 7;
-        const unsigned endSecondFraction = timeStr.length();
-        if (!extractUInt32FromString(timeStr, startSecondFraction, endSecondFraction,
-                                     secondFraction)) {
+        secondPrecision = timeView.size() - 7;
+        if (!extractUInt32FromStringView(timeView, 7, secondPrecision, secondFraction)) {
             return false;
         }
-        secondPrecision = endSecondFraction - startSecondFraction;
     } else {
         secondFraction = 0;
         secondPrecision = 0;
@@ -55,15 +47,15 @@ bool NMEATime::set(const String &timeStr) {
 }
 
 bool NMEATime::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType) {
-    String timeStr;
-    if (!nmeaLine.extractWord(timeStr)) {
+    etl::string_view timeView;
+    if (!nmeaLine.getWord(timeView)) {
         logger << logWarning << talker << " " << msgType << " message missing Time field" << eol;
         return false;
     }
 
-    if (!set(timeStr)) {
+    if (!set(timeView)) {
         logger << logWarning << talker << " " << msgType << " message with bad Time field '"
-               << timeStr << "'" << eol;
+               << timeView << "'" << eol;
         return false;
     }
 
@@ -74,10 +66,11 @@ void NMEATime::publish(DataModelStringLeaf &leaf) const {
     char secondFractionStr[12];
     buildSecondsFactionString(secondFractionStr);
 
-    string<40> timeStr;
-    string_stream timeStrStream(timeStr);
-    timeStrStream << setfill('0') << setw(2) << hours << setw(1) << ":" << setw(2) << minutes
-                  << setw(1) << ":" << setw(2) << seconds << setw(0) << secondFractionStr;
+    etl::string<22> timeStr;
+    etl::string_stream timeStrStream(timeStr);
+    timeStrStream << etl::setfill('0') << etl::setw(2) << hours << etl::setw(1) << ":"
+                  << etl::setw(2) << minutes << etl::setw(1) << ":" << etl::setw(2) << seconds
+                  << etl::setw(0) << secondFractionStr;
 
     leaf = timeStr;
 }
@@ -106,8 +99,11 @@ void NMEATime::log(Logger &logger) const {
     char secondFractionStr[12];
     buildSecondsFactionString(secondFractionStr);
 
-    char timeString[22];
-    snprintf(timeString, 22, "%02u:%02u:%02u%s", hours, minutes, seconds, secondFractionStr);
+    etl::string<22> timeStr;
+    etl::string_stream timeStrStream(timeStr);
+    timeStrStream << etl::setfill('0') << etl::setw(2) << hours << etl::setw(1) << ":"
+                  << etl::setw(2) << minutes << etl::setw(1) << ":" << etl::setw(2) << seconds
+                  << etl::setw(0) << secondFractionStr;
 
-    logger << timeString;
+    logger << timeStr;
 }

@@ -1,7 +1,7 @@
 #ifndef NMEA_MESSAGE_BUFFER_H
 #define NMEA_MESSAGE_BUFFER_H
 
-#include <Arduino.h>
+#include <stdint.h>
 
 extern uint8_t nmeaMessageBuffer[];
 

@@ -3,16 +3,17 @@
 
 #include "DataModel/DataModelStringLeaf.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
+
+#include <stdint.h>
 
 class NMEACoordinate {
     protected:
         uint8_t degrees;
         float minutes;
 
-        bool setDegrees(const String &string, unsigned startDegrees, unsigned endDegrees,
-                        uint8_t maxDegrees);
-        bool setMinutes(const String &string, unsigned startMinutes);
+        bool setDegrees(const etl::string_view &degreesView, uint8_t maxDegrees);
+        bool setMinutes(const etl::string_view &minutesView);
         void snprint(char *string, size_t maxLength) const;
         void publish(DataModelStringLeaf &leaf, bool isPositive) const;
 };

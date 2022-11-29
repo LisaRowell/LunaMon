@@ -13,8 +13,6 @@
 #include "Util/PlacementNew.h"
 #include "Util/Logger.h"
 
-#include <Arduino.h>
-
 NMEAGLLMessage::NMEAGLLMessage(NMEATalker &talker) : NMEAMessage(talker) {
 }
 
@@ -40,13 +38,8 @@ bool NMEAGLLMessage::parse(NMEALine &nmeaLine) {
         return false;
     }
 
-    String faaModeIndicatorStr;
-    if (nmeaLine.extractWord(faaModeIndicatorStr)) {
-        if (!faaModeIndicator.set(faaModeIndicatorStr)) {
-            logger << logWarning << talker << " GLL message with bad FAA Mode Indicator field '"
-                   << faaModeIndicatorStr << "'" << eol;
-            return false;
-        }
+    if (!faaModeIndicator.extract(nmeaLine, talker, "GLL")) {
+        return false;
     }
 
     return true;

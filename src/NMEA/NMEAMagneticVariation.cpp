@@ -1,53 +1,72 @@
 #include "NMEAMagneticVariation.h"
 
 #include "Util/CharacterTools.h"
-#include "Util/StringTools.h"
-#include "Util/Logger.h"
+#include "Util/Error.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
+#include <etl/to_arithmetic.h>
 
-bool NMEAMagneticVariation::set(const String &directionStr, const String &eastOrWestStr) {
-    const unsigned directionLength = directionStr.length();
-    if (directionLength == 0 && eastOrWestStr.length() == 0) {
+bool NMEAMagneticVariation::set(const etl::string_view &directionView,
+                                const etl::string_view &eastOrWestView) {
+    if (directionView.size() == 0 || eastOrWestView.size() == 0) {
         hasValue = false;
         return true;
     }
-    if (directionLength == 0) {
+
+    etl::string_view integerView;
+    size_t periodPos = directionView.find('.');
+    if (periodPos == directionView.npos) {
+        integerView = etl::string_view(directionView);
+    } else {
+        integerView = etl::string_view(directionView.begin(), periodPos);
+    }
+    etl::to_arithmetic_result<uint8_t> integerResult = etl::to_arithmetic<uint8_t>(integerView);
+    if (!integerResult.has_value()) {
+        hasValue = false;
         return false;
     }
+    uint8_t directionAbsoluteValue = integerResult.value();
 
-    uint16_t directionAbsoluteValue;
-    int periodPos = directionStr.indexOf(".");
-    if (periodPos > 0) {
-        if (!extractUInt16FromString(directionStr, 0, periodPos, directionAbsoluteValue, 180)) {
+    if (periodPos != directionView.npos && directionView.length() > periodPos + 1) {
+        etl::string_view decimalView(directionView.begin() + periodPos, directionView.end());
+        decimalView.remove_prefix(1);
+        if (decimalView.length() > 2) {
+            decimalView.remove_suffix(decimalView.length() - 2);
+        }
+        etl::to_arithmetic_result<uint8_t> decimalResult;
+        decimalResult = etl::to_arithmetic<uint8_t>(decimalView);
+        if (!decimalResult.has_value()) {
+            hasValue = false;
             return false;
         }
-
-        if (directionLength > (unsigned)periodPos + 1) {
-            if (!extractDigitFromString(directionStr, periodPos + 1, tenths)) {
-                return false;
-            }
-        }
-    } else if (periodPos == 0) {
-        directionAbsoluteValue = 0;
-        if (directionLength > 1) {
-            if (!extractDigitFromString(directionStr, 1, tenths)) {
-                return false;
-            }
+        switch (decimalView.length()) {
+            case 1:
+                tenths = decimalResult.value();
+                break;
+            case 2:
+                tenths = (decimalResult.value() + 5) / 10;
+                break;
+            default:
+                fatalError("Bad parsing of TenthsInt16");
         }
     } else {
-        if (!extractUInt16FromString(directionStr, 0, directionLength, directionAbsoluteValue)) {
-            return false;
-        }
         tenths = 0;
     }
-    
-    if (eastOrWestStr == "W") {
-        direction = directionAbsoluteValue;
-    } else if (eastOrWestStr == "E") {
-        direction = -directionAbsoluteValue;
-    } else {
+
+    if (eastOrWestView.size() != 1) {
+        hasValue = false;
         return false;
+    }
+    switch (eastOrWestView.front()) {
+        case 'W':
+            direction = directionAbsoluteValue;
+            break;
+        case 'E':
+            direction = -directionAbsoluteValue;
+            break;
+        default:
+            hasValue = false;
+            return false;
     }
 
     hasValue = true;
@@ -55,23 +74,25 @@ bool NMEAMagneticVariation::set(const String &directionStr, const String &eastOr
 }
 
 bool NMEAMagneticVariation::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType) {
-    String directionStr;
-    if (!nmeaLine.extractWord(directionStr)) {
+    etl::string_view directionView;
+    if (!nmeaLine.getWord(directionView)) {
         logger << logWarning << talker << " " << msgType
                << " message missing Magnetic Variation direction field" << eol;
+        hasValue = false;
         return false;
     }
-    String eastOrWestStr;
-    if (!nmeaLine.extractWord(eastOrWestStr)) {
+    etl::string_view eastOrWestView;
+    if (!nmeaLine.getWord(eastOrWestView)) {
         logger << logWarning << talker << " " << msgType
                << " message missing Magnetic Variation E/W field" << eol;
+        hasValue = false;
         return false;
     }
 
-    if (!set(directionStr, eastOrWestStr)) {
+    if (!set(directionView, eastOrWestView)) {
         logger << logWarning << talker << " " << msgType
-               << " message with bad Magnetic Variation field '" << directionStr << ","
-               << eastOrWestStr << "'" << eol;
+               << " message with bad Magnetic Variation field '" << directionView << ","
+               << eastOrWestView << "'" << eol;
         return false;
     }
 

@@ -6,10 +6,10 @@
 #include "NMEAMessageBuffer.h"
 
 #include "Util/PlacementNew.h"
-#include "Util/StringTools.h"
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
+#include <etl/to_arithmetic.h>
 
 NMEATXTMessage::NMEATXTMessage(NMEATalker &talker) : NMEAMessage(talker) {
 }
@@ -20,46 +20,43 @@ bool NMEATXTMessage::parse(NMEALine &nmeaLine) {
         return false;
     }
 
-    String totalSentencesStr;
-    if (!nmeaLine.extractWord(totalSentencesStr)) {
-        logger << logWarning << talker << " TXT message missing Total Sentences field" << eol;
-        return false;
-    }
-    if (!convertTwoDigitDecimalString(totalSentencesStr, totalSentences)) {
-        logger << logWarning << talker << " TXT message with bad Total Sentences field '"
-               << totalSentencesStr << "'" << eol;
+    if (!getTwoDigitField(nmeaLine, totalSentences, "Total Sentences")) {
         return false;
     }
 
-    String sentenceNumberStr;
-    if (!nmeaLine.extractWord(sentenceNumberStr)) {
-        logger << logWarning << talker << " TXT message missing Sentence Number field" << eol;
-        return false;
-    }
-    if (!convertTwoDigitDecimalString(sentenceNumberStr, sentenceNumber)) {
-        logger << logWarning << talker << " TXT message with bad Sentence Number field '"
-               << sentenceNumberStr << "'" << eol;
+    if (!getTwoDigitField(nmeaLine, sentenceNumber, "Sentence Number")) {
         return false;
     }
 
-    String textIdentifierStr;
-    if (!nmeaLine.extractWord(textIdentifierStr)) {
-        logger << logWarning << talker << " TXT message missing Text Identifier field" << eol;
-        return false;
-    }
-    if (!convertTwoDigitDecimalString(textIdentifierStr, textIdentifier)) {
-        logger << logWarning << talker << " TXT message with bad Text Identifier field '"
-               << textIdentifierStr << "'" << eol;
+    if (!getTwoDigitField(nmeaLine, textIdentifier, "Text Identifier")) {
         return false;
     }
 
-    String textStr;
-    if (!nmeaLine.extractWord(textStr)) {
+    etl::string_view textView;
+    if (!nmeaLine.getWord(textView)) {
         logger << logWarning << talker << " TXT message missing Text field" << eol;
         return false;
     }
-    strncpy(text, textStr.c_str(), maxNMEALineLength);
+    text.assign(textView.begin(), textView.end());
 
+    return true;
+}
+
+bool NMEATXTMessage::getTwoDigitField(NMEALine &nmeaLine, uint8_t &value, const char *fieldName) {
+    etl::string_view valueView;
+    if (!nmeaLine.getWord(valueView)) {
+        logger << logWarning << talker << " TXT message missing " << fieldName << " field" << eol;
+        return false;
+    }
+
+    etl::to_arithmetic_result<uint8_t> conversionResult;
+    conversionResult = etl::to_arithmetic<uint8_t>(valueView);
+    if (!conversionResult.has_value()) {
+        logger << logWarning << talker << " TXT message with bad " << fieldName << " field '"
+               << valueView << "'" << eol;
+        return false;
+    }
+    value = conversionResult.value();
     return true;
 }
 

@@ -1,49 +1,60 @@
 #include "NMEAHundredthsUInt8.h"
 
 #include "Util/Logger.h"
-#include "Util/CharacterTools.h"
-#include "Util/StringTools.h"
+#include "Util/Error.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
+#include <etl/to_arithmetic.h>
+#include <etl/string.h>
+#include <etl/string_stream.h>
 
-bool NMEAHundredthsUInt8::set(const String &decimalStr) {
-    const unsigned length = decimalStr.length();
-    if (length == 0) {
+#include <stdint.h>
+
+bool NMEAHundredthsUInt8::set(const etl::string_view &valueView) {
+    if (valueView.size() == 0) {
         return false;
     }
 
-    const int periodPos = decimalStr.indexOf(".");
-    if (periodPos < 0) {
-        if (!extractUInt8FromString(decimalStr, 0, length, wholeNumber)) {
+    etl::string_view wholeNumberView;
+    size_t periodPos = valueView.find('.');
+    if (periodPos == valueView.npos) {
+        wholeNumberView = etl::string_view(valueView);
+    } else {
+        wholeNumberView = etl::string_view(valueView.begin(), periodPos);
+    }
+    etl::to_arithmetic_result<uint8_t> wholeNumberResult;
+    wholeNumberResult = etl::to_arithmetic<uint8_t>(wholeNumberView);
+    if (!wholeNumberResult.has_value()) {
+        return false;
+    }
+    wholeNumber = wholeNumberResult.value();
+
+    if (periodPos != valueView.npos && valueView.length() > periodPos + 1) {
+        etl::string_view decimalView(valueView.begin() + periodPos, valueView.end());
+        decimalView.remove_prefix(1);
+        if (decimalView.length() > 3) {
+            decimalView.remove_suffix(decimalView.length() - 3);
+        }
+        etl::to_arithmetic_result<uint16_t> decimalResult;
+        decimalResult = etl::to_arithmetic<uint16_t>(decimalView);
+        if (!decimalResult.has_value()) {
             return false;
         }
-        hundredths = 0;
+        switch (decimalView.length()) {
+            case 1:
+                hundredths = decimalResult.value() * 10;
+                break;
+            case 2:
+                hundredths = decimalResult.value();
+                break;
+            case 3:
+                hundredths = (decimalResult.value() + 5) / 10;
+                break;
+            default:
+                fatalError("Bad parsing of HundredthsUint8");
+        }
     } else {
-        if (periodPos != 0) {
-            if (!extractUInt8FromString(decimalStr, 0, periodPos, wholeNumber)) {
-                return false;
-            }
-        } else {
-            wholeNumber = 0;
-        }
-
-        const unsigned charactersAfterPeriod = length - periodPos - 1;
-        if (charactersAfterPeriod) {
-            const unsigned decimalStart = periodPos + 1;
-            const unsigned placesToRead = min((unsigned)3, charactersAfterPeriod);
-            const unsigned decimalEnd = decimalStart + placesToRead;
-            uint16_t decimalPortion;
-            if (!extractUInt16FromString(decimalStr, decimalStart, decimalEnd, decimalPortion)) {
-                return false;
-            }
-            if (placesToRead > 2) {
-                hundredths = (decimalPortion + 5) / 10;
-            } else {
-                hundredths = decimalPortion;
-            }
-        } else {
-            hundredths = 0;
-        }
+        hundredths = 0;
     }
 
     return true;
@@ -51,16 +62,16 @@ bool NMEAHundredthsUInt8::set(const String &decimalStr) {
 
 bool NMEAHundredthsUInt8::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType,
                                   const char *fieldName) {
-    String decimalStr;
-    if (!nmeaLine.extractWord(decimalStr)) {
+    etl::string_view valueView;
+    if (!nmeaLine.getWord(valueView)) {
         logger << logWarning << talker << " " << msgType << " message missing " << fieldName
                << " field" << eol;
         return false;
     }
 
-    if (!set(decimalStr)) {
+    if (!set(valueView)) {
         logger << logWarning << talker << " " << msgType << " message with bad " << fieldName
-               << " field '" << decimalStr << "'" << eol;
+               << " field '" << valueView << "'" << eol;
         return false;
     }
 
@@ -72,7 +83,8 @@ void NMEAHundredthsUInt8::publish(DataModelHundredthsUInt8Leaf &leaf) const {
 }
 
 void NMEAHundredthsUInt8::log(Logger &logger) const {
-    char hundredthsStr[4];
-    snprintf(hundredthsStr, 4, "%02u", hundredths);
-    logger << wholeNumber << "." << hundredthsStr;
+    etl::string<6> decimalStr;
+    etl::string_stream decimalStream(decimalStr);
+    decimalStream << wholeNumber << "." << etl::setw(2) << etl::setfill('0') << hundredths;
+    logger << decimalStr;
 }

@@ -5,9 +5,9 @@
 #include "MQTT/MQTTString.h"
 
 #include <etl/string.h>
-#include <Arduino.h>
+#include <etl/string_view.h>
 
-using etl::istring;
+#include <Arduino.h>
 
 Logger logger(LOGGER_LEVEL_WARNING, Serial);
 
@@ -77,9 +77,19 @@ Logger & Logger::operator << (const char *string) {
     return *this;
 }
 
-Logger & Logger::operator << (const istring &string) {
+Logger & Logger::operator << (const etl::istring &string) {
     if (outputCurrentLine) {
        logString(string.data());
+    }
+
+    return *this;
+}
+
+Logger & Logger::operator << (const etl::string_view &stringView) {
+    if (outputCurrentLine) {
+        for (char character: stringView) {
+            logCharacter(character);
+        }
     }
 
     return *this;

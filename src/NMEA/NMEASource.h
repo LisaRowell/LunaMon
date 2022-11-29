@@ -13,8 +13,6 @@ class StatsManager;
 #include <etl/vector.h>
 #include <Stream.h>
 
-using etl::vector;
-
 class NMEASource : public StatsHolder {
     private:
         Stream &stream;
@@ -24,7 +22,7 @@ class NMEASource : public StatsHolder {
         bool carriageReturnFound;
         NMEALine inputLine;
         static const size_t maxMessageHandlers = 5;
-        vector<NMEAMessageHandler *, maxMessageHandlers> messageHandlers;
+        etl::vector<NMEAMessageHandler *, maxMessageHandlers> messageHandlers;
         StatCounter messagesCounter;
         DataModelLeaf &messageCountDataModelLeaf;
         DataModelLeaf &messageRateDataModelLeaf;

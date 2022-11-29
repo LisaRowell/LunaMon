@@ -7,18 +7,14 @@
 #include "Util/CharacterTools.h"
 #include "Util/Logger.h"
 
-#include <etl/string.h>
+#include <etl/string_view.h>
 
-#include <Arduino.h>
-
-using etl::string;
-
-bool NMEAGPSFixMode::set(String &gpsFixModeStr) {
-    if (gpsFixModeStr.length() != 1) {
+bool NMEAGPSFixMode::set(etl::string_view &gpsFixModeView) {
+    if (gpsFixModeView.size() != 1) {
         return false;
     }
 
-    const char gpsFixModeChar = gpsFixModeStr.charAt(0);
+    const char gpsFixModeChar = gpsFixModeView.front();
     if (!isDigit(gpsFixModeChar)) {
         return false;
     }
@@ -31,16 +27,16 @@ bool NMEAGPSFixMode::set(String &gpsFixModeStr) {
 }
 
 bool NMEAGPSFixMode::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType) {
-    String gpsFixModeStr;
-    if (!nmeaLine.extractWord(gpsFixModeStr)) {
+    etl::string_view gpsFixModeView;
+    if (!nmeaLine.getWord(gpsFixModeView)) {
         logger << logWarning << talker << " " << msgType << " message missing GPS Fix Mode field"
                << eol;
         return false;
     }
 
-    if (!set(gpsFixModeStr)) {
+    if (!set(gpsFixModeView)) {
         logger << logWarning << talker << " " << msgType << " message with bad GPS Fix Mode field '"
-               << gpsFixModeStr << "'" << eol;
+               << gpsFixModeView << "'" << eol;
         return false;
     }
 

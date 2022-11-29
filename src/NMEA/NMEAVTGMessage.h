@@ -2,7 +2,6 @@
 #define NMEA_VTG_MESSAGE_H
 
 #include "NMEAMessage.h"
-#include "NMEADirection.h"
 #include "NMEATenthsUInt16.h"
 #include "NMEAFAAModeIndicator.h"
 #include "NMEATalker.h"
@@ -10,11 +9,13 @@
 
 class NMEAVTGMessage : public NMEAMessage {
     private:
-        NMEADirection trackMadeGood;
-        NMEADirection courseOverGroundMagnetic;
+        NMEATenthsUInt16 trackMadeGood;
+        NMEATenthsUInt16 courseOverGroundMagnetic;
         NMEATenthsUInt16 speedOverGround;
         NMEATenthsUInt16 speedOverGroundKm2;
         NMEAFAAModeIndicator faaModeIndicator;
+
+        bool wordIsT(const etl::string_view &word);
 
     public:
         NMEAVTGMessage(NMEATalker &talker);

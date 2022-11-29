@@ -7,14 +7,14 @@
 #include "Util/CharacterTools.h"
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
 
-bool NMEAGPSQuality::set(String &gpsQualityStr) {
-    if (gpsQualityStr.length() != 1) {
+bool NMEAGPSQuality::set(etl::string_view &gpsQualityView) {
+    if (gpsQualityView.size() != 1) {
         return false;
     }
 
-    const char gpsQualityChar = gpsQualityStr.charAt(0);
+    const char gpsQualityChar = gpsQualityView.front();
     if (!isDigit(gpsQualityChar)) {
         return false;
     }
@@ -27,16 +27,16 @@ bool NMEAGPSQuality::set(String &gpsQualityStr) {
 }
 
 bool NMEAGPSQuality::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType) {
-    String gpsQualityStr;
-    if (!nmeaLine.extractWord(gpsQualityStr)) {
+    etl::string_view gpsQualityView;
+    if (!nmeaLine.getWord(gpsQualityView)) {
         logger << logWarning << talker << " " << msgType << " message missing GPS Quality field"
                << eol;
         return false;
     }
 
-    if (!set(gpsQualityStr)) {
+    if (!set(gpsQualityView)) {
         logger << logWarning << talker << " " << msgType << " message with bad GPS Quality field '"
-               << gpsQualityStr << "'" << eol;
+               << gpsQualityView << "'" << eol;
         return false;
     }
 

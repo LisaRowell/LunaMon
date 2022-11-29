@@ -15,7 +15,7 @@
 #include "Util/Logger.h"
 
 #include <etl/string.h>
-#include <Arduino.h>
+#include <etl/string_view.h>
 
 NMEAMessage::NMEAMessage(NMEATalker &talker) : talker(talker) {
 }
@@ -26,8 +26,8 @@ NMEATalker NMEAMessage::source() const {
 
 bool NMEAMessage::extractConstantWord(NMEALine &nmeaLine, const char *messageType,
                                       const char *constantWord) {
-    etl::string<maxNMEALineLength> word;
-    if (!nmeaLine.extractWord(word)) {
+    etl::string_view word;
+    if (!nmeaLine.getWord(word)) {
         logger << logError << talker << " " << messageType << " message missing " << constantWord
                << " field" << eol;
         return false;
@@ -43,20 +43,20 @@ bool NMEAMessage::extractConstantWord(NMEALine &nmeaLine, const char *messageTyp
 }
 
 NMEAMessage *parseNMEAMessage(NMEALine &nmeaLine) {
-    etl::string<5> tag;
-    if (!nmeaLine.extractWord(tag)) {
+    etl::string_view tagView;
+    if (!nmeaLine.getWord(tagView)) {
         logger << logWarning << "NMEA message missing tag" << eol;
         return NULL;
     }
-    if (tag.truncated() || tag.size() != 5) {
-        logger << logWarning << "Bad NMEA tag" << eol;
+    if (tagView.size() != 5) {
+        logger << logWarning << "Bad NMEA tag '" << tagView << "'" << eol;
         return NULL;
     }
 
-    etl::string<2> talkerCode(tag, 0, 2);
+    etl::string<2> talkerCode(tagView.begin(), 2);
     NMEATalker talker(talkerCode);
 
-    etl::string<3> msgTypeStr(tag, 2, 3);
+    etl::string<3> msgTypeStr(tagView.begin() + 2, 3);
     enum NMEAMsgType msgType = parseNMEAMsgType(msgTypeStr);
 
     switch (msgType) {

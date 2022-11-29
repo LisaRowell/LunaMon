@@ -3,7 +3,7 @@
 
 #include "NMEAUInt16.h"
 #include "NMEAInt8.h"
-#include "NMEADirection.h"
+#include "NMEATenthsUInt16.h"
 #include "NMEAUInt8.h"
 #include "NMEALine.h"
 
@@ -13,7 +13,7 @@ class NMEAGSVSatelitteInfo : public LoggableItem {
     private:
         NMEAUInt16 id;
         NMEAInt8 elevation;
-        NMEADirection azimuth;
+        NMEATenthsUInt16 azimuth;
         NMEAUInt8 signalToNoiseRatio;
 
     public:

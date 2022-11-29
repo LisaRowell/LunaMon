@@ -59,6 +59,7 @@ bool NMEAGSTMessage::parse(NMEALine &nmeaLine) {
 
     if (!standardDeviationOfAltitudeError.extract(nmeaLine, talker, "GST",
                                                   "Standard Deviation of Altitude Error")) {
+        nmeaLine.logLine();
         return false;
     }
 

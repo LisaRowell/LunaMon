@@ -4,10 +4,15 @@
 #include "Util/CharacterTools.h"
 #include "Util/StringTools.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
+#include <etl/to_arithmetic.h>
 
-bool NMEAInt8::set(const String &decimalStr, bool optional, int8_t minValue, int8_t maxValue) {
-    const unsigned length = decimalStr.length();
+#include <stddef.h>
+#include <stdint.h>
+
+bool NMEAInt8::set(const etl::string_view &valueView, bool optional, int8_t minValue,
+                   int8_t maxValue) {
+    const size_t length = valueView.size();
     if (length == 0) {
         if (!optional) {
             return false;
@@ -16,17 +21,27 @@ bool NMEAInt8::set(const String &decimalStr, bool optional, int8_t minValue, int
         return true;
     }
 
-    if (!extractInt8FromString(decimalStr, 0, length, value, minValue, maxValue)) {
+    etl::to_arithmetic_result<int8_t> conversionResult = etl::to_arithmetic<int8_t>(valueView);
+    if (!conversionResult.has_value()) {
+        valuePresent = false;
         return false;
     }
+
+    if (conversionResult.value() > maxValue || conversionResult.value() < minValue) {
+        valuePresent = false;
+        return false;
+    }
+
+    value = conversionResult.value();
+    valuePresent = true;
 
     return true;
 }
 
 bool NMEAInt8::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType,
                        const char *fieldName, bool optional, int8_t minValue, int8_t maxValue) {
-    String decimalStr;
-    if (!nmeaLine.extractWord(decimalStr)) {
+    etl::string_view valueView;
+    if (!nmeaLine.getWord(valueView)) {
         if (!optional) {
             logger << logWarning << talker << " " << msgType << " message missing " << fieldName
                    << " field" << eol;
@@ -37,9 +52,9 @@ bool NMEAInt8::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgTy
         return true;
     }
 
-    if (!set(decimalStr, optional, minValue, maxValue)) {
+    if (!set(valueView, optional, minValue, maxValue)) {
         logger << logWarning << talker << " " << msgType << " message with bad " << fieldName
-               << " field '" << decimalStr << "'" << eol;
+               << " field '" << valueView << "'" << eol;
         return false;
     }
 

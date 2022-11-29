@@ -6,52 +6,53 @@
 #include "Util/CharacterTools.h"
 #include "Util/StringTools.h"
 
+#include <etl/string_view.h>
+#include <etl/to_arithmetic.h>
 #include <etl/string.h>
 #include <etl/string_stream.h>
 
-#include <Arduino.h>
+#include <stdint.h>
 
-using etl::string;
-using etl::string_stream;
-
-bool NMEACoordinate::setDegrees(const String &string, unsigned startDegrees, unsigned endDegrees,
-                                uint8_t maxDegrees) {
-    if (!extractUInt8FromString(string, startDegrees, endDegrees, degrees, maxDegrees)) {
+bool NMEACoordinate::setDegrees(const etl::string_view &degreesView, uint8_t maxDegrees) {
+    etl::to_arithmetic_result<uint8_t> conversionResult = etl::to_arithmetic<uint8_t>(degreesView);
+    if (!conversionResult.has_value()) {
         return false;
     }
 
+    if (conversionResult.value() > maxDegrees) {
+        return false;
+    }
+
+    degrees = conversionResult.value();
     return true;
 }
 
-bool NMEACoordinate::setMinutes(const String &string, unsigned startMinutes) {
-    uint8_t wholeMinutes;
-    const unsigned endWholeMinutes = startMinutes + 2;
-    if (!extractUInt8FromString(string, startMinutes, endWholeMinutes, wholeMinutes, 59)) {
+bool NMEACoordinate::setMinutes(const etl::string_view &minutesView) {
+    etl::string_view wholeMinutesView(minutesView.begin(), 2);
+    etl::to_arithmetic_result<uint8_t> wholeResult = etl::to_arithmetic<uint8_t>(wholeMinutesView);
+    if (!wholeResult.has_value()) {
+        return false;
+    }
+    uint8_t wholeMinutes = wholeResult.value();
+    if (wholeMinutes > 59) {
         return false;
     }
 
-    if (string.length() > endWholeMinutes) {
-        if (string.charAt(endWholeMinutes) != '.') {
+    if (minutesView.size() > 2) {
+        if (minutesView[2] != '.') {
             return false;
         }
 
-        const unsigned startMinuteFraction = endWholeMinutes + 1;
-        const unsigned endMinuteFraction = string.length();
-
-        uint32_t numerator = 0;
-        uint32_t denominator = 1;
-
-        unsigned fractionPos;
-        for (fractionPos = startMinuteFraction; fractionPos < endMinuteFraction; fractionPos++) {
-            char digit = string.charAt(fractionPos);
-            if (!isDigit(digit)) {
+        if (minutesView.size() > 3) {
+            etl::string_view decimalView(minutesView.begin() + 2, minutesView.end());
+            etl::to_arithmetic_result<float> decimalResult = etl::to_arithmetic<float>(decimalView);
+            if (!decimalResult.has_value()) {
                 return false;
             }
-            numerator = numerator * 10 + decimalValue(digit);
-            denominator = denominator * 10;
+            minutes = (float)wholeMinutes + decimalResult.value();
+        } else {
+            minutes = (float)wholeMinutes;
         }
-
-        minutes = (float)wholeMinutes + (float)numerator / denominator;
     } else {
         minutes = (float)wholeMinutes;
     }
@@ -67,8 +68,8 @@ void NMEACoordinate::snprint(char *string, size_t maxLength) const {
 // We publish coordinates as a string containing a signed, floating point number of degrees.
 // Clients are responsible for displaying the values in a way that matches the users preference.
 void NMEACoordinate::publish(DataModelStringLeaf &leaf, bool isPositive) const {
-    string<coordinateLength> coordinateStr;
-    string_stream coordinateStream(coordinateStr);
+    etl::string<coordinateLength> coordinateStr;
+    etl::string_stream coordinateStream(coordinateStr);
 
     if (!isPositive) {
         coordinateStream << "-";

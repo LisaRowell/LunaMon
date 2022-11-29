@@ -2,6 +2,8 @@
 #define NMEA_LINE_H
 
 #include <etl/string.h>
+#include <etl/string_view.h>
+
 #include <Arduino.h>
 
 const unsigned maxNMEALineLength = 82;
@@ -9,15 +11,13 @@ const unsigned maxNMEALineLength = 82;
 class NMEALine {
     private:
         etl::string<maxNMEALineLength> line;
-        unsigned position;
-        unsigned remaining;
+        etl::string_view remaining;
         // This flag is used to indentify the lines which are in the encapsulated encoding scheme
         // used for AIS messages (and possibly others), versus the normal style NMEA 0183 CSV data.
         bool encapsulatedData;
 
         void stripParity();
         bool checkParity();
-        String bufferSubstring(unsigned start, unsigned end);
 
     public:
         NMEALine();
@@ -28,8 +28,8 @@ class NMEALine {
         bool isEncapsulatedData();
         bool sanityCheck();
         bool extractChar(char &character);
-        bool extractWord(String &word);
-        bool extractWord(etl::istring &word);
+        bool getWord(etl::string_view &word);
+        bool atEndOfLine();
         void logLine();
 };
 

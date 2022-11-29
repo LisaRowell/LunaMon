@@ -9,7 +9,7 @@
 #include "Util/LoggableItem.h"
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
 
 class NMEATenthsUInt16 : public LoggableItem {
     private:
@@ -18,7 +18,7 @@ class NMEATenthsUInt16 : public LoggableItem {
         bool valuePresent;
 
     public:
-        bool set(const String &decimalStr, bool optional);
+        bool set(const etl::string_view &valueView, bool optional);
         bool extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType,
                      const char *fieldName, bool optional = false);
         bool hasValue() const;

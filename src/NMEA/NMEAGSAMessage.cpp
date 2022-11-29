@@ -8,7 +8,7 @@
 #include "Util/PlacementNew.h"
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
 
 NMEAGSAMessage::NMEAGSAMessage(NMEATalker &talker) : NMEAMessage(talker) {
 }
@@ -19,16 +19,25 @@ bool NMEAGSAMessage::parse(NMEALine &nmeaLine) {
         return false;
     }
 
-    String manualOrAutomaticModeStr;
-    if (!nmeaLine.extractWord(manualOrAutomaticModeStr)) {
+    etl::string_view manualOrAutomaticModeView;
+    if (!nmeaLine.getWord(manualOrAutomaticModeView)) {
         logger << logWarning << talker << " GSA message missing Manual or Automatic Mode indicator"
                << eol;
         return false;
     }
-    if (manualOrAutomaticModeStr == "A") {
-        automaticMode = true;
-    } else if (manualOrAutomaticModeStr == "M") {
-        automaticMode = false;
+    if (manualOrAutomaticModeView.size() == 1) {
+        switch (manualOrAutomaticModeView.front()) {
+            case 'A':
+                automaticMode = true;
+                break;
+            case 'M':
+                automaticMode = false;
+                break;
+            default:
+                logger << logWarning << talker
+                       << " GSA message with bad Manual or Automatic Mode indicator" << eol;
+                return false;
+        }
     } else {
         logger << logWarning << talker << " GSA message with bad Manual or Automatic Mode indicator"
                << eol;

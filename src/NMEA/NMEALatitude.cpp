@@ -6,48 +6,57 @@
 
 #include "Util/Logger.h"
 
-#include <Arduino.h>
+#include <etl/string_view.h>
 
-bool NMEALatitude::set(const String &string, const String &northOrSouthStr) {
-    if (string.length() < 4) {
+bool NMEALatitude::set(const etl::string_view &latitudeView,
+                       const etl::string_view &northOrSouthView) {
+    if (latitudeView.size() < 4) {
         return false;
     }
 
-    if (!setDegrees(string, 0, 2, 90)) {
+    etl::string_view degreesView(latitudeView.data(), 2);
+    if (!setDegrees(degreesView, 90)) {
         return false;
     }
 
-    if (!setMinutes(string, 2)) {
+    etl::string_view minutesView(latitudeView.begin() + 2, latitudeView.end());
+    if (!setMinutes(minutesView)) {
         return false;
     }
 
-    if (northOrSouthStr == "N") {
-        northOrSouth = NORTH;
-    } else if (northOrSouthStr == "S") {
-        northOrSouth = SOUTH;
-    } else {
+    if (northOrSouthView.size() != 1) {
         return false;
+    }
+    switch (northOrSouthView.front()) {
+        case 'N':
+            northOrSouth = NORTH;
+            return true;
+        case 'S':
+            northOrSouth = SOUTH;
+            return true;
+        default:
+            return false;
     }
 
     return true;
 }
 
 bool NMEALatitude::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType) {
-    String latitudeStr;
-    if (!nmeaLine.extractWord(latitudeStr)) {
+    etl::string_view latitudeView;
+    if (!nmeaLine.getWord(latitudeView)) {
         logger << logWarning << talker << " " << msgType << " message missing latitude" << eol;
         return false;
     }
 
-    String northOrSouthStr;
-    if (!nmeaLine.extractWord(northOrSouthStr)) {
+    etl::string_view northOrSouthView;
+    if (!nmeaLine.getWord(northOrSouthView)) {
         logger << logWarning << talker << " " << msgType << " message missing N/S" << eol;
         return false;
     }
 
-    if (!set(latitudeStr, northOrSouthStr)) {
+    if (!set(latitudeView, northOrSouthView)) {
         logger << logWarning << talker << " " << msgType << " message with bad latitude '"
-               << latitudeStr << "' '" << northOrSouthStr << "'" << eol;
+               << latitudeView << "' '" << northOrSouthView << "'" << eol;
         return false;
     }
 
