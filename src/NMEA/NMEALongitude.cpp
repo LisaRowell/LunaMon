@@ -73,10 +73,7 @@ void NMEALongitude::publish(DataModelStringLeaf &leaf) const {
 }
 
 void NMEALongitude::log(Logger &logger) const {
-    char coordinateStr[20];
-
-    NMEACoordinate::snprint(coordinateStr, 20);
-    logger << coordinateStr;
+    NMEACoordinate::log(logger);
 
     switch (eastOrWest) {
         case EAST:

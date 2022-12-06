@@ -9,6 +9,8 @@
 
 #include <Arduino.h>
 
+#include <stdint.h>
+
 Logger logger(LOGGER_LEVEL_WARNING, Serial);
 
 Logger::Logger(LoggerLevel level, Stream &console)
@@ -90,14 +92,6 @@ Logger & Logger::operator << (const etl::string_view &stringView) {
         for (char character: stringView) {
             logCharacter(character);
         }
-    }
-
-    return *this;
-}
-
-Logger & Logger::operator << (const String &string) {
-    if (outputCurrentLine) {
-       logString(string.c_str());
     }
 
     return *this;

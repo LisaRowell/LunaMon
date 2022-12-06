@@ -5,6 +5,7 @@
 
 #include "Util/CharacterTools.h"
 #include "Util/StringTools.h"
+#include "Util/Logger.h"
 
 #include <etl/string_view.h>
 #include <etl/to_arithmetic.h>
@@ -61,8 +62,13 @@ bool NMEACoordinate::setMinutes(const etl::string_view &minutesView) {
 }
 
 // This prints the coordinate as unsigned and the caller is responsible for appending N/S or E/W.
-void NMEACoordinate::snprint(char *string, size_t maxLength) const {
-    snprintf(string, maxLength, "%u\xC2\xB0%05f'", degrees, minutes);
+void NMEACoordinate::log(Logger &logger) const {
+    etl::string<20> coordinateStr;
+    etl::string_stream coordinateStream(coordinateStr);
+
+    coordinateStream << degrees << "\xC2\xB0" << etl::setprecision(5) << minutes << "'";
+
+    logger << coordinateStr;
 }
 
 // We publish coordinates as a string containing a signed, floating point number of degrees.

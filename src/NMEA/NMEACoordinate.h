@@ -7,6 +7,8 @@
 
 #include <stdint.h>
 
+class Logger;
+
 class NMEACoordinate {
     protected:
         uint8_t degrees;
@@ -14,6 +16,7 @@ class NMEACoordinate {
 
         bool setDegrees(const etl::string_view &degreesView, uint8_t maxDegrees);
         bool setMinutes(const etl::string_view &minutesView);
+        void log(Logger &logger) const;
         void snprint(char *string, size_t maxLength) const;
         void publish(DataModelStringLeaf &leaf, bool isPositive) const;
 };

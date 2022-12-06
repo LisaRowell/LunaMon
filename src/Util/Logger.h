@@ -12,6 +12,8 @@
 
 #include <Arduino.h>
 
+#include <stdint.h>
+
 enum LoggerModule {
     LOGGER_MODULE_DATA_MODEL,
     LOGGER_MODULE_MQTT,
@@ -91,7 +93,6 @@ class Logger {
         Logger & operator << (const char *string);
         Logger & operator << (const etl::istring &string);
         Logger & operator << (const etl::string_view &stringView);
-        Logger & operator << (const String &string);
         Logger & operator << (uint8_t value);
         Logger & operator << (uint16_t value);
         Logger & operator << (uint32_t value);

@@ -5,7 +5,6 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include <Arduino.h>
 
 extern bool extractUInt32FromStringView(const etl::string_view &stringView, size_t start,
                                         size_t length, uint32_t &value,
