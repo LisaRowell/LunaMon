@@ -7,19 +7,8 @@
 #include <etl/string_view.h>
 
 #include <stddef.h>
-#include <Arduino.h>
 
 NMEALine::NMEALine() : line(), remaining(){
-}
-
-NMEALine::NMEALine(String &inputString) : line() {
-    inputString.trim();
-
-    line.initialize_free_space();
-    inputString.toCharArray(line.data(), maxNMEALineLength);
-    line.trim_to_terminator();
-
-    remaining = line;
 }
 
 void NMEALine::reset() {
@@ -27,7 +16,7 @@ void NMEALine::reset() {
     remaining = line;
 }
 
-void NMEALine::append(const char *srcBuffer, unsigned start, unsigned end) {
+void NMEALine::append(const char *srcBuffer, size_t start, size_t end) {
     line.append(srcBuffer + start, end - start);
     remaining = line;
 }
@@ -109,14 +98,13 @@ void NMEALine::stripParity() {
 }
 
 bool NMEALine::checkParity() {
-    unsigned checksumPos = line.size() - 3;
+    size_t checksumPos = line.size() - 3;
     if (line[checksumPos] != '*') {
         return false;
     }
 
     uint8_t checksum = 0;
-    unsigned pos;
-    for (pos = 1; pos < checksumPos; pos++) {
+    for (size_t pos = 1; pos < checksumPos; pos++) {
         checksum = checksum ^ line[pos];
     }
 

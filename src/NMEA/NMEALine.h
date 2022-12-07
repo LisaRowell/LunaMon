@@ -4,9 +4,9 @@
 #include <etl/string.h>
 #include <etl/string_view.h>
 
-#include <Arduino.h>
+#include <stddef.h>
 
-const unsigned maxNMEALineLength = 82;
+const size_t maxNMEALineLength = 82;
 
 class NMEALine {
     private:
@@ -21,9 +21,8 @@ class NMEALine {
 
     public:
         NMEALine();
-        NMEALine(String &inputString);
         void reset();
-        void append(const char *srcBuffer, unsigned start, unsigned end);
+        void append(const char *srcBuffer, size_t start, size_t end);
         bool isEmpty();
         bool isEncapsulatedData();
         bool sanityCheck();

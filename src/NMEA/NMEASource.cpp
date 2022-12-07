@@ -15,6 +15,8 @@
 
 #include <Stream.h>
 
+#include <stddef.h>
+
 NMEASource::NMEASource(Stream &stream, DataModelLeaf &messageCountDataModelLeaf,
                        DataModelLeaf &messageRateDataModelLeaf, StatsManager &statsManager)
     : stream(stream),
@@ -36,9 +38,9 @@ void NMEASource::addMessageHandler(NMEAMessageHandler &messageHandler) {
 }
 
 
-bool NMEASource::scanForCarriageReturn(unsigned &carriageReturnPos) {
-    unsigned scanRemaining;
-    unsigned scanPos;
+bool NMEASource::scanForCarriageReturn(size_t &carriageReturnPos) {
+    size_t scanRemaining;
+    size_t scanPos;
 
     for (scanPos = bufferPos, scanRemaining = remaining;
         scanRemaining;
@@ -71,7 +73,7 @@ bool NMEASource::processBuffer() {
         }
     }
 
-    unsigned carriageReturnPos;
+    size_t carriageReturnPos;
     if (scanForCarriageReturn(carriageReturnPos)) {
         // We have a CR, move the characters up to that point into the line.
         inputLine.append(buffer, bufferPos, carriageReturnPos);
@@ -116,9 +118,9 @@ bool NMEASource::processBuffer() {
 }
 
 bool NMEASource::readAvailableInput() {
-    const unsigned available = stream.available();
+    const size_t available = stream.available();
     if (available) {
-        const unsigned readLength = min(available, maxNMEALineLength);
+        const size_t readLength = min(available, maxNMEALineLength);
         remaining = stream.readBytes(buffer, readLength);
         if (readLength != remaining) {
             logger << logWarning << "Truncated NMEA serial read" << eol;

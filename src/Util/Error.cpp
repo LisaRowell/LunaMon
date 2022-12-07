@@ -1,5 +1,7 @@
 #include "Error.h"
 
+#include <etl/string.h>
+
 #include <Arduino.h>
 
 void fatalError(const char *errorMsg) {

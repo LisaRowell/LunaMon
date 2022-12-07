@@ -11,14 +11,17 @@ class StatsManager;
 #include "StatsManager/StatsHolder.h"
 
 #include <etl/vector.h>
+
 #include <Stream.h>
+
+#include <stddef.h>
 
 class NMEASource : public StatsHolder {
     private:
         Stream &stream;
         char buffer[maxNMEALineLength];
-        unsigned bufferPos;
-        unsigned remaining;
+        size_t bufferPos;
+        size_t remaining;
         bool carriageReturnFound;
         NMEALine inputLine;
         static const size_t maxMessageHandlers = 5;
@@ -27,7 +30,7 @@ class NMEASource : public StatsHolder {
         DataModelLeaf &messageCountDataModelLeaf;
         DataModelLeaf &messageRateDataModelLeaf;
 
-        bool scanForCarriageReturn(unsigned &carriageReturnPos);
+        bool scanForCarriageReturn(size_t &carriageReturnPos);
         bool readAvailableInput();
         bool processBuffer();
         void lineCompleted();
