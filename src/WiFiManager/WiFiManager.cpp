@@ -38,9 +38,6 @@ void WiFiManager::service() {
 
         case WIFI_CONNECTION_WAIT:
             checkForConnectionCompleted();
-            if (connectionWaitTimer.expired()) {
-                initiateConnection();
-            }
             break;
 
         case WIFI_CONNECTION_CONNECTED:
@@ -83,7 +80,8 @@ void WiFiManager::connectionEstablished() {
 }
 
 void WiFiManager::checkConnectionStatus() {
-    if (!connected()) {
+    if (WiFi.status() != WL_CONNECTED) {
+        logger << logNotify << "Lost connection to WiFi network " << wifiSSID << eol;
         notifyWiFiDisconnected();
         initiateConnection();
     }

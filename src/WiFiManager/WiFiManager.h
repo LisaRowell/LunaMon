@@ -20,7 +20,7 @@ class WiFiManager {
 
         static const size_t maxFirmwareVersionLength = 10;
 
-        static const uint32_t connectionRetryTime = oneSecond;
+        static const uint32_t connectionRetryTime = oneSecond * 2;
 
         enum WiFiConnectionState connectionState;
         PassiveTimer connectionWaitTimer;
