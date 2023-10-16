@@ -98,6 +98,9 @@ bool DataModelLeaf::subscribeIfMatching(const char *topicFilter, DataModelSubscr
 }
 
 bool DataModelLeaf::subscribeAll(DataModelSubscriber &subscriber, uint32_t cookie) {
+    logger << logDebugDataModel << subscriber.name() << " subscribing to element ending in '"
+           << elementName() << "' via subscription wildcard" << eol;
+
     return subscribe(subscriber, cookie);
 }
 

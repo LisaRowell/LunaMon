@@ -1,6 +1,8 @@
 #include "DataModelNode.h"
 #include "DataModelElement.h"
 
+#include "Util/Logger.h"
+
 #include <stdint.h>
 
 DataModelNode::DataModelNode(const char *name, DataModelElement *parent,
@@ -9,9 +11,13 @@ DataModelNode::DataModelNode(const char *name, DataModelElement *parent,
 }
 
 bool DataModelNode::subscribeAll(DataModelSubscriber &subscriber, uint32_t cookie) {
+    logger << logDebugDataModel << subscriber.name()
+           << " subscribing to children of node ending in '" << elementName()
+           << "' via subscription wildcard" << eol;
+
     unsigned childIndex;
     for (childIndex = 0; children[childIndex] != nullptr; childIndex++) {
-        DataModelElement *child = *children + childIndex;
+        DataModelElement *child = children[childIndex];
         if (!child->subscribeAll(subscriber, cookie)) {
             return false;
         }

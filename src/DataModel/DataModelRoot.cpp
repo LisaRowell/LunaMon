@@ -18,6 +18,7 @@ bool DataModelRoot::subscribe(const char *topicFilter, DataModelSubscriber &subs
     }
 
     if (isMultiLevelWildcard(topicFilter)) {
+        logger << logDebugDataModel << subscriber.name() << " subscribing to all (#)" << eol;
         return subscribeAll(subscriber, cookie);
     }
 
