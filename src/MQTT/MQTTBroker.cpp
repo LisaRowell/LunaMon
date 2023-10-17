@@ -53,6 +53,12 @@ MQTTBroker::MQTTBroker(StatsManager &statsManager)
     sysBrokerMessagesReceived = 0;
     messagesSent = 0;
     sysBrokerMessagesSent = 0;
+    publishMessagesReceived = 0;
+    sysBrokerMessagesReceived = 0;
+    publishMessagesSent = 0;
+    sysBrokerMessagesSent = 0;
+    publishMessagesDropped = 0;
+    sysBrokerMessagesPublishDropped = 0;
 }
 
 void MQTTBroker::begin(WiFiManager &wifiManager) {
@@ -83,6 +89,9 @@ void MQTTBroker::service() {
 void MQTTBroker::exportStats(uint32_t msElapsed) {
     sysBrokerMessagesReceived = messagesReceived;
     sysBrokerMessagesSent = messagesSent;
+    sysBrokerMessagesPublishReceived = publishMessagesReceived;
+    sysBrokerMessagesPublishSent = publishMessagesSent;
+    sysBrokerMessagesPublishDropped = publishMessagesDropped;
 }
 
 void MQTTBroker::serviceWiFiClientWithData(WiFiClient &wifiClient) {
@@ -311,8 +320,13 @@ void MQTTBroker::messageReceived(MQTTConnection *connection, MQTTMessage &messag
             reservedMsgReceivedError(connection, message);
             break;
 
-        case MQTT_MSG_PUBACK:
         case MQTT_MSG_PUBREC:
+            publishMessagesReceived++;
+            logger << logWarning << "Received unimplemented message type "
+                   << message.messageTypeStr() << eol;
+            break;
+
+        case MQTT_MSG_PUBACK:
         case MQTT_MSG_PUBREL:
         case MQTT_MSG_PUBCOMP:
         default:
@@ -694,6 +708,7 @@ bool MQTTBroker::sendMQTTPublishMessage(MQTTConnection *connection, const char *
         fixedHeader.typeAndFlags |= MQTT_PUBLISH_FLAGS_RETAIN_MASK;
     }
     if (!connection->write((uint8_t *)&fixedHeader, sizeof(fixedHeader))) {
+        publishMessagesDropped++;
         return false;
     }
 
@@ -704,24 +719,29 @@ bool MQTTBroker::sendMQTTPublishMessage(MQTTConnection *connection, const char *
         remainingLength += 2;
     }
     if (!mqttWriteRemainingLength(connection, remainingLength)) {
+        publishMessagesDropped++;
         return false;
     }
 
     if (!mqttWriteMQTTString(connection, topic)) {
+        publishMessagesDropped++;
         return false;
     }
 
     if (qosLevel > 0) {
         if (!mqttWriteUInt16(connection, packetId)) {
+            publishMessagesDropped++;
             return false;
         }
     }
 
     if (!connection->write((uint8_t *)value, valueLength)) {
+        publishMessagesDropped++;
         return false;
     }
 
     messagesSent++;
+    publishMessagesSent++;
 
     return true;
 }

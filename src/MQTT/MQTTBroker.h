@@ -47,6 +47,9 @@ class MQTTBroker : WiFiManagerClient, public StatsHolder {
 
         uint32_t messagesReceived;
         uint32_t messagesSent;
+        uint32_t publishMessagesReceived;
+        uint32_t publishMessagesSent;
+        uint32_t publishMessagesDropped;
 
         void checkForLostConnections();
         void cleanupLostConnection(MQTTConnection &connection);

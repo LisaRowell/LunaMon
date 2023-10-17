@@ -35,12 +35,26 @@ DataModelElement *sysBrokerClientsChildren[] = {
 };
 DataModelNode sysBrokerClientsNode("clients", &sysBrokerNode, sysBrokerClientsChildren);
 
+DataModelUInt32Leaf sysBrokerMessagesPublishReceived("received", &sysBrokerMessagesPublishNode);
+DataModelUInt32Leaf sysBrokerMessagesPublishSent("sent", &sysBrokerMessagesPublishNode);
+DataModelUInt32Leaf sysBrokerMessagesPublishDropped("dropped", &sysBrokerMessagesPublishNode);
+
+DataModelElement *sysBrokerMessagesPublishChildren[] = {
+    &sysBrokerMessagesPublishReceived,
+    &sysBrokerMessagesPublishSent,
+    &sysBrokerMessagesPublishDropped,
+    NULL
+};
+DataModelNode sysBrokerMessagesPublishNode("publish", &sysBrokerMessagesNode,
+                                           sysBrokerMessagesPublishChildren);
+
 DataModelUInt32Leaf sysBrokerMessagesReceived("received", &sysBrokerMessagesNode);
 DataModelUInt32Leaf sysBrokerMessagesSent("sent", &sysBrokerMessagesNode);
 
 DataModelElement *sysBrokerMessagesChildren[] = {
     &sysBrokerMessagesReceived,
     &sysBrokerMessagesSent,
+    &sysBrokerMessagesPublishNode,
     NULL
 };
 DataModelNode sysBrokerMessagesNode("messages", &sysBrokerNode, sysBrokerMessagesChildren);

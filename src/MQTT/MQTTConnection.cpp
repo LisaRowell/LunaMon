@@ -156,7 +156,7 @@ void MQTTConnection::readToBuffer(size_t readAmount) {
 }
 
 bool MQTTConnection::write(const uint8_t *data, size_t size) {
-    return wifiClient.write(data, size);
+    return wifiClient.write(data, size) == size;
 }
 
 bool MQTTConnection::hasSession() {
