@@ -15,9 +15,9 @@ DataModelBoolLeaf & DataModelBoolLeaf::operator = (const bool value) {
         this->value = value;
         updated();
         if (value) {
-            *this << 1;
+            *this << (uint32_t)1;
         } else {
-            *this << 0;
+            *this << (uint32_t)0;
         }
     }
 
