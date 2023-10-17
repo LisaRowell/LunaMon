@@ -30,6 +30,8 @@ const size_t maxConnectionDescriptionLength =
 const size_t maxSessionDescriptionLength =
     maxMQTTClientIDLength + 2 + maxIPAddressTextLength + 1 + maxTCPPortTextLength + 1 + 1;
 
+const size_t maxVersionLength = 20;
+
 extern DataModelUInt32Leaf sysBrokerClientsConnected;
 extern DataModelUInt32Leaf sysBrokerClientsDisconnected;
 extern DataModelUInt32Leaf sysBrokerClientsMaximum;
@@ -49,6 +51,7 @@ extern DataModelUInt32Leaf sysBrokerMessagesSent;
 extern DataModelNode sysBrokerMessagesNode;
 
 extern DataModelUInt32Leaf sysBrokerUptime;
+extern DataModelStringLeaf sysBrokerVersion;
 
 extern DataModelNode sysBrokerNode;
 extern DataModelNode sysNode;

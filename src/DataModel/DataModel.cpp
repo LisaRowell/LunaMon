@@ -10,6 +10,7 @@
 #include "DataModelHundredthsUInt16Leaf.h"
 #include "DataModelStringLeaf.h"
 #include "Config.h"
+#include "Version.h"
 
 #include "StatsManager/StatCounter.h"
 #include "StatsManager/StatsManager.h"
@@ -71,11 +72,14 @@ DataModelElement *sysBrokerMessagesChildren[] = {
 DataModelNode sysBrokerMessagesNode("messages", &sysBrokerNode, sysBrokerMessagesChildren);
 
 DataModelUInt32Leaf sysBrokerUptime("uptime", &sysBrokerNode);
+static etl::string<maxVersionLength> sysBrokerVersionBuffer;
+DataModelStringLeaf sysBrokerVersion("version", &sysBrokerNode, sysBrokerVersionBuffer);
 
 DataModelElement *sysBrokerChildren[] = {
     &sysBrokerClientsNode,
     &sysBrokerMessagesNode,
     &sysBrokerUptime,
+    &sysBrokerVersion,
     NULL
 };
 DataModelNode sysBrokerNode("broker", &sysNode, sysBrokerChildren);
@@ -347,6 +351,8 @@ DataModelRoot dataModelRoot(topNodeChildren);
 
 DataModel::DataModel(StatsManager &statsManager) : root(dataModelRoot), leafUpdatesCounter() {
     statsManager.addStatsHolder(this);
+
+    sysBrokerVersion = VERSION;
 }
 
 bool DataModel::subscribe(const char *topicFilter, DataModelSubscriber &subscriber,
