@@ -6,6 +6,7 @@ class StatsManager;
 
 #include "DataModelNode.h"
 #include "DataModelRoot.h"
+#include "DataModelBoolLeaf.h"
 #include "DataModelUInt16Leaf.h"
 #include "DataModelUInt32Leaf.h"
 #include "DataModelTenthsUInt16Leaf.h"
@@ -31,6 +32,9 @@ const size_t maxSessionDescriptionLength =
     maxMQTTClientIDLength + 2 + maxIPAddressTextLength + 1 + maxTCPPortTextLength + 1 + 1;
 
 const size_t maxVersionLength = 20;
+
+extern DataModelBoolLeaf sysBrokerBridgeWiFiNMEA;
+extern DataModelNode sysBrokerBridgeNode;
 
 extern DataModelUInt32Leaf sysBrokerClientsConnected;
 extern DataModelUInt32Leaf sysBrokerClientsDisconnected;

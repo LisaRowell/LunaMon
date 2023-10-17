@@ -2,6 +2,7 @@
 #include "DataModelNode.h"
 #include "DataModelElement.h"
 #include "DataModelRoot.h"
+#include "DataModelBoolLeaf.h"
 #include "DataModelUInt16Leaf.h"
 #include "DataModelUInt32Leaf.h"
 #include "DataModelTenthsUInt16Leaf.h"
@@ -21,6 +22,14 @@
 #include <etl/string.h>
 
 #include <stdint.h>
+
+DataModelBoolLeaf sysBrokerBridgeWiFiNMEA("WiFiNMEA", &sysBrokerBridgeNode);
+
+DataModelElement *sysBrokerBridgeChildren[] = {
+    &sysBrokerBridgeWiFiNMEA,
+    NULL
+};
+DataModelNode sysBrokerBridgeNode("bridge", &sysBrokerNode, sysBrokerBridgeChildren);
 
 DataModelUInt32Leaf sysBrokerClientsConnected("connected", &sysBrokerClientsNode);
 DataModelUInt32Leaf sysBrokerClientsDisconnected("disconnected", &sysBrokerClientsNode);
@@ -80,6 +89,7 @@ DataModelElement *sysBrokerChildren[] = {
     &sysBrokerMessagesNode,
     &sysBrokerUptime,
     &sysBrokerVersion,
+    &sysBrokerBridgeNode,
     NULL
 };
 DataModelNode sysBrokerNode("broker", &sysNode, sysBrokerChildren);

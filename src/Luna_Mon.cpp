@@ -19,7 +19,8 @@
 StatsManager statsManager;
 NMEASource usbSerialNMEASource(Serial, usbNMEAMessages, usbNMEAMessageRate, statsManager);
 WiFiManager wifiManager;
-NMEAWiFiSource nmeaWiFiSource(wifiManager, wifiNMEAMessages, wifiNMEAMessageRate, statsManager);
+NMEAWiFiSource nmeaWiFiSource(wifiManager, wifiNMEAMessages, wifiNMEAMessageRate,
+                              sysBrokerBridgeWiFiNMEA, statsManager);
 MQTTBroker mqttBroker(statsManager);
 DataModel dataModel(statsManager);
 NMEADataModelBridge nmeaDataModelBridge(statsManager);

@@ -3,6 +3,7 @@
 
 class WiFiManager;
 class DataModelLeaf;
+class DataModelBoolLeaf;
 class StatsManager;
 
 #include "NMEA/NMEASource.h"
@@ -16,12 +17,14 @@ class NMEAWiFiSource : public NMEASource, public WiFiManagerClient {
         WiFiManager &wifiManager;
         WiFiClient client;
         bool clientConnected;
+        DataModelBoolLeaf &connectionStatusLeaf;
 
         void connect();
 
     public:
         NMEAWiFiSource(WiFiManager &wifiManager, DataModelLeaf &messageCountDataModelLeaf,
-                       DataModelLeaf &messageRateDataModelLeaf, StatsManager &statsManager);
+                       DataModelLeaf &messageRateDataModelLeaf,
+                       DataModelBoolLeaf &connectionStatusLeaf, StatsManager &statsManager);
         void begin();
         void service();
         virtual void wifiConnected() override;

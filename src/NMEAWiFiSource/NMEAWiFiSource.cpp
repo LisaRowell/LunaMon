@@ -5,6 +5,7 @@
 #include "WiFiManager/WiFiManager.h"
 
 #include "DataModel/DataModelLeaf.h"
+#include "DataModel/DataModelBoolLeaf.h"
 
 #include "StatsManager/StatsManager.h"
 
@@ -12,9 +13,11 @@
 #include "Util/Error.h"
 
 NMEAWiFiSource::NMEAWiFiSource(WiFiManager &wifiManager, DataModelLeaf &messageCountDataModelLeaf,
-                               DataModelLeaf &messageRateDataModelLeaf, StatsManager &statsManager)
+                               DataModelLeaf &messageRateDataModelLeaf,
+                               DataModelBoolLeaf &connectionStatusLeaf, StatsManager &statsManager)
     : NMEASource(client, messageCountDataModelLeaf, messageRateDataModelLeaf, statsManager),
-      wifiManager(wifiManager), clientConnected(false) {
+      wifiManager(wifiManager), clientConnected(false), connectionStatusLeaf(connectionStatusLeaf) {
+    connectionStatusLeaf = false;
 }
 
 void NMEAWiFiSource::begin() {
@@ -28,6 +31,7 @@ void NMEAWiFiSource::service() {
                 logger << logNotify << "Connected NMEA WiFi Client " << nmeaWiFiSourceIPAddress
                        << ":" << nmeaWiFiSourceTCPPort << eol;
                 clientConnected = true;
+                connectionStatusLeaf = true;
             }
         }
     }
@@ -36,6 +40,7 @@ void NMEAWiFiSource::service() {
         // Make sure the other side hasn't hung up on us.
         if (!client.connected()) {
             clientConnected = false;
+            connectionStatusLeaf = false;
             logger << logNotify << "NMEA WiFi Client " << nmeaWiFiSourceIPAddress << ":"
                    << nmeaWiFiSourceTCPPort << " disconnected. Retrying..." << eol;
             connect();
@@ -59,6 +64,7 @@ void NMEAWiFiSource::connect() {
 
     if (client.connect(ipAddress, nmeaWiFiSourceTCPPort)) {
         clientConnected = true;
+        connectionStatusLeaf = true;
 
         logger << logNotify << "Connected NMEA WiFi Client " << nmeaWiFiSourceIPAddress << ":"
                << nmeaWiFiSourceTCPPort << eol;
