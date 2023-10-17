@@ -8,11 +8,10 @@ class DataModelSubscriber;
 #include <stdint.h>
 
 class DataModelNode : public DataModelElement {
-    private:
+    protected:
         // Pointer to a static, null terminated array of children.
         DataModelElement **children;
 
-    protected:
         bool subscribeChildrenIfMatching(const char *topicFilter, DataModelSubscriber &subscriber,
                                          uint32_t cookie);
         void unsubscribeChildrenIfMatching(const char *topicFilter,

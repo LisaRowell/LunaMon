@@ -25,6 +25,43 @@ bool DataModelRoot::subscribe(const char *topicFilter, DataModelSubscriber &subs
     return subscribeChildrenIfMatching(topicFilter, subscriber, cookie);
 }
 
+bool DataModelRoot::subscribeAll(DataModelSubscriber &subscriber, uint32_t cookie) {
+    logger << logDebugDataModel << subscriber.name()
+           << " subscribing to children of root node via multilevel wildcard" << eol;
+
+    unsigned childIndex;
+    for (childIndex = 0; children[childIndex] != nullptr; childIndex++) {
+        DataModelElement *child = children[childIndex];
+        if (child->elementName()[0] != '$') {
+            if (!child->subscribeAll(subscriber, cookie)) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+bool DataModelRoot::subscribeChildrenIfMatching(const char *topicFilter,
+                                                DataModelSubscriber &subscriber, uint32_t cookie) {
+    const bool isSingleLevelWildcard = topicFilter[0] == dataModelSingleLevelWildcard;
+
+    unsigned childIndex;
+    bool atLeastOneMatch = false;
+    for (childIndex = 0; children[childIndex] != nullptr; childIndex++) {
+        DataModelElement *child = children[childIndex];
+        // Per the MQTT specification, single level wildcards must not match with topics beginning
+        // with a $
+        if (!(isSingleLevelWildcard && child->elementName()[0] == '$')) {
+            if (child->subscribeIfMatching(topicFilter, subscriber, cookie)) {
+                atLeastOneMatch = true;
+            }
+        }
+    }
+
+    return atLeastOneMatch;
+}
+
 void DataModelRoot::unsubscribe(const char *topicFilter, DataModelSubscriber &subscriber) {
     if (!checkTopicFilterValidity(topicFilter )) {
         logger << logWarning << "Illegal Topic Filter '" << topicFilter
