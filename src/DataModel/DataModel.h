@@ -36,6 +36,9 @@ extern DataModelUInt32Leaf sysBrokerClientsMaximum;
 extern DataModelUInt32Leaf sysBrokerClientsTotal;
 extern DataModelNode sysBrokerClientsNode;
 
+extern DataModelUInt16Leaf sysBrokerMessagesRetainedCount;
+extern DataModelNode sysBrokerMessagesRetainedNode;
+
 extern DataModelUInt32Leaf sysBrokerMessagesPublishReceived;
 extern DataModelUInt32Leaf sysBrokerMessagesPublishSent;
 extern DataModelUInt32Leaf sysBrokerMessagesPublishDropped;

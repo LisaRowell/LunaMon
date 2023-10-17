@@ -8,6 +8,7 @@
 class DataModelRetainedValueLeaf : public DataModelLeaf {
     private:
         bool hasBeenSet;
+        static uint16_t retainedValues;
 
     protected:
         DataModelRetainedValueLeaf(const char *name, DataModelElement *parent);
@@ -18,6 +19,7 @@ class DataModelRetainedValueLeaf : public DataModelLeaf {
 
     public:
         void removeValue();
+        static uint16_t retainedValueCount();
 };
 
 #endif

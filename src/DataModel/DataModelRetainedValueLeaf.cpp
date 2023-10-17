@@ -5,6 +5,12 @@
 
 #include <stdint.h>
 
+uint16_t DataModelRetainedValueLeaf::retainedValues = 0;
+
+uint16_t DataModelRetainedValueLeaf::retainedValueCount() {
+    return retainedValues;
+}
+
 DataModelRetainedValueLeaf::DataModelRetainedValueLeaf(const char *name, DataModelElement *parent)
     : DataModelLeaf(name, parent), hasBeenSet(false) {
 }
@@ -20,7 +26,10 @@ bool DataModelRetainedValueLeaf::subscribe(DataModelSubscriber &subscriber, uint
 }
 
 void DataModelRetainedValueLeaf::updated() {
-    hasBeenSet = true;
+    if (!hasBeenSet) {
+        retainedValues++;
+        hasBeenSet = true;
+    }
 }
 
 void DataModelRetainedValueLeaf::removeValue() {

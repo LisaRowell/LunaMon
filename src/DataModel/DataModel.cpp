@@ -35,9 +35,19 @@ DataModelElement *sysBrokerClientsChildren[] = {
 };
 DataModelNode sysBrokerClientsNode("clients", &sysBrokerNode, sysBrokerClientsChildren);
 
+DataModelUInt16Leaf sysBrokerMessagesRetainedCount("count", &sysBrokerMessagesRetainedNode);
+
+DataModelElement *sysBrokerMessagesRetainedChildren[] = {
+    &sysBrokerMessagesRetainedCount,
+    NULL
+};
+DataModelNode sysBrokerMessagesRetainedNode("retained", &sysBrokerMessagesNode,
+                                            sysBrokerMessagesRetainedChildren);
+
 DataModelUInt32Leaf sysBrokerMessagesPublishReceived("received", &sysBrokerMessagesPublishNode);
 DataModelUInt32Leaf sysBrokerMessagesPublishSent("sent", &sysBrokerMessagesPublishNode);
 DataModelUInt32Leaf sysBrokerMessagesPublishDropped("dropped", &sysBrokerMessagesPublishNode);
+
 
 DataModelElement *sysBrokerMessagesPublishChildren[] = {
     &sysBrokerMessagesPublishReceived,
@@ -55,6 +65,7 @@ DataModelElement *sysBrokerMessagesChildren[] = {
     &sysBrokerMessagesReceived,
     &sysBrokerMessagesSent,
     &sysBrokerMessagesPublishNode,
+    &sysBrokerMessagesRetainedNode,
     NULL
 };
 DataModelNode sysBrokerMessagesNode("messages", &sysBrokerNode, sysBrokerMessagesChildren);
@@ -357,4 +368,6 @@ void DataModel::leafUpdated() {
 
 void DataModel::exportStats(uint32_t msElapsed) {
     leafUpdatesCounter.update(dataModelLeafUpdates, dataModelLeafUpdateRate, msElapsed);
+
+    sysBrokerMessagesRetainedCount = DataModelRetainedValueLeaf::retainedValueCount();
 }
