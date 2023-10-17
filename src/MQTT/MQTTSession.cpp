@@ -19,8 +19,9 @@ bool MQTTSession::matches(const etl::istring &clientID) const {
     return this->clientID.compare(clientID) == 0;
 }
 
-void MQTTSession::begin(bool cleanSession, const etl::istring &clientID, MQTTConnection *connection,
-                        uint16_t keepAliveTime) {
+void MQTTSession::begin(MQTTBroker *broker, bool cleanSession, const etl::istring &clientID,
+                        MQTTConnection *connection, uint16_t keepAliveTime) {
+    this->broker = broker;
     this->cleanSession = cleanSession;
     this->clientID = clientID;
     this->connection = connection;
@@ -49,7 +50,7 @@ void MQTTSession::reconnect(bool newCleanSession, MQTTConnection *connection,
     MQTTSession::connection = connection;
 }
 
-void MQTTSession::service(MQTTBroker *broker) {
+void MQTTSession::service() {
     // Do things like timeout sessions whose connection died and hasn't returned.
     if (isConnected()) {
         if (keepAliveTimer.expired()) {
@@ -97,10 +98,9 @@ const etl::istring &MQTTSession::name() const {
 }
 
 void MQTTSession::publish(const char *topic, const char *value, bool retainedValue) {
-    logger << logDebugMQTT << "Publishing Topic '" << topic << "' to Client '" << clientID
-           << "' with value '" << value << "' and retain " << retainedValue << eol;
-    
-    sendMQTTPublishMessage(connection, topic, value, false, 0, retainedValue, 0);
+    if (connection) {
+        broker->publishToConnection(connection, clientID, topic, value, retainedValue);
+    }
 }
 
 void MQTTSession::updateSessionDebug(DataModelStringLeaf &debug) {

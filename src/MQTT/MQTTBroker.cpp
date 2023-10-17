@@ -10,9 +10,12 @@
 #include "MQTTUnsubscribeMessage.h"
 #include "MQTTUnsubscribeAckMessage.h"
 #include "MQTTPingRequestMessage.h"
-#include "MQTTPingResponseMessage.h"
+#include "MQTTPublishMessage.h"
+#include "MQTTUtil.h"
 
 #include "DataModel/DataModel.h"
+
+#include "StatsManager/StatsManager.h"
 
 #include "Util/StringTools.h"
 #include "Util/Error.h"
@@ -25,8 +28,10 @@
 
 #include <stdint.h>
 
-MQTTBroker::MQTTBroker()
+MQTTBroker::MQTTBroker(StatsManager &statsManager)
         : wifiIsConnected(false), wifiServer(portNumber) {
+    statsManager.addStatsHolder(this);
+
     unsigned connectionIndex;
     for (connectionIndex = 0; connectionIndex < maxMQTTSessions; connectionIndex++) {
         connectionValid[connectionIndex] = false;
@@ -43,6 +48,11 @@ MQTTBroker::MQTTBroker()
     sysBrokerClientsDisconnected = 0;
     sysBrokerClientsMaximum = 0;
     sysBrokerClientsTotal = 0;
+
+    messagesReceived = 0;
+    sysBrokerMessagesReceived = 0;
+    messagesSent = 0;
+    sysBrokerMessagesSent = 0;
 }
 
 void MQTTBroker::begin(WiFiManager &wifiManager) {
@@ -68,6 +78,11 @@ void MQTTBroker::service() {
             }
         } while (sessionWasAvailable);
     }
+}
+
+void MQTTBroker::exportStats(uint32_t msElapsed) {
+    sysBrokerMessagesReceived = messagesReceived;
+    sysBrokerMessagesSent = messagesSent;
 }
 
 void MQTTBroker::serviceWiFiClientWithData(WiFiClient &wifiClient) {
@@ -101,6 +116,16 @@ void MQTTBroker::serviceWiFiClientWithData(WiFiClient &wifiClient) {
     }
     if (messageComplete) {
         messageReceived(connection, message);
+    }
+}
+
+void MQTTBroker::publishToConnection(MQTTConnection *connection, etl::istring &clientID,
+                                 const char *topic, const char *value, bool retainedValue) {
+    logger << logDebugMQTT << "Publishing Topic '" << topic << "' to Client '" << clientID
+           << "' with value '" << value << "' and retain " << retainedValue << eol;
+
+    if (connection) {
+        sendMQTTPublishMessage(connection, topic, value, false, 0, retainedValue, 0);
     }
 }
 
@@ -235,7 +260,7 @@ void MQTTBroker::serviceSessions() {
     for (sessionIndex = 0; sessionIndex < maxMQTTSessions; sessionIndex++) {
         if (sessionValid[sessionIndex]) {
             MQTTSession &session = sessions[sessionIndex];
-            session.service(this);
+            session.service();
         }
     }
 }
@@ -250,6 +275,8 @@ void MQTTBroker::refuseIncomingWiFiClient(WiFiClient &wifiClient) {
 }
 
 void MQTTBroker::messageReceived(MQTTConnection *connection, MQTTMessage &message) {
+    messagesReceived++;
+
     MQTTMessageType msgType = message.messageType();
     switch (msgType) {
         case MQTT_MSG_CONNECT:
@@ -373,7 +400,7 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
             const bool cleanSession = connectMessage.cleanSession();
             session->reconnect(cleanSession, connection, keepAliveTime);
             connection->connectTo(session);
-            sendMQTTConnectAckMessage(connection, !cleanSession, MQTT_CONNACK_ACCEPTED);
+            if (sendMQTTConnectAckMessage(connection, !cleanSession, MQTT_CONNACK_ACCEPTED)) {}
             dataModelDebugNeedsUpdating = true;
         }
     } else {
@@ -381,7 +408,8 @@ void MQTTBroker::connectMessageReceived(MQTTConnection *connection, MQTTMessage 
         if (session) {
             logger << logDebugMQTT << "Starting new MQTT Session for Client '" << clientID << "'"
                    << eol;
-            session->begin(connectMessage.cleanSession(), clientID, connection, keepAliveTime);
+            session->begin(this, connectMessage.cleanSession(), clientID, connection,
+                           keepAliveTime);
             connection->connectTo(session);
             logger << logDebugMQTT << "MQTT Client '" << clientID << "' connected with new Session"
                    << eol;
@@ -604,6 +632,161 @@ void MQTTBroker::serverOnlyMsgReceivedError(MQTTConnection *connection, MQTTMess
     logger << logError << "Received server->client only message " << message.messageTypeStr()
            << ". Terminating connection" << eol;
     terminateConnection(connection);
+}
+
+bool MQTTBroker::sendMQTTConnectAckMessage(MQTTConnection *connection, bool sessionPresent,
+                                           uint8_t returnCode) {
+    MQTTFixedHeader fixedHeader;
+    MQTTConnectAckVariableHeader variableHeader;
+
+    fixedHeader.typeAndFlags = MQTT_MSG_CONNACK << MQTT_MSG_TYPE_SHIFT;
+    if (!connection->write((uint8_t *)&fixedHeader, sizeof(fixedHeader))) {
+        return false;
+    }
+    const uint8_t remainingLength = sizeof(MQTTConnectAckVariableHeader);
+    if (!mqttWriteRemainingLength(connection, remainingLength)) {
+        return false;
+    }
+
+    variableHeader.flags = 0;
+    if (sessionPresent) {
+        variableHeader.flags |= MQTT_CONNACK_SESSION_PRESENT_MASK;
+    }
+    variableHeader.returnCode = returnCode;
+
+    if (!connection->write((uint8_t *)&variableHeader, sizeof(variableHeader))) {
+        return false;
+    }
+
+    messagesSent++;
+
+    return true;
+}
+
+bool MQTTBroker::sendMQTTPingResponseMessage(MQTTConnection *connection) {
+    MQTTFixedHeader fixedHeader;
+
+    fixedHeader.typeAndFlags = MQTT_MSG_PINGRESP << MQTT_MSG_TYPE_SHIFT;
+    if (!connection->write((uint8_t *)&fixedHeader, sizeof(fixedHeader))) {
+        return false;
+    }
+
+    if (!mqttWriteRemainingLength(connection, 0)) {
+        return false;
+    }
+
+    messagesSent++;
+
+    return true;
+}
+
+bool MQTTBroker::sendMQTTPublishMessage(MQTTConnection *connection, const char *topic,
+                                        const char *value, bool dup, uint8_t qosLevel,
+                                        bool retain, uint16_t packetId) {
+    MQTTFixedHeader fixedHeader;
+
+    fixedHeader.typeAndFlags = MQTT_MSG_PUBLISH << MQTT_MSG_TYPE_SHIFT;
+    if (dup) {
+        fixedHeader.typeAndFlags |= MQTT_PUBLISH_FLAGS_DUP_MASK;
+    }
+    fixedHeader.typeAndFlags |= qosLevel << MQTT_PUBLISH_FLAGS_QOS_SHIFT;
+    if (retain) {
+        fixedHeader.typeAndFlags |= MQTT_PUBLISH_FLAGS_RETAIN_MASK;
+    }
+    if (!connection->write((uint8_t *)&fixedHeader, sizeof(fixedHeader))) {
+        return false;
+    }
+
+    const size_t valueLength = strlen(value);
+    uint32_t remainingLength;
+    remainingLength = strlen(topic) + 2 + valueLength;
+    if (qosLevel > 0) {
+        remainingLength += 2;
+    }
+    if (!mqttWriteRemainingLength(connection, remainingLength)) {
+        return false;
+    }
+
+    if (!mqttWriteMQTTString(connection, topic)) {
+        return false;
+    }
+
+    if (qosLevel > 0) {
+        if (!mqttWriteUInt16(connection, packetId)) {
+            return false;
+        }
+    }
+
+    if (!connection->write((uint8_t *)value, valueLength)) {
+        return false;
+    }
+
+    messagesSent++;
+
+    return true;
+}
+
+bool MQTTBroker::sendMQTTSubscribeAckMessage(MQTTConnection *connection, uint16_t packetId,
+                                             uint8_t numberResults, uint8_t *results) {
+    MQTTFixedHeader fixedHeader;
+    MQTTSubscribeAckVariableHeader variableHeader;
+
+    fixedHeader.typeAndFlags = MQTT_MSG_SUBACK << MQTT_MSG_TYPE_SHIFT;
+    if (!connection->write((uint8_t *)&fixedHeader, sizeof(fixedHeader))) {
+        return false;
+    }
+    const uint8_t remainingLength = sizeof(MQTTSubscribeAckVariableHeader) + numberResults;
+    if (!mqttWriteRemainingLength(connection, remainingLength)) {
+        return false;
+    }
+
+    variableHeader.packetIdMSB = packetId >> 8;
+    variableHeader.packetIdLSB = packetId & 0xff;
+
+    if (!connection->write((uint8_t *)&variableHeader, sizeof(variableHeader))) {
+        return false;
+    }
+
+    if (!connection->write(results, numberResults * sizeof(uint8_t))) {
+        return false;
+    }
+
+    messagesSent++;
+
+    return true;
+}
+
+uint8_t MQTTBroker::mqttSubscribeResult(bool success, uint8_t maxQoS) {
+    if (!success) {
+        return MQTT_SUBACK_FAILURE_FLAG;
+    } else {
+        return maxQoS;
+    }
+}
+
+bool MQTTBroker::sendMQTTUnsubscribeAckMessage(MQTTConnection *connection, uint16_t packetId) {
+    MQTTFixedHeader fixedHeader;
+    MQTTUnsubscribeAckVariableHeader variableHeader;
+
+    fixedHeader.typeAndFlags = MQTT_MSG_UNSUBACK << MQTT_MSG_TYPE_SHIFT;
+    if (!connection->write((uint8_t *)&fixedHeader, sizeof(fixedHeader))) {
+        return false;
+    }
+    const uint8_t remainingLength = sizeof(MQTTUnsubscribeAckVariableHeader);
+    if (!mqttWriteRemainingLength(connection, remainingLength)) {
+        return false;
+    }
+
+    variableHeader.packetIdMSB = packetId >> 8;
+    variableHeader.packetIdLSB = packetId & 0xff;
+
+    if (!connection->write((uint8_t *)&variableHeader, sizeof(variableHeader))) {
+        return false;
+    }
+
+    messagesSent++;
+
+    return true;
 }
 
 void MQTTBroker::updateDataModelDebugs() {

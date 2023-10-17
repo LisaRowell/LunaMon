@@ -35,10 +35,21 @@ DataModelElement *sysBrokerClientsChildren[] = {
 };
 DataModelNode sysBrokerClientsNode("clients", &sysBrokerNode, sysBrokerClientsChildren);
 
+DataModelUInt32Leaf sysBrokerMessagesReceived("received", &sysBrokerMessagesNode);
+DataModelUInt32Leaf sysBrokerMessagesSent("sent", &sysBrokerMessagesNode);
+
+DataModelElement *sysBrokerMessagesChildren[] = {
+    &sysBrokerMessagesReceived,
+    &sysBrokerMessagesSent,
+    NULL
+};
+DataModelNode sysBrokerMessagesNode("messages", &sysBrokerNode, sysBrokerMessagesChildren);
+
 DataModelUInt32Leaf sysBrokerUptime("uptime", &sysBrokerNode);
 
 DataModelElement *sysBrokerChildren[] = {
     &sysBrokerClientsNode,
+    &sysBrokerMessagesNode,
     &sysBrokerUptime,
     NULL
 };

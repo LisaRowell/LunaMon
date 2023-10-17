@@ -1,8 +1,6 @@
 #ifndef MQTT_CONNECT_ACK_MESSAGE_H
 #define MQTT_CONNECT_ACK_MESSAGE_H
 
-class MQTTConnection;
-
 #include <stdint.h>
 
 #define MQTT_CONNACK_ACCEPTED                     0x00
@@ -18,7 +16,5 @@ struct MQTTConnectAckVariableHeader {
 };
 
 #define MQTT_CONNACK_SESSION_PRESENT_MASK 0x01
-
-bool sendMQTTConnectAckMessage(MQTTConnection *connection, bool sessionPresent, uint8_t errorCode);
 
 #endif

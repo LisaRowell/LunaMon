@@ -7,6 +7,8 @@ class WiFiManager;
 #include "MQTTConnection.h"
 #include "MQTTSession.h"
 
+#include "StatsManager/StatsManager.h"
+
 #include "WiFiManager/WiFiManagerClient.h"
 
 #include <etl/string.h>
@@ -15,7 +17,7 @@ class WiFiManager;
 
 const unsigned maxMQTTSessions = 5;
 
-class MQTTBroker : WiFiManagerClient {
+class MQTTBroker : WiFiManagerClient, public StatsHolder {
     private:
         bool wifiIsConnected;
 
@@ -43,6 +45,9 @@ class MQTTBroker : WiFiManagerClient {
         // in the service routine.
         bool dataModelDebugNeedsUpdating;
 
+        uint32_t messagesReceived;
+        uint32_t messagesSent;
+
         void checkForLostConnections();
         void cleanupLostConnection(MQTTConnection &connection);
         void invalidateSession(MQTTSession *session);
@@ -61,18 +66,31 @@ class MQTTBroker : WiFiManagerClient {
         void pingRequestMessageReceived(MQTTConnection *connection, MQTTMessage &message);
         void disconnectMessageReceived(MQTTConnection *connection, MQTTMessage &message);
         void serverOnlyMsgReceivedError(MQTTConnection *connection, MQTTMessage &message);
+        bool sendMQTTConnectAckMessage(MQTTConnection *connection, bool sessionPresent,
+                                       uint8_t returnCode);
+        bool sendMQTTPingResponseMessage(MQTTConnection *connection);
+        bool sendMQTTPublishMessage(MQTTConnection *connection, const char *topic,
+                                    const char *value, bool dup, uint8_t qosLevel, bool retain,
+                                    uint16_t packetId);
+        bool sendMQTTUnsubscribeAckMessage(MQTTConnection *connection, uint16_t packetId);
+        bool sendMQTTSubscribeAckMessage(MQTTConnection *connection, uint16_t packetId,
+                                         uint8_t numberResults, uint8_t *results);
+        uint8_t mqttSubscribeResult(bool success, uint8_t maxQoS);
         void updateDataModelDebugs();
         void updateConnectionDebugs();
         void updateSessionDebugs();
 
     public:
-        MQTTBroker();
+        MQTTBroker(StatsManager &statsManager);
         void begin(WiFiManager &wifiManager);
         void service();
+        void publishToConnection(MQTTConnection *connection, etl::istring &clientID,
+                                 const char *topic, const char *value, bool retainedValue);
         void terminateConnection(MQTTConnection *connection);
         void terminateSession(MQTTSession *session);
         void wifiConnected() override;
         void wifiDisconnected() override;
+        virtual void exportStats(uint32_t msElapsed) override;
 };
 
 #endif

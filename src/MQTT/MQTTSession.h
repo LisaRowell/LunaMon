@@ -30,6 +30,7 @@ const uint16_t unconnectedSessionTearDownTime = 120;
 
 class MQTTSession : public DataModelSubscriber {
     private:
+        MQTTBroker *broker;
         bool cleanSession;
         etl::string<maxMQTTClientIDLength> clientID;
         MQTTConnection *connection;
@@ -42,11 +43,11 @@ class MQTTSession : public DataModelSubscriber {
     public:
         bool isConnected() const;
         bool matches(const etl::istring &clientID) const;
-        void begin(bool cleanSession, const etl::istring &clientID, MQTTConnection *connection,
-                   uint16_t keepAliveTime);
+        void begin(MQTTBroker *broker, bool cleanSession, const etl::istring &clientID,
+                   MQTTConnection *connection, uint16_t keepAliveTime);
         void reconnect(bool newCleanSession, MQTTConnection *connection, uint16_t keepAliveTime);
         bool disconnect();
-        void service(MQTTBroker *broker);
+        void service();
         void resetKeepAliveTimer();
         virtual const etl::istring &name() const override;
         virtual void publish(const char *topic, const char *value, bool retainedValue) override;
