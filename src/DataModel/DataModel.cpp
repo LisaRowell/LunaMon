@@ -23,13 +23,69 @@
 
 #include <stdint.h>
 
-DataModelBoolLeaf sysBrokerBridgeWiFiNMEA("WiFiNMEA", &sysBrokerBridgeNode);
+static etl::string<maxConnectionDescriptionLength> sysBrokerConnection1Buffer;
+DataModelStringLeaf sysBrokerConnection1("1", &sysBrokerConnectionsNode,
+                                         sysBrokerConnection1Buffer);
+static etl::string<maxConnectionDescriptionLength> sysBrokerConnection2Buffer;
+DataModelStringLeaf sysBrokerConnection2("2", &sysBrokerConnectionsNode,
+                                         sysBrokerConnection2Buffer);
+static etl::string<maxConnectionDescriptionLength> sysBrokerConnection3Buffer;
+DataModelStringLeaf sysBrokerConnection3("3", &sysBrokerConnectionsNode,
+                                         sysBrokerConnection3Buffer);
+static etl::string<maxConnectionDescriptionLength> sysBrokerConnection4Buffer;
+DataModelStringLeaf sysBrokerConnection4("4", &sysBrokerConnectionsNode,
+                                         sysBrokerConnection4Buffer);
+static etl::string<maxConnectionDescriptionLength> sysBrokerConnection5Buffer;
+DataModelStringLeaf sysBrokerConnection5("5", &sysBrokerConnectionsNode,
+                                         sysBrokerConnection5Buffer);
 
-DataModelElement *sysBrokerBridgeChildren[] = {
-    &sysBrokerBridgeWiFiNMEA,
+DataModelStringLeaf *sysBrokerConnectionDebugs[] = {
+    &sysBrokerConnection1,
+    &sysBrokerConnection2,
+    &sysBrokerConnection3,
+    &sysBrokerConnection4,
+    &sysBrokerConnection5
+};
+
+DataModelElement *sysBrokerConnectionsNodeChildren[] = {
+    &sysBrokerConnection1,
+    &sysBrokerConnection2,
+    &sysBrokerConnection3,
+    &sysBrokerConnection4,
+    &sysBrokerConnection5,
     NULL
 };
-DataModelNode sysBrokerBridgeNode("bridge", &sysBrokerNode, sysBrokerBridgeChildren);
+DataModelNode sysBrokerConnectionsNode("connections", &sysBrokerNode,
+                                       sysBrokerConnectionsNodeChildren);
+
+static etl::string<maxSessionDescriptionLength> sysBrokerSession1Buffer;
+DataModelStringLeaf sysBrokerSession1("1", &sysBrokerSessionsNode, sysBrokerSession1Buffer);
+static etl::string<maxSessionDescriptionLength> sysBrokerSession2Buffer;
+DataModelStringLeaf sysBrokerSession2("2", &sysBrokerSessionsNode, sysBrokerSession2Buffer);
+static etl::string<maxSessionDescriptionLength> sysBrokerSession3Buffer;
+DataModelStringLeaf sysBrokerSession3("3", &sysBrokerSessionsNode, sysBrokerSession3Buffer);
+static etl::string<maxSessionDescriptionLength> sysBrokerSession4Buffer;
+DataModelStringLeaf sysBrokerSession4("4", &sysBrokerSessionsNode, sysBrokerSession4Buffer);
+static etl::string<maxSessionDescriptionLength> sysBrokerSession5Buffer;
+DataModelStringLeaf sysBrokerSession5("5", &sysBrokerSessionsNode, sysBrokerSession5Buffer);
+
+DataModelStringLeaf *sysBrokerSessionDebugs[] = {
+    &sysBrokerSession1,
+    &sysBrokerSession2,
+    &sysBrokerSession3,
+    &sysBrokerSession4,
+    &sysBrokerSession5
+};
+
+DataModelElement *sysBrokerSessionsNodeChildren[] = {
+    &sysBrokerSession1,
+    &sysBrokerSession2,
+    &sysBrokerSession3,
+    &sysBrokerSession4,
+    &sysBrokerSession5,
+    NULL
+};
+DataModelNode sysBrokerSessionsNode("sessions", &sysBrokerNode, sysBrokerSessionsNodeChildren);
 
 DataModelUInt32Leaf sysBrokerClientsConnected("connected", &sysBrokerClientsNode);
 DataModelUInt32Leaf sysBrokerClientsDisconnected("disconnected", &sysBrokerClientsNode);
@@ -85,181 +141,104 @@ static etl::string<maxVersionLength> sysBrokerVersionBuffer;
 DataModelStringLeaf sysBrokerVersion("version", &sysBrokerNode, sysBrokerVersionBuffer);
 
 DataModelElement *sysBrokerChildren[] = {
+    &sysBrokerConnectionsNode,
+    &sysBrokerSessionsNode,
     &sysBrokerClientsNode,
     &sysBrokerMessagesNode,
     &sysBrokerUptime,
     &sysBrokerVersion,
-    &sysBrokerBridgeNode,
     NULL
 };
 DataModelNode sysBrokerNode("broker", &sysNode, sysBrokerChildren);
 
+DataModelBoolLeaf sysNEMAWiFiState("state", &sysNMEAWiFiNode);
+DataModelLeaf sysNMEAWiFiMessages("messages", &sysNMEAWiFiNode);
+DataModelLeaf sysNMEAWiFiMessageRate("messageRate", &sysNMEAWiFiNode);
+
+DataModelElement *sysNMEAWiFiNodeChildren[] = {
+    &sysNEMAWiFiState,
+    &sysNMEAWiFiMessages,
+    &sysNMEAWiFiMessageRate,
+    NULL
+};
+DataModelNode sysNMEAWiFiNode("wifi", &sysNMEANode, sysNMEAWiFiNodeChildren);
+
+DataModelLeaf sysNMEAUSBMessages("messages", &sysNMEAUSBNode);
+DataModelLeaf sysNMEAUSBMessageRate("messageRate", &sysNMEAUSBNode);
+
+DataModelElement *sysNMEAUSBNodeChildren[] = {
+    &sysNMEAUSBMessages,
+    &sysNMEAUSBMessageRate,
+    NULL
+};
+DataModelNode sysNMEAUSBNode("usb", &sysNMEANode, sysNMEAUSBNodeChildren);
+
+DataModelElement *sysNMEANodeChildren[] = {
+    &sysNMEAUSBNode,
+    &sysNMEAWiFiNode,
+    NULL
+};
+DataModelNode sysNMEANode("nmea", &sysNode, sysNMEANodeChildren);
+
+DataModelLeaf sysDataModelLeafUpdates("updates", &sysDataModelNode);
+DataModelLeaf sysDataModelLeafUpdateRate("updateRate", &sysDataModelNode);
+
+DataModelElement *sysDataModelNodeChildren[] = {
+    &sysDataModelLeafUpdates,
+    &sysDataModelLeafUpdateRate,
+    NULL
+};
+DataModelNode sysDataModelNode("dataModel", &sysNode, sysDataModelNodeChildren);
+
+DataModelLeaf sysNMEADataModelMessagesBridged("messages", &sysNMEADataModelBridgeNode);
+DataModelLeaf sysNMEADataModelMessageBridgeRate("messageRate", &sysNMEADataModelBridgeNode);
+
+DataModelElement *sysNMEADataModelBridgeNodeChildren[] = {
+    &sysNMEADataModelMessagesBridged,
+    &sysNMEADataModelMessageBridgeRate,
+    NULL
+};
+DataModelNode sysNMEADataModelBridgeNode("nmeaDataModelBridge", &sysNode,
+                                         sysNMEADataModelBridgeNodeChildren);
+
+static etl::string<maxLogEntryLength> sysLogEntry1Buffer;
+DataModelStringLeaf sysLogEntry1("1", &sysLogNode, sysLogEntry1Buffer);
+static etl::string<maxLogEntryLength> sysLogEntry2Buffer;
+DataModelStringLeaf sysLogEntry2("2", &sysLogNode, sysLogEntry2Buffer);
+static etl::string<maxLogEntryLength> sysLogEntry3Buffer;
+DataModelStringLeaf sysLogEntry3("3", &sysLogNode, sysLogEntry3Buffer);
+static etl::string<maxLogEntryLength> sysLogEntry4Buffer;
+DataModelStringLeaf sysLogEntry4("4", &sysLogNode, sysLogEntry4Buffer);
+static etl::string<maxLogEntryLength> sysLogEntry5Buffer;
+DataModelStringLeaf sysLogEntry5("5", &sysLogNode, sysLogEntry5Buffer);
+
+DataModelStringLeaf *sysLogEntries[logEntrySlots] = {
+    &sysLogEntry1,
+    &sysLogEntry2,
+    &sysLogEntry3,
+    &sysLogEntry4,
+    &sysLogEntry5
+};
+
+DataModelElement *sysLogNodeChildren[] = {
+    &sysLogEntry1,
+    &sysLogEntry2,
+    &sysLogEntry3,
+    &sysLogEntry4,
+    &sysLogEntry5,
+    NULL
+};
+DataModelNode sysLogNode("log", &sysNode, sysLogNodeChildren);
+
 DataModelElement *sysNodeChildren[] = {
     &sysBrokerNode,
+    &sysNMEANode,
+    &sysDataModelNode,
+    &sysNMEADataModelBridgeNode,
+    &sysLogNode,
     NULL
 };
 DataModelNode sysNode("$SYS", &dataModelRoot, sysNodeChildren);
-
-DataModelLeaf nmeaDataModelMessagesBridged("messages", &nmeaDataModelBridgeNode);
-DataModelLeaf nmeaDataModelMessageBridgeRate("messageRate", &nmeaDataModelBridgeNode);
-
-DataModelElement *nmeaDataModelBridgeNodeChildren[] = {
-    &nmeaDataModelMessagesBridged,
-    &nmeaDataModelMessageBridgeRate,
-    NULL
-};
-DataModelNode nmeaDataModelBridgeNode("nmeaDataModelBridge", &controllerIDNode,
-                                      nmeaDataModelBridgeNodeChildren);
-
-DataModelLeaf dataModelLeafUpdates("updates", &dataModelNode);
-DataModelLeaf dataModelLeafUpdateRate("updateRate", &dataModelNode);
-
-DataModelElement *dataModelNodeChildren[] = {
-    &dataModelLeafUpdates,
-    &dataModelLeafUpdateRate,
-    NULL
-};
-DataModelNode dataModelNode("dataModel", &controllerIDNode, dataModelNodeChildren);
-
-DataModelLeaf wifiNMEAMessages("messages", &wifiNMEANode);
-DataModelLeaf wifiNMEAMessageRate("messageRate", &wifiNMEANode);
-
-DataModelElement *wifiNMEANodeChildren[] = {
-    &wifiNMEAMessages,
-    &wifiNMEAMessageRate,
-    NULL
-};
-DataModelNode wifiNMEANode("wifi", &nmeaNode, wifiNMEANodeChildren);
-
-DataModelLeaf usbNMEAMessages("messages", &usbNMEANode);
-DataModelLeaf usbNMEAMessageRate("messageRate", &usbNMEANode);
-
-DataModelElement *usbNMEANodeChildren[] = {
-    &usbNMEAMessages,
-    &usbNMEAMessageRate,
-    NULL
-};
-DataModelNode usbNMEANode("usb", &nmeaNode, usbNMEANodeChildren);
-
-DataModelElement *nmeaNodeChildren[] = {
-    &usbNMEANode,
-    &wifiNMEANode,
-    NULL
-};
-DataModelNode nmeaNode("nmea", &controllerIDNode, nmeaNodeChildren);
-
-static etl::string<maxSessionDescriptionLength> mqttSession1Buffer;
-DataModelStringLeaf mqttSession1("1", &mqttSessionsNode, mqttSession1Buffer);
-static etl::string<maxSessionDescriptionLength> mqttSession2Buffer;
-DataModelStringLeaf mqttSession2("2", &mqttSessionsNode, mqttSession2Buffer);
-static etl::string<maxSessionDescriptionLength> mqttSession3Buffer;
-DataModelStringLeaf mqttSession3("3", &mqttSessionsNode, mqttSession3Buffer);
-static etl::string<maxSessionDescriptionLength> mqttSession4Buffer;
-DataModelStringLeaf mqttSession4("4", &mqttSessionsNode, mqttSession4Buffer);
-static etl::string<maxSessionDescriptionLength> mqttSession5Buffer;
-DataModelStringLeaf mqttSession5("5", &mqttSessionsNode, mqttSession5Buffer);
-
-DataModelStringLeaf *mqttSessionDebugs[] = {
-    &mqttSession1,
-    &mqttSession2,
-    &mqttSession3,
-    &mqttSession4,
-    &mqttSession5
-};
-
-DataModelElement *mqttSessionsNodeChildren[] = {
-    &mqttSession1,
-    &mqttSession2,
-    &mqttSession3,
-    &mqttSession4,
-    &mqttSession5,
-    NULL
-};
-DataModelNode mqttSessionsNode("sessions", &mqttNode, mqttSessionsNodeChildren);
-
-static etl::string<maxConnectionDescriptionLength> mqttConnection1Buffer;
-DataModelStringLeaf mqttConnection1("1", &mqttConnectionsNode, mqttConnection1Buffer);
-static etl::string<maxConnectionDescriptionLength> mqttConnection2Buffer;
-DataModelStringLeaf mqttConnection2("2", &mqttConnectionsNode, mqttConnection2Buffer);
-static etl::string<maxConnectionDescriptionLength> mqttConnection3Buffer;
-DataModelStringLeaf mqttConnection3("3", &mqttConnectionsNode, mqttConnection3Buffer);
-static etl::string<maxConnectionDescriptionLength> mqttConnection4Buffer;
-DataModelStringLeaf mqttConnection4("4", &mqttConnectionsNode, mqttConnection4Buffer);
-static etl::string<maxConnectionDescriptionLength> mqttConnection5Buffer;
-DataModelStringLeaf mqttConnection5("5", &mqttConnectionsNode, mqttConnection5Buffer);
-
-DataModelStringLeaf *mqttConnectionDebugs[] = {
-    &mqttConnection1,
-    &mqttConnection2,
-    &mqttConnection3,
-    &mqttConnection4,
-    &mqttConnection5
-};
-
-DataModelElement *mqttConnectionsNodeChildren[] = {
-    &mqttConnection1,
-    &mqttConnection2,
-    &mqttConnection3,
-    &mqttConnection4,
-    &mqttConnection5,
-    NULL
-};
-DataModelNode mqttConnectionsNode("connections", &mqttNode, mqttConnectionsNodeChildren);
-
-DataModelUInt32Leaf mqttConnectionCount("connectionCount", &mqttNode);
-
-DataModelElement *mqttNodeChildren[] = {
-    &mqttConnectionCount,
-    &mqttConnectionsNode,
-    &mqttSessionsNode,
-    NULL
-};
-DataModelNode mqttNode("MQTT", &controllerIDNode, mqttNodeChildren);
-
-static etl::string<maxErrorLength> error1Buffer;
-DataModelStringLeaf error1("1", &errorsNode, error1Buffer);
-static etl::string<maxErrorLength> error2Buffer;
-DataModelStringLeaf error2("2", &errorsNode, error2Buffer);
-static etl::string<maxErrorLength> error3Buffer;
-DataModelStringLeaf error3("3", &errorsNode, error3Buffer);
-static etl::string<maxErrorLength> error4Buffer;
-DataModelStringLeaf error4("4", &errorsNode, error4Buffer);
-static etl::string<maxErrorLength> error5Buffer;
-DataModelStringLeaf error5("5", &errorsNode, error5Buffer);
-
-DataModelStringLeaf *errorDebugs[errorDebugSlots] = {
-    &error1,
-    &error2,
-    &error3,
-    &error4,
-    &error5
-};
-
-DataModelElement *errorsNodeChildren[] = {
-    &error1,
-    &error2,
-    &error3,
-    &error4,
-    &error5,
-    NULL
-};
-DataModelNode errorsNode("errors", &controllerIDNode, errorsNodeChildren);
-
-DataModelElement *controllerIDNodeChildren[] = {
-    &errorsNode,
-    &mqttNode,
-    &nmeaNode,
-    &dataModelNode,
-    &nmeaDataModelBridgeNode,
-    NULL
-};
-DataModelNode controllerIDNode(controllerID, &controllersNode, controllerIDNodeChildren);
-
-DataModelElement *controllersNodeChildren[] = { &controllerIDNode, NULL };
-DataModelNode controllersNode("controllers", &electronicsNode, controllersNodeChildren);
-
-DataModelElement *electronicsNodeChildren[] = { &controllersNode, NULL };
-DataModelNode electronicsNode("electronics", &dataModelRoot, electronicsNodeChildren);
 
 etl::string<coordinateLength> positionLatitudeBuffer;
 DataModelStringLeaf positionLatitude("latitude", &positionNode, positionLatitudeBuffer);
@@ -353,7 +332,6 @@ DataModelNode navigationNode("navigation", &dataModelRoot, navigationNodeChildre
 
 DataModelElement *topNodeChildren[] = {
     &sysNode,
-    &electronicsNode,
     &navigationNode,
     NULL
 };
@@ -383,7 +361,7 @@ void DataModel::leafUpdated() {
 }
 
 void DataModel::exportStats(uint32_t msElapsed) {
-    leafUpdatesCounter.update(dataModelLeafUpdates, dataModelLeafUpdateRate, msElapsed);
+    leafUpdatesCounter.update(sysDataModelLeafUpdates, sysDataModelLeafUpdateRate, msElapsed);
 
     sysBrokerMessagesRetainedCount = DataModelRetainedValueLeaf::retainedValueCount();
 }

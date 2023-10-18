@@ -815,23 +815,19 @@ void MQTTBroker::updateDataModelDebugs() {
 }
 
 void MQTTBroker::updateConnectionDebugs() {
-    uint32_t connectionCount = 0;
     unsigned connectionDebugPos = 0;
     for (unsigned connectionIndex = 0; connectionIndex < maxMQTTSessions; connectionIndex++) {
         if (connectionValid[connectionIndex]) {
-            connectionCount++;
-
             MQTTConnection &connection = connections[connectionIndex];
-            DataModelStringLeaf &connectionDebug = *mqttConnectionDebugs[connectionDebugPos];
+            DataModelStringLeaf &connectionDebug = *sysBrokerConnectionDebugs[connectionDebugPos];
             connection.updateConnectionDebug(connectionDebug);
             connectionDebugPos++;
         }
     }
     for (; connectionDebugPos < maxMQTTSessions; connectionDebugPos++) {
-        DataModelStringLeaf &emptyConnectionDebug = *mqttConnectionDebugs[connectionDebugPos];
+        DataModelStringLeaf &emptyConnectionDebug = *sysBrokerConnectionDebugs[connectionDebugPos];
         emptyConnectionDebug = "";
     }
-    mqttConnectionCount = connectionCount;
 }
 
 void MQTTBroker::updateSessionDebugs() {
@@ -842,7 +838,7 @@ void MQTTBroker::updateSessionDebugs() {
     for (unsigned sessionIndex = 0; sessionIndex < maxMQTTSessions; sessionIndex++) {
         if (sessionValid[sessionIndex]) {
             MQTTSession &session = sessions[sessionIndex];
-            DataModelStringLeaf &sessionDebug = *mqttSessionDebugs[sessionDebugPos];
+            DataModelStringLeaf &sessionDebug = *sysBrokerSessionDebugs[sessionDebugPos];
             session.updateSessionDebug(sessionDebug);
             sessionDebugPos++;
 
@@ -854,7 +850,7 @@ void MQTTBroker::updateSessionDebugs() {
         }
     }
     for (; sessionDebugPos < maxMQTTSessions; sessionDebugPos++) {
-        DataModelStringLeaf &emptySessionDebug = *mqttSessionDebugs[sessionDebugPos];
+        DataModelStringLeaf &emptySessionDebug = *sysBrokerSessionDebugs[sessionDebugPos];
         emptySessionDebug = "";
     }
 

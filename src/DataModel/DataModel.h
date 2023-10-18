@@ -33,8 +33,11 @@ const size_t maxSessionDescriptionLength =
 
 const size_t maxVersionLength = 20;
 
-extern DataModelBoolLeaf sysBrokerBridgeWiFiNMEA;
-extern DataModelNode sysBrokerBridgeNode;
+extern DataModelStringLeaf *sysBrokerConnectionDebugs[];
+extern DataModelNode sysBrokerConnectionsNode;
+
+extern DataModelStringLeaf *sysBrokerSessionDebugs[];
+extern DataModelNode sysBrokerSessionsNode;
 
 extern DataModelUInt32Leaf sysBrokerClientsConnected;
 extern DataModelUInt32Leaf sysBrokerClientsDisconnected;
@@ -56,50 +59,33 @@ extern DataModelNode sysBrokerMessagesNode;
 
 extern DataModelUInt32Leaf sysBrokerUptime;
 extern DataModelStringLeaf sysBrokerVersion;
-
 extern DataModelNode sysBrokerNode;
+
+extern DataModelBoolLeaf sysNEMAWiFiState;
+extern DataModelLeaf sysNMEAWiFiMessages;
+extern DataModelLeaf sysNMEAWiFiMessageRate;
+extern DataModelNode sysNMEAWiFiNode;
+
+extern DataModelLeaf sysNMEAUSBMessages;
+extern DataModelLeaf sysNMEAUSBMessageRate;
+extern DataModelNode sysNMEAUSBNode;
+
+extern DataModelNode sysNMEANode;
+
+extern DataModelLeaf sysDataModelLeafUpdates;
+extern DataModelLeaf sysDataModelLeafUpdateRate;
+extern DataModelNode sysDataModelNode;
+
+extern DataModelLeaf sysNMEADataModelMessagesBridged;
+extern DataModelLeaf sysNMEADataModelMessageBridgeRate;
+extern DataModelNode sysNMEADataModelBridgeNode;
+
+const size_t maxLogEntryLength = 80;
+const unsigned logEntrySlots = 5;
+extern DataModelStringLeaf *sysLogEntries[];
+extern DataModelNode sysLogNode;
+
 extern DataModelNode sysNode;
-
-extern DataModelLeaf nmeaDataModelMessagesBridged;
-extern DataModelLeaf nmeaDataModelMessageBridgeRate;
-
-extern DataModelNode nmeaDataModelBridgeNode;
-
-extern DataModelLeaf dataModelLeafUpdates;
-extern DataModelLeaf dataModelLeafUpdateRate;
-
-extern DataModelNode dataModelNode;
-
-extern DataModelLeaf wifiNMEAMessages;
-extern DataModelLeaf wifiNMEAMessageRate;
-extern DataModelNode wifiNMEANode;
-
-extern DataModelLeaf usbNMEAMessages;
-extern DataModelLeaf usbNMEAMessageRate;
-extern DataModelNode usbNMEANode;
-
-extern DataModelNode nmeaNode;
-
-extern DataModelStringLeaf *mqttSessionDebugs[];
-extern DataModelNode mqttSessionsNode;
-
-extern DataModelStringLeaf *mqttConnectionDebugs[];
-extern DataModelNode mqttConnectionsNode;
-
-extern DataModelUInt32Leaf mqttConnectionCount;
-
-extern DataModelNode mqttNode;
-
-const size_t maxErrorLength = 80;
-const unsigned errorDebugSlots = 5;
-extern DataModelStringLeaf *errorDebugs[];
-extern DataModelNode errorsNode;
-
-extern DataModelNode controllerIDNode;
-
-extern DataModelNode controllersNode;
-
-extern DataModelNode electronicsNode;
 
 constexpr size_t coordinateLength = 40;
 extern DataModelStringLeaf positionLatitude;

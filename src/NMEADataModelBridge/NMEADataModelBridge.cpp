@@ -163,6 +163,6 @@ void NMEADataModelBridge::bridgeNMEAVTGMessage(NMEAVTGMessage *message) {
 }
 
 void NMEADataModelBridge::exportStats(uint32_t msElapsed) {
-    messagesBridgedCounter.update(nmeaDataModelMessagesBridged, nmeaDataModelMessageBridgeRate,
-                                  msElapsed);
+    messagesBridgedCounter.update(sysNMEADataModelMessagesBridged,
+                                  sysNMEADataModelMessageBridgeRate, msElapsed);
 }

@@ -17,10 +17,10 @@
 #include <Arduino.h>
 
 StatsManager statsManager;
-NMEASource usbSerialNMEASource(Serial, usbNMEAMessages, usbNMEAMessageRate, statsManager);
+NMEASource usbSerialNMEASource(Serial, sysNMEAUSBMessages, sysNMEAUSBMessageRate, statsManager);
 WiFiManager wifiManager;
-NMEAWiFiSource nmeaWiFiSource(wifiManager, wifiNMEAMessages, wifiNMEAMessageRate,
-                              sysBrokerBridgeWiFiNMEA, statsManager);
+NMEAWiFiSource nmeaWiFiSource(wifiManager, sysNMEAWiFiMessages, sysNMEAWiFiMessageRate,
+                              sysNEMAWiFiState, statsManager);
 MQTTBroker mqttBroker(statsManager);
 DataModel dataModel(statsManager);
 NMEADataModelBridge nmeaDataModelBridge(statsManager);

@@ -71,7 +71,7 @@ class Logger {
         LogBase base;
         Stream &console;
         uint8_t errorsSetInDataModel;
-        char errorLine[maxErrorLength];
+        char errorLine[maxLogEntryLength];
         unsigned errorLinePos;
         // Flag used to make sure that we don't try to set an error in the DataModel that occured
         // while trying to set an error in the DataModel.

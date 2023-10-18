@@ -303,7 +303,7 @@ void Logger::logString(const char *string) {
     if (lineLevel >= LOGGER_LEVEL_WARNING && !inLogger) {
         unsigned strPos;
         for (strPos = 0;
-             errorLinePos < maxErrorLength - 1 && string[strPos];
+             errorLinePos < maxLogEntryLength - 1 && string[strPos];
              strPos++, errorLinePos++) {
             errorLine[errorLinePos] = string[strPos];
         }
@@ -325,11 +325,11 @@ void Logger::addErrorLineToDebugs() {
     if (!inLogger) {
         inLogger = true;
 
-        if (errorsSetInDataModel == errorDebugSlots) {
+        if (errorsSetInDataModel == logEntrySlots) {
             scrollUpDebugs();
         }
 
-        DataModelStringLeaf *errorDebug = errorDebugs[errorsSetInDataModel];
+        DataModelStringLeaf *errorDebug = sysLogEntries[errorsSetInDataModel];
         *errorDebug = errorLine;
         errorsSetInDataModel++;
 
@@ -339,9 +339,9 @@ void Logger::addErrorLineToDebugs() {
 
 void Logger::scrollUpDebugs() {
     unsigned slot;
-    for (slot = 0; slot < errorDebugSlots - 1; slot++) {
-        DataModelStringLeaf *toErrorDebug = errorDebugs[slot];
-        DataModelStringLeaf *fromErrorDebug = errorDebugs[slot + 1];
+    for (slot = 0; slot < logEntrySlots - 1; slot++) {
+        DataModelStringLeaf *toErrorDebug = sysLogEntries[slot];
+        DataModelStringLeaf *fromErrorDebug = sysLogEntries[slot + 1];
         *toErrorDebug = *fromErrorDebug;
     }
     errorsSetInDataModel--;
