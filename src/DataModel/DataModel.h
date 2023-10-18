@@ -57,6 +57,9 @@ extern DataModelUInt32Leaf sysBrokerMessagesReceived;
 extern DataModelUInt32Leaf sysBrokerMessagesSent;
 extern DataModelNode sysBrokerMessagesNode;
 
+extern DataModelUInt32Leaf sysBrokerSubscriptionsCount;
+extern DataModelNode sysBrokerSubscriptionsNode;
+
 extern DataModelUInt32Leaf sysBrokerUptime;
 extern DataModelStringLeaf sysBrokerVersion;
 extern DataModelNode sysBrokerNode;

@@ -136,6 +136,15 @@ DataModelElement *sysBrokerMessagesChildren[] = {
 };
 DataModelNode sysBrokerMessagesNode("messages", &sysBrokerNode, sysBrokerMessagesChildren);
 
+DataModelUInt32Leaf sysBrokerSubscriptionsCount("count", &sysBrokerSubscriptionsNode);
+
+DataModelElement *sysBrokerSubscriptionsChildren[] = {
+    &sysBrokerSubscriptionsCount,
+    NULL
+};
+DataModelNode sysBrokerSubscriptionsNode("subscriptions", &sysBrokerNode,
+                                         sysBrokerSubscriptionsChildren);
+
 DataModelUInt32Leaf sysBrokerUptime("uptime", &sysBrokerNode);
 static etl::string<maxVersionLength> sysBrokerVersionBuffer;
 DataModelStringLeaf sysBrokerVersion("version", &sysBrokerNode, sysBrokerVersionBuffer);
@@ -145,6 +154,7 @@ DataModelElement *sysBrokerChildren[] = {
     &sysBrokerSessionsNode,
     &sysBrokerClientsNode,
     &sysBrokerMessagesNode,
+    &sysBrokerSubscriptionsNode,
     &sysBrokerUptime,
     &sysBrokerVersion,
     NULL

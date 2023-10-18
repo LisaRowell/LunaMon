@@ -33,6 +33,9 @@ bool DataModelLeaf::addSubscriber(DataModelSubscriber &subscriber, uint32_t cook
         if (subscribers[subscriberPos] == NULL) {
             subscribers[subscriberPos] = &subscriber;
             cookies[subscriberPos] = cookie;
+
+            sysBrokerSubscriptionsCount++;
+
             return true;
         }
     }
@@ -59,13 +62,18 @@ void DataModelLeaf::unsubscribe(DataModelSubscriber &subscriber) {
     for (subscriberPos = 0; subscriberPos < maxDataModelSubscribers; subscriberPos++) {
         if (subscribers[subscriberPos] == &subscriber) {
             subscribers[subscriberPos] = NULL;
+            sysBrokerSubscriptionsCount--;
+
+            // We don't cache the full name of a topic, and instead store it in bits in the tree,
+            // so we don't log the full name. If we switch to storing the name, this debug could be
+            // made to be more specific
             logger << logDebugDataModel << "Client '" << subscriber.name()
                    << "' unscribed from topic ending in '" << elementName() << "'" << eol;
             return;
         }
     }
 
-    // MQTT protocol wide, tt's an acceptable occurance for a broker to receive an unsubscribe for
+    // MQTT protocol wise, it's an acceptable occurance for a broker to receive an unsubscribe for
     // a topic that it doesn't have an active subcription for. We didn't find the subscriber on the
     // topic, but just calmly return.
 }
@@ -152,16 +160,5 @@ void DataModelLeaf::unsubscribeIfMatching(const char *topicFilter,
 }
 
 void DataModelLeaf::unsubscribeAll(DataModelSubscriber &subscriber) {
-    unsigned subscriberIndex;
-    for (subscriberIndex = 0; subscriberIndex < maxDataModelSubscribers; subscriberIndex++) {
-        if (subscribers[subscriberIndex] == &subscriber) {
-            // We don't cache the full name of a topic, and instead store it in bits in the tree,
-            // so we don't log the full name. If we switch to storing the name, this debug could be
-            // made to be more specific
-            logger << logDebugDataModel << "Unsubscribing Client '" << subscriber.name()
-                   << "' from Topic ending in '" << elementName() << "'" << eol;
-
-            subscribers[subscriberIndex] = NULL;
-        }
-    }
+    unsubscribe(subscriber);
 }
