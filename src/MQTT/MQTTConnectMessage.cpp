@@ -52,9 +52,10 @@ bool MQTTConnectMessage::parse() {
         variableHeader->protocolName[2] != 'T' || variableHeader->protocolName[3] != 'T') {
         logger << logWarning
                << "Received MQTT CONNECT message with non MQTT protocol string: Length "
-               << protocolNameLength << "'"
-               << variableHeader->protocolName[0] << variableHeader->protocolName[1]
-               << variableHeader->protocolName[2] << variableHeader->protocolName[3] <<  "'" << eol;
+               << protocolNameLength << " '"
+               << (char)variableHeader->protocolName[0] << (char)variableHeader->protocolName[1]
+               << (char)variableHeader->protocolName[2] << (char)variableHeader->protocolName[3]
+               <<  "'" << eol;
         return false;
     }
 
