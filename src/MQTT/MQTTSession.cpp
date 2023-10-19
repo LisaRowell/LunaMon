@@ -72,7 +72,7 @@ void MQTTSession::service() {
     // Do things like timeout sessions whose connection died and hasn't returned.
     if (isConnected()) {
         if (keepAliveTimer.expired()) {
-            logger << logDebugMQTT << "Keep alive time expired for Client '" << clientID
+            logger << logNotify << "Keep alive time expired for Client '" << clientID
                    << "'. Disconnecting..." << eol;
             broker->terminateConnection(connection);
         }
