@@ -26,9 +26,8 @@
 MQTTMessage::MQTTMessage() : fixedHeader(NULL), length(0), fixedHdrSize(0), bytesAfterFixedHdr(0) {
 }
 
-MQTTMessage::MQTTMessage(uint8_t *messageData, uint32_t messageLength) :
-                         fixedHeader((MQTTFixedHeader *)messageData),
-                         length(messageLength) {
+MQTTMessage::MQTTMessage(uint8_t *messageData, uint32_t messageLength)
+    : fixedHeader((MQTTFixedHeader *)messageData), length(messageLength) {
     fixedHdrSize = fixedHeaderSize();
     bytesAfterFixedHdr = length - fixedHdrSize;
 
