@@ -35,6 +35,7 @@ void MQTTConnection::begin(WiFiClient &wifiClient) {
     mqttSession = NULL;
     remoteIPAddress = wifiClient.remoteIP();
     remotePort = wifiClient.remotePort();
+    resetMessageBuffer();
 }
 
 bool MQTTConnection::matches(WiFiClient &wifiClient) {
@@ -45,9 +46,9 @@ bool MQTTConnection::matches(WiFiClient &wifiClient) {
 bool MQTTConnection::readMessageData(MQTTMessage &message, bool &errorTerminateConnection) {
     errorTerminateConnection = false;
 
-    // To avoid multi-threading (which the WiFiNINA library would probably bard on),and to avoid
-    // twisted state machine code dealing with partial messages, we build up an incoming message in
-    // a buffer and when we have a complete one, let the broker deal with it.
+    // To avoid multi-threading (which the WiFiNINA library would probably barf on), and to avoid
+    // having twisted state machine code dealing with partial messages, we build up an incoming
+    // message in a buffer and when we have a complete one, let the broker deal with it.
     size_t bytesAvailable = (size_t)wifiClient.available();
 
     // MQTT has a leading header, called the Fixed Header, which has a variable length encoding of
