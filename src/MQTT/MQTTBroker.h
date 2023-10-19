@@ -73,8 +73,10 @@ class MQTTBroker : WiFiManagerClient, public StatsHolder {
         void cleanupLostConnection(MQTTConnection &connection);
         void invalidateSession(MQTTSession *session);
         void serviceSessions();
-        void serviceWiFiClientWithData(WiFiClient &wifiClient);
-        MQTTConnection *findExistingConnection(WiFiClient &wifiClient);
+        void serviceConnections();
+        void handleNewWiFiClient(WiFiClient &wifiClient);
+        void serviceConnection(MQTTConnection *connection);
+        bool wifiClientIsExistingConnection(WiFiClient &wifiClient);
         MQTTConnection *newConnection(WiFiClient &wifiClient);
         MQTTSession *findMatchingSession(const etl::istring &clientID);
         MQTTSession *findAvailableSession();

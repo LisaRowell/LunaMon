@@ -17,6 +17,7 @@
  */
 
 #include "MQTTConnection.h"
+#include "MQTTBroker.h"
 #include "MQTTMessage.h"
 
 #include "DataModel/DataModel.h"
@@ -38,18 +39,27 @@ void MQTTConnection::begin(WiFiClient &wifiClient) {
     resetMessageBuffer();
 }
 
+
 bool MQTTConnection::matches(WiFiClient &wifiClient) {
     return (this->wifiClient.remoteIP() == wifiClient.remoteIP() &&
             this->wifiClient.remotePort() == wifiClient.remotePort());
 }
 
+// Since we're receiving messages over TCP, even if it's a small message we have no guarantee that
+// the entire message will be available at this time. We use a buffer in the connection to read in
+// data, chunk by chunk, until an entire message is present, then process it. An alternative
+// implementation would be to use threads and let the thread block trying to read message data, but
+// it's not clear that the WiFiNINA library is thread safe (it's highly unlikely) and we're trying
+// to avoid multi-threading.
 bool MQTTConnection::readMessageData(MQTTMessage &message, bool &errorTerminateConnection) {
     errorTerminateConnection = false;
 
-    // To avoid multi-threading (which the WiFiNINA library would probably barf on), and to avoid
-    // having twisted state machine code dealing with partial messages, we build up an incoming
-    // message in a buffer and when we have a complete one, let the broker deal with it.
+    // We check for available data here and store the amount vs in the called and getting it as
+    // needed since wifiClient.available() is actually going out over the PCI bus, incurring waits.
     size_t bytesAvailable = (size_t)wifiClient.available();
+    if (bytesAvailable == 0) {
+        return false;
+    }
 
     // MQTT has a leading header, called the Fixed Header, which has a variable length encoding of
     // the number of bytes coming after the fixed header. This can be used to calculate the overall

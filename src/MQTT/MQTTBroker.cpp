@@ -91,16 +91,54 @@ void MQTTBroker::service() {
     }
 
     if (wifiIsConnected) {
-        bool sessionWasAvailable;
+        serviceConnections();
+
+        bool newClientRead;
         do {
+            // The WIFI NINA implementation as of version 1.8.13 has a very poor implementation
+            // of WiFiServer::available which will return the last client used if it happens to
+            // have data available, or, if not, a new client that was connect and has data
+            // available. It's as if this was implementing a combination of an accept and polling
+            // on a socket. The issue is if we rely on it for socket servicing we starve whatever
+            // socket wasn't last and if we service the sockets first then call available(), there
+            // is a race condition where new data arriving could still get us an old socket returned
+            // as if it's new. Additionally, if we have a client close, and the socket happens to
+            // get reused by some other WiFi client, such as the NMEA WiFi source, we could get
+            // back a WiFiClient from available() which isn't even an MQTT client at all. Sigh.
+
+            // Until the code is fixed (aka rewritten), we work around this problem by polling the
+            // previously connected WiFiClients first, to prevent an overlooked socket, then
+            // checking the WiFiClient received back from available() against existing clients on
+            // the WiFi to make sure what we get back is truely new.
+            // 
             WiFiClient wifiClient = wifiServer.available();
             if (wifiClient) {
-                serviceWiFiClientWithData(wifiClient);
-                sessionWasAvailable = true;
+                // We check here if the WiFiClient returned is an existing MQTT connection, but
+                // really we need to check if it's ANY existing WiFi client, including one for the
+                // NMEA over WiFi feed.
+                if (!wifiClientIsExistingConnection(wifiClient)) {
+                    handleNewWiFiClient(wifiClient);
+                    newClientRead = true;
+                } else {
+                    // The client is some existing WiFi client that happens to have been read last
+                    // and has data and is not actually new. Ignore it and let normal connection
+                    // servicing get out around the problem...hopefully.
+                    newClientRead = false;
+                }
             } else {
-                sessionWasAvailable = false;
+                newClientRead = false;
             }
-        } while (sessionWasAvailable);
+        } while (newClientRead);
+    }
+}
+
+void MQTTBroker::serviceConnections() {
+    unsigned connectionPos;
+    for (connectionPos = 0; connectionPos < maxMQTTSessions; connectionPos++) {
+        if (connectionValid[connectionPos]) {
+            MQTTConnection *connection = &connections[connectionPos];
+            serviceConnection(connection);
+        }
     }
 }
 
@@ -112,38 +150,36 @@ void MQTTBroker::exportStats(uint32_t msElapsed) {
     sysBrokerMessagesPublishDropped = publishMessagesDropped;
 }
 
-void MQTTBroker::serviceWiFiClientWithData(WiFiClient &wifiClient) {
-    // Some client has data for us. Given the wonkiness of the WiFiNINA api, we don't know if this
-    // is a new to us TCP connection or one we already know about. We do know that it has data ready
-    // to be read.
-    MQTTConnection *connection;
-    connection = findExistingConnection(wifiClient);
-    if (!connection) {
-        connection = newConnection(wifiClient);
-        if (connection == NULL) {
-            refuseIncomingWiFiClient(wifiClient);
-            return;
-        }
-        logger << logDebugMQTT << "Established MQTT Connection from " << connection->ipAddress()
-               << ":" << connection->port() << eol;
-    }
-
-    // Since we're receiving messages over TCP, even if it's a small message we have no guarantee
-    // that the entire message will be available at this time. We use a buffer in the connection to
-    // read in data, chunk by chunk, until an entire message is present, then process it. An
-    // alternative implementation would be to use threads and let the thread block trying to read
-    // message data, but it's not clear that the WiFiNINA library is thread safe (it's highly
-    // unlikely) and we're trying to avoid multi-threading.
-    bool errorTerminateConnection;
-    MQTTMessage message;
-    bool messageComplete = connection->readMessageData(message, errorTerminateConnection);
-    if (errorTerminateConnection) {
-        terminateConnection(connection);
+void MQTTBroker::handleNewWiFiClient(WiFiClient &wifiClient) {
+    MQTTConnection *connection = newConnection(wifiClient);
+    if (connection == NULL) {
+        refuseIncomingWiFiClient(wifiClient);
         return;
     }
-    if (messageComplete) {
-        messageReceived(connection, message);
-    }
+    logger << logDebugMQTT << "Established MQTT Connection from " << connection->ipAddress() << ":"
+           << connection->port() << eol;
+
+    serviceConnection(connection);
+}
+
+void MQTTBroker::serviceConnection(MQTTConnection *connection) {
+    // We loop here, getting all available messages out of the socket so that we reduce the risk
+    // of hitting the WiFi::available() bug where an existing connection is returned instead of
+    // a new connection. If we do hit it, we'll end up back here pulling the new message data and
+    // hopefully we won't start the new connection.
+    bool messageRead;
+    do {
+        bool errorTerminateConnection;
+        MQTTMessage message;
+        messageRead = connection->readMessageData(message, errorTerminateConnection);
+        if (errorTerminateConnection) {
+            terminateConnection(connection);
+            return;
+        }
+        if (messageRead) {
+            messageReceived(connection, message);
+        }
+    } while(messageRead);
 }
 
 void MQTTBroker::publishToConnection(MQTTConnection *connection, etl::istring &clientID,
@@ -202,18 +238,18 @@ void MQTTBroker::terminateSession(MQTTSession *session) {
     invalidateSession(session);
 }
 
-MQTTConnection *MQTTBroker::findExistingConnection(WiFiClient &wifiClient) {
+bool MQTTBroker::wifiClientIsExistingConnection(WiFiClient &wifiClient) {
     unsigned connectionIndex;
     for (connectionIndex = 0; connectionIndex < maxMQTTSessions; connectionIndex++) {
         if (connectionValid[connectionIndex]) {
             MQTTConnection *connection = &connections[connectionIndex];
             if (connection->matches(wifiClient)) {
-                return connection;
+                return true;
             }
         }
     }
 
-    return NULL;
+    return false;
 }
 
 MQTTConnection *MQTTBroker::newConnection(WiFiClient &wifiClient) {
