@@ -268,22 +268,40 @@ DataModelElement *sysNodeChildren[] = {
 };
 DataModelNode sysNode("$SYS", &dataModelRoot, sysNodeChildren);
 
-etl::string<coordinateLength> positionLatitudeBuffer;
-DataModelStringLeaf positionLatitude("latitude", &positionNode, positionLatitudeBuffer);
+etl::string<timeLength> gpsTimeBuffer;
+DataModelStringLeaf gpsTime("time", &gpsNode, gpsTimeBuffer);
+etl::string<dateLength> gpsDateBuffer;
+DataModelStringLeaf gpsDate("date", &gpsNode, gpsDateBuffer);
+DataModelBoolLeaf gpsDataValid("dataValid", &gpsNode);
+etl::string<coordinateLength> gpsLatitudeBuffer;
+DataModelStringLeaf gpsLatitude("latitude", &gpsNode, gpsLatitudeBuffer);
 etl::string<coordinateLength> positionLongitudeBuffer;
-DataModelStringLeaf positionLongitude("longitude", &positionNode, positionLongitudeBuffer);
-etl::string<timeLength> positionTimeBuffer;
-DataModelStringLeaf positionTime("time", &positionNode, positionTimeBuffer);
-DataModelUInt32Leaf positionDataValid("dataValid", &positionNode);
-etl::string<15> faaModeIndicatorBuffer;
-DataModelStringLeaf positionFAAModeindicator("faaModeIndicator", &positionNode,
-                                             faaModeIndicatorBuffer);
-DataModelTenthsUInt16Leaf positionSpeedOverGround("speedOverGround", &positionNode);
-DataModelTenthsUInt16Leaf positionCourseOverGround("courseOverGround", &positionNode);
-DataModelTenthsUInt16Leaf positionTrackMadeGood("trackMadeGood", &positionNode);
-etl::string<dateLength> positionDateBuffer;
-DataModelStringLeaf positionDate("date", &positionNode, positionDateBuffer);
-DataModelTenthsInt16Leaf positionMagneticVariation("magneticVariation", &positionNode);
+DataModelStringLeaf gpsLongitude("longitude", &gpsNode, positionLongitudeBuffer);
+DataModelTenthsUInt16Leaf gpsSpeedOverGround("speedOverGround", &gpsNode);
+DataModelTenthsUInt16Leaf gpsSpeedOverGroundKmPerH("speedOverGroundKmPerH", &gpsNode);
+DataModelTenthsUInt16Leaf gpsTrackMadeGoodTrue("trackMadeGoodTrue", &gpsNode);
+DataModelTenthsUInt16Leaf gpsTrackMadeGoodMagnetic("trackMadeGoodMagnetic", &gpsNode);
+DataModelTenthsInt16Leaf gpsMagneticVariation("magneticVariation", &gpsNode);
+etl::string<15> gpsFAAModeIndicatorBuffer;
+DataModelStringLeaf gpsFAAModeindicator("faaModeIndicator", &gpsNode,
+                                        gpsFAAModeIndicatorBuffer);
+
+DataModelElement *gpsNodeChildren[] = {
+    &gpsTime,
+    &gpsDate,
+    &gpsDataValid,
+    &gpsLatitude,
+    &gpsLongitude,
+    &gpsSpeedOverGround,
+    &gpsSpeedOverGroundKmPerH,
+    &gpsTrackMadeGoodTrue,
+    &gpsTrackMadeGoodMagnetic,
+    &gpsMagneticVariation,
+    &gpsFAAModeindicator,
+    NULL
+};
+DataModelNode gpsNode("gps", &dataModelRoot, gpsNodeChildren);
+
 etl::string<20> positionGPSQualityBuffer;
 DataModelStringLeaf positionGPSQuality("gpsQuality", &positionNode, positionGPSQualityBuffer);
 DataModelUInt16Leaf positionNumberSatellites("numberSatellites", &positionNode);
@@ -321,16 +339,6 @@ DataModelTenthsUInt16Leaf
     positionStandardDeviationOfAltitudeError("standardDeviationOfAltitudeError", &positionNode);
 
 DataModelElement *positionNodeChildren[] = {
-    &positionLatitude,
-    &positionLongitude,
-    &positionTime,
-    &positionDataValid,
-    &positionFAAModeindicator,
-    &positionSpeedOverGround,
-    &positionCourseOverGround,
-    &positionTrackMadeGood,
-    &positionDate,
-    &positionMagneticVariation,
     &positionGPSQuality,
     &positionNumberSatellites,
     &positionHorizontalDilutionOfPrecision,
@@ -360,6 +368,7 @@ DataModelNode navigationNode("navigation", &dataModelRoot, navigationNodeChildre
 
 DataModelElement *topNodeChildren[] = {
     &sysNode,
+    &gpsNode,
     &navigationNode,
     NULL
 };

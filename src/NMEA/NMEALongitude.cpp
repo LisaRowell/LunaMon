@@ -82,11 +82,11 @@ bool NMEALongitude::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *
 void NMEALongitude::publish(DataModelStringLeaf &leaf) const {
     switch (eastOrWest) {
         case EAST:
-            NMEACoordinate::publish(leaf, true);
+            NMEACoordinate::publish(leaf, "E");
             break;
 
         case WEST:
-            NMEACoordinate::publish(leaf, false);
+            NMEACoordinate::publish(leaf, "W");
     }
 }
 

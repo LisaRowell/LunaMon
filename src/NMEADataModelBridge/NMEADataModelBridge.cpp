@@ -91,9 +91,9 @@ void NMEADataModelBridge::processMessage(NMEAMessage *message) {
 }
 
 void NMEADataModelBridge::bridgeNMEAGGAMessage(NMEAGGAMessage *message) {
-    message->time.publish(positionTime);
-    message->latitude.publish(positionLatitude);
-    message->longitude.publish(positionLongitude);
+    message->time.publish(gpsTime);
+    message->latitude.publish(gpsLatitude);
+    message->longitude.publish(gpsLongitude);
     message->gpsQuality.publish(positionGPSQuality);
     message->numberSatellites.publish(positionNumberSatellites);
     message->horizontalDilutionOfPrecision.publish(positionHorizontalDilutionOfPrecision);
@@ -106,11 +106,11 @@ void NMEADataModelBridge::bridgeNMEAGGAMessage(NMEAGGAMessage *message) {
 }
 
 void NMEADataModelBridge::bridgeNMEAGLLMessage(NMEAGLLMessage *message) {
-    message->latitude.publish(positionLatitude);
-    message->longitude.publish(positionLongitude);
-    message->time.publish(positionTime);
-    message->dataValid.publish(positionDataValid);
-    message->faaModeIndicator.publish(positionFAAModeindicator);
+    message->latitude.publish(gpsLatitude);
+    message->longitude.publish(gpsLongitude);
+    message->time.publish(gpsTime);
+    message->dataValid.publish(gpsDataValid);
+    message->faaModeIndicator.publish(gpsFAAModeindicator);
 
     messagesBridgedCounter++;
 }
@@ -158,24 +158,25 @@ void NMEADataModelBridge::bridgeNMEAGSTMessage(NMEAGSTMessage *message) {
 }
 
 void NMEADataModelBridge::bridgeNMEARMCMessage(NMEARMCMessage *message) {
-    message->time.publish(positionTime);
-    message->dataValid.publish(positionDataValid);
-    message->latitude.publish(positionLatitude);
-    message->longitude.publish(positionLongitude);
-    message->speedOverGround.publish(positionSpeedOverGround);
-    message->trackMadeGood.publish(positionTrackMadeGood);
-    message->date.publish(positionDate);
-    message->magneticVariation.publish(positionMagneticVariation);
-    message->faaModeIndicator.publish(positionFAAModeindicator);
+    message->time.publish(gpsTime);
+    message->dataValid.publish(gpsDataValid);
+    message->latitude.publish(gpsLatitude);
+    message->longitude.publish(gpsLongitude);
+    message->speedOverGround.publish(gpsSpeedOverGround);
+    message->trackMadeGood.publish(gpsTrackMadeGoodTrue);
+    message->date.publish(gpsDate);
+    message->magneticVariation.publish(gpsMagneticVariation);
+    message->faaModeIndicator.publish(gpsFAAModeindicator);
 
     messagesBridgedCounter++;
 }
 
 void NMEADataModelBridge::bridgeNMEAVTGMessage(NMEAVTGMessage *message) {
-    message->trackMadeGood.publish(positionTrackMadeGood);
-    message->speedOverGround.publish(positionSpeedOverGround);
-    message->courseOverGroundMagnetic.publish(positionCourseOverGround);
-    message->faaModeIndicator.publish(positionFAAModeindicator);
+    message->trackMadeGoodTrue.publish(gpsTrackMadeGoodTrue);
+    message->trackMadeGoodMagnetic.publish(gpsTrackMadeGoodMagnetic);
+    message->speedOverGround.publish(gpsSpeedOverGround);
+    message->speedOverGroundKmPerH.publish(gpsSpeedOverGroundKmPerH);
+    message->faaModeIndicator.publish(gpsFAAModeindicator);
 
     messagesBridgedCounter++;
 }

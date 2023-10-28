@@ -36,7 +36,7 @@ class NMEACoordinate {
         bool setMinutes(const etl::string_view &minutesView);
         void log(Logger &logger) const;
         void snprint(char *string, size_t maxLength) const;
-        void publish(DataModelStringLeaf &leaf, bool isPositive) const;
+        void publish(DataModelStringLeaf &leaf, const char *suffix) const;
 };
 
 #endif

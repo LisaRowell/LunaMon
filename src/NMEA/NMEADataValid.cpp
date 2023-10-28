@@ -20,7 +20,7 @@
 #include "NMEALine.h"
 #include "NMEATalker.h"
 
-#include "DataModel/DataModelUInt32Leaf.h"
+#include "DataModel/DataModelBoolLeaf.h"
 
 #include "Util/Logger.h"
 
@@ -64,12 +64,8 @@ bool NMEADataValid::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *
     return true;
 }
 
-void NMEADataValid::publish(DataModelUInt32Leaf &leaf) const {
-    if (valid) {
-        leaf = 1;
-    } else {
-        leaf = 0;
-    }
+void NMEADataValid::publish(DataModelBoolLeaf &leaf) const {
+    leaf = valid;
 }
 
 void NMEADataValid::log(Logger &logger) const {

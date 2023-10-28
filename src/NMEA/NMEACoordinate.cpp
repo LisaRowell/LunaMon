@@ -89,17 +89,11 @@ void NMEACoordinate::log(Logger &logger) const {
     logger << coordinateStr;
 }
 
-// We publish coordinates as a string containing a signed, floating point number of degrees.
-// Clients are responsible for displaying the values in a way that matches the users preference.
-void NMEACoordinate::publish(DataModelStringLeaf &leaf, bool isPositive) const {
+void NMEACoordinate::publish(DataModelStringLeaf &leaf, const char *suffix) const {
     etl::string<coordinateLength> coordinateStr;
     etl::string_stream coordinateStream(coordinateStr);
 
-    if (!isPositive) {
-        coordinateStream << "-";
-    }
-    float coordinateFloat = degrees + minutes / 60;
-    coordinateStream << etl::setprecision(4) << coordinateFloat;
+    coordinateStream << degrees << "\xC2\xB0 " << etl::setprecision(4) << minutes << "' " << suffix;
 
     leaf = coordinateStr;
 }

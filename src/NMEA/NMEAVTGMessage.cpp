@@ -37,7 +37,7 @@ bool NMEAVTGMessage::parse(NMEALine &nmeaLine) {
         return false;
     }
 
-    if (!trackMadeGood.extract(nmeaLine, talker, "VTG", "Track Made Good", true)) {
+    if (!trackMadeGoodTrue.extract(nmeaLine, talker, "VTG", "Track Made Good", true)) {
         return false;
     }
 
@@ -58,7 +58,7 @@ bool NMEAVTGMessage::parse(NMEALine &nmeaLine) {
         }
     }
 
-    if (!courseOverGroundMagnetic.set(secondWordView, true)) {
+    if (!trackMadeGoodMagnetic.set(secondWordView, true)) {
         logger << logError << talker << " VTG message with a bad Course Over Ground, Magentic"
                << "'" << secondWordView << "'" << eol;
         return false;
@@ -80,7 +80,7 @@ bool NMEAVTGMessage::parse(NMEALine &nmeaLine) {
         }
     }
 
-    if (!speedOverGroundKm2.extract(nmeaLine, talker, "VTG", "Speed Over Ground km/s")) {
+    if (!speedOverGroundKmPerH.extract(nmeaLine, talker, "VTG", "Speed Over Ground km/h")) {
         return false;
     }
 
@@ -114,8 +114,9 @@ enum NMEAMsgType NMEAVTGMessage::type() const {
 }
 
 void NMEAVTGMessage::log() const {
-    logger << logDebugNMEA << talker << " VTG: " << trackMadeGood << " " << courseOverGroundMagnetic
-           << " " << speedOverGround << "kn " << speedOverGroundKm2 << "km/h";
+    logger << logDebugNMEA << talker << " VTG: " << trackMadeGoodTrue << " "
+           << trackMadeGoodMagnetic << " " << speedOverGround << "kn " << speedOverGroundKmPerH
+           << "km/h";
 
     if (faaModeIndicator.hasValue()) {
         logger << " " << faaModeIndicator;

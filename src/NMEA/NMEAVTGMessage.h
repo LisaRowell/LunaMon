@@ -27,10 +27,10 @@
 
 class NMEAVTGMessage : public NMEAMessage {
     private:
-        NMEATenthsUInt16 trackMadeGood;
-        NMEATenthsUInt16 courseOverGroundMagnetic;
+        NMEATenthsUInt16 trackMadeGoodTrue;
+        NMEATenthsUInt16 trackMadeGoodMagnetic;
         NMEATenthsUInt16 speedOverGround;
-        NMEATenthsUInt16 speedOverGroundKm2;
+        NMEATenthsUInt16 speedOverGroundKmPerH;
         NMEAFAAModeIndicator faaModeIndicator;
 
         bool wordIsT(const etl::string_view &word);

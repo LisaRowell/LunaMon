@@ -108,19 +108,22 @@ extern DataModelNode sysLogNode;
 
 extern DataModelNode sysNode;
 
-constexpr size_t coordinateLength = 40;
-extern DataModelStringLeaf positionLatitude;
-extern DataModelStringLeaf positionLongitude;
-constexpr size_t timeLength = 40;
-extern DataModelStringLeaf positionTime;
-extern DataModelUInt32Leaf positionDataValid;
-extern DataModelStringLeaf positionFAAModeindicator;
-extern DataModelTenthsUInt16Leaf positionSpeedOverGround;
-extern DataModelTenthsUInt16Leaf positionCourseOverGround;
-extern DataModelTenthsUInt16Leaf positionTrackMadeGood;
+constexpr size_t timeLength = 15;
+extern DataModelStringLeaf gpsTime;
 constexpr size_t dateLength = 10;
-extern DataModelStringLeaf positionDate;
-extern DataModelTenthsInt16Leaf positionMagneticVariation;
+extern DataModelStringLeaf gpsDate;
+extern DataModelBoolLeaf gpsDataValid;
+constexpr size_t coordinateLength = 20;
+extern DataModelStringLeaf gpsLatitude;
+extern DataModelStringLeaf gpsLongitude;
+extern DataModelTenthsUInt16Leaf gpsSpeedOverGround;
+extern DataModelTenthsUInt16Leaf gpsSpeedOverGroundKmPerH;
+extern DataModelTenthsUInt16Leaf gpsTrackMadeGoodTrue;
+extern DataModelTenthsUInt16Leaf gpsTrackMadeGoodMagnetic;
+extern DataModelTenthsInt16Leaf gpsMagneticVariation;
+extern DataModelStringLeaf gpsFAAModeindicator;
+extern DataModelNode gpsNode;
+
 extern DataModelStringLeaf positionGPSQuality;
 extern DataModelUInt16Leaf positionNumberSatellites;
 extern DataModelHundredthsUInt16Leaf positionHorizontalDilutionOfPrecision;

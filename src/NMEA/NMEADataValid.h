@@ -22,7 +22,7 @@
 #include "NMEALine.h"
 #include "NMEATalker.h"
 
-#include "DataModel/DataModelUInt32Leaf.h"
+#include "DataModel/DataModelBoolLeaf.h"
 
 #include "Util/LoggableItem.h"
 #include "Util/Logger.h"
@@ -38,7 +38,7 @@ class NMEADataValid : public LoggableItem {
     public:
         NMEADataValid();
         bool extract(NMEALine &nmeaLine, NMEATalker &talker, const char *msgType);
-        void publish(DataModelUInt32Leaf &leaf) const;
+        void publish(DataModelBoolLeaf &leaf) const;
         virtual void log(Logger &logger) const override;
 };
 

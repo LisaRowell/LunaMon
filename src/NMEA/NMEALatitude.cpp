@@ -85,11 +85,11 @@ bool NMEALatitude::extract(NMEALine &nmeaLine, NMEATalker &talker, const char *m
 void NMEALatitude::publish(DataModelStringLeaf &leaf) const {
     switch (northOrSouth) {
         case NORTH:
-            NMEACoordinate::publish(leaf, true);
+            NMEACoordinate::publish(leaf, "N");
             break;
 
         case SOUTH:
-            NMEACoordinate::publish(leaf, false);
+            NMEACoordinate::publish(leaf, "S");
     }
 }
 
