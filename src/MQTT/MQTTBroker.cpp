@@ -156,7 +156,7 @@ void MQTTBroker::handleNewWiFiClient(WiFiClient &wifiClient) {
         refuseIncomingWiFiClient(wifiClient);
         return;
     }
-    logger << logDebugMQTT << "Established MQTT Connection from " << connection->ipAddress() << ":"
+    logger << logNotify << "Established MQTT Connection from " << connection->ipAddress() << ":"
            << connection->port() << eol;
 
     serviceConnection(connection);
