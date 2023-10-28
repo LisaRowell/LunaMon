@@ -37,15 +37,18 @@ bool NMEADate::set(const etl::string_view &dateView) {
     }
 
     if (length != 6) {
+        hasValue = false;
         return false;
     }
 
     etl::string_view dayView(dateView.data(), dateView.data() + 2);
     etl::to_arithmetic_result<uint8_t> dayResult = etl::to_arithmetic<uint8_t>(dayView);
     if (!dayResult.has_value()) {
+        hasValue = false;
         return false;
     }
     if (dayResult.value() > 31) {
+        hasValue = false;
         return false;
     }
     day = dayResult.value();
@@ -53,9 +56,11 @@ bool NMEADate::set(const etl::string_view &dateView) {
     etl::string_view monthView(dateView.data() + 2, dateView.data() + 4);
     etl::to_arithmetic_result<uint8_t> monthResult = etl::to_arithmetic<uint8_t>(monthView);
     if (!monthResult.has_value()) {
+        hasValue = false;
         return false;
     }
     if (monthResult.value() > 12) {
+        hasValue = false;
         return false;
     }
     month = monthResult.value();
@@ -65,9 +70,11 @@ bool NMEADate::set(const etl::string_view &dateView) {
     etl::string_view yearView(dateView.data() + 4, dateView.data() + 6);
     etl::to_arithmetic_result<uint8_t> yearResult = etl::to_arithmetic<uint8_t>(yearView);
     if (!yearResult.has_value()) {
+        hasValue = false;
         return false;
     }
     year = yearResult.value() + century;
+    hasValue = true;
 
     return true;
 }
