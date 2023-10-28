@@ -37,7 +37,7 @@ bool NMEAVTGMessage::parse(NMEALine &nmeaLine) {
         return false;
     }
 
-    if (!trackMadeGood.extract(nmeaLine, talker, "VTG", "Track Made Good")) {
+    if (!trackMadeGood.extract(nmeaLine, talker, "VTG", "Track Made Good", true)) {
         return false;
     }
 
