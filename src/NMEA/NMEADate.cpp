@@ -105,6 +105,6 @@ void NMEADate::log(Logger &logger) const {
     if (hasValue) {
         logger << month / 10 << month % 10 << "/" << day / 10 << day % 10 << "/" << year;
     } else {
-        logger << "Unknown\xC2\xB0";
+        logger << "Unknown";
     }
 }

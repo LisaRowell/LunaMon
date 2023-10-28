@@ -129,6 +129,6 @@ void NMEAMagneticVariation::log(Logger &logger) const {
     if (hasValue) {
         logger << direction << "." << tenths << "\xC2\xB0";
     } else {
-        logger << "Unknown\xC2\xB0";
+        logger << "Unknown";
     }
 }
