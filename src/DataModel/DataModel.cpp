@@ -277,6 +277,7 @@ etl::string<coordinateLength> gpsLatitudeBuffer;
 DataModelStringLeaf gpsLatitude("latitude", &gpsNode, gpsLatitudeBuffer);
 etl::string<coordinateLength> positionLongitudeBuffer;
 DataModelStringLeaf gpsLongitude("longitude", &gpsNode, positionLongitudeBuffer);
+DataModelTenthsInt16Leaf gpsAltitude("altitude", &gpsNode);
 DataModelTenthsUInt16Leaf gpsSpeedOverGround("speedOverGround", &gpsNode);
 DataModelTenthsUInt16Leaf gpsSpeedOverGroundKmPerH("speedOverGroundKmPerH", &gpsNode);
 DataModelTenthsUInt16Leaf gpsTrackMadeGoodTrue("trackMadeGoodTrue", &gpsNode);
@@ -285,6 +286,37 @@ DataModelTenthsInt16Leaf gpsMagneticVariation("magneticVariation", &gpsNode);
 etl::string<15> gpsFAAModeIndicatorBuffer;
 DataModelStringLeaf gpsFAAModeindicator("faaModeIndicator", &gpsNode,
                                         gpsFAAModeIndicatorBuffer);
+etl::string<20> gpsGPSQualityBuffer;
+DataModelStringLeaf gpsGPSQuality("gpsQuality", &gpsNode, gpsGPSQualityBuffer);
+DataModelUInt16Leaf gpsNumberSatellites("numberSatellites", &gpsNode);
+DataModelHundredthsUInt16Leaf gpsHorizontalDilutionOfPrecision("horizontalDilutionOfPrecision",
+                                                               &gpsNode);
+DataModelTenthsInt16Leaf gpsGeoidalSeparation("geoidalSeparation", &gpsNode);
+DataModelTenthsUInt16Leaf gpsDataAge("dataAge", &gpsNode);
+DataModelUInt16Leaf gpsDifferentialReferenceStation("differentialReferenceStation", &gpsNode);
+etl::string<9> gpsSatelliteSelectionModeBuffer;
+DataModelStringLeaf gpsSatelliteSelectionMode("satelliteSelectionMode", &gpsNode,
+                                              gpsSatelliteSelectionModeBuffer);
+etl::string<4> gpsFixModeBuffer;
+DataModelStringLeaf gpsFixMode("fixMode", &gpsNode, gpsFixModeBuffer);
+etl::string<activeSatellitesLength> gpsActiveSatellitesBuffer;
+DataModelStringLeaf gpsActiveSatellites("activeSatellites", &gpsNode, gpsActiveSatellitesBuffer);
+DataModelHundredthsUInt8Leaf gpsPDOP("pdop", &gpsNode);
+DataModelHundredthsUInt8Leaf gpsHDOP("hdop", &gpsNode);
+DataModelHundredthsUInt8Leaf gpsVDOP("vdop", &gpsNode);
+DataModelTenthsUInt16Leaf gpsStandardDeviationOfRangeInputsRMS("standardDeviationOfRangeInputsRMS",
+                                                               &gpsNode);
+DataModelTenthsUInt16Leaf gpsStandardDeviationOfSemiMajorAxis("standardDeviationOfSemiMajorAxis",
+                                                              &gpsNode);
+DataModelTenthsUInt16Leaf gpsStandardDeviationOfSemiMinorAxis("standardDeviationOfSemiMinorAxis",
+                                                              &gpsNode);
+DataModelTenthsUInt16Leaf gpsOrientationOfSemiMajorAxis("orientationOfSemiMajorAxis", &gpsNode);
+DataModelTenthsUInt16Leaf gpsStandardDeviationOfLatitudeError("standardDeviationOfLatitudeError",
+                                                              &gpsNode);
+DataModelTenthsUInt16Leaf gpsStandardDeviationOfLongitudeError("standardDeviationOfLongitudeError",
+                                                               &gpsNode);
+DataModelTenthsUInt16Leaf gpsStandardDeviationOfAltitudeError("standardDeviationOfAltitudeError",
+                                                              &gpsNode);
 
 DataModelElement *gpsNodeChildren[] = {
     &gpsTime,
@@ -292,84 +324,39 @@ DataModelElement *gpsNodeChildren[] = {
     &gpsDataValid,
     &gpsLatitude,
     &gpsLongitude,
+    &gpsAltitude,
     &gpsSpeedOverGround,
     &gpsSpeedOverGroundKmPerH,
     &gpsTrackMadeGoodTrue,
     &gpsTrackMadeGoodMagnetic,
     &gpsMagneticVariation,
     &gpsFAAModeindicator,
+    &gpsGPSQuality,
+    &gpsNumberSatellites,
+    &gpsHorizontalDilutionOfPrecision,
+    &gpsGeoidalSeparation,
+    &gpsDataAge,
+    &gpsDifferentialReferenceStation,
+    &gpsSatelliteSelectionMode,
+    &gpsFixMode,
+    &gpsActiveSatellites,
+    &gpsPDOP,
+    &gpsHDOP,
+    &gpsVDOP,
+    &gpsStandardDeviationOfRangeInputsRMS,
+    &gpsStandardDeviationOfSemiMajorAxis,
+    &gpsStandardDeviationOfSemiMinorAxis,
+    &gpsOrientationOfSemiMajorAxis,
+    &gpsStandardDeviationOfLatitudeError,
+    &gpsStandardDeviationOfLongitudeError,
+    &gpsStandardDeviationOfAltitudeError,
     NULL
 };
 DataModelNode gpsNode("gps", &dataModelRoot, gpsNodeChildren);
 
-etl::string<20> positionGPSQualityBuffer;
-DataModelStringLeaf positionGPSQuality("gpsQuality", &positionNode, positionGPSQualityBuffer);
-DataModelUInt16Leaf positionNumberSatellites("numberSatellites", &positionNode);
-DataModelHundredthsUInt16Leaf positionHorizontalDilutionOfPrecision("horizontalDilutionOfPrecision",
-                                                                    &positionNode);
-DataModelTenthsInt16Leaf positionAntennaAltitude("antennaAltitude", &positionNode);
-DataModelTenthsInt16Leaf positionGeoidalSeparation("geoidalSeparation", &positionNode);
-DataModelTenthsUInt16Leaf positionGPSDataAge("gpsDataAge", &positionNode);
-DataModelUInt16Leaf positionDifferentialReferenceStation("differentialReferenceStation",
-                                                         &positionNode);
-etl::string<9> positionSatelliteSelectionModeBuffer;
-DataModelStringLeaf positionSatelliteSelectionMode("satelliteSelectionMode", &positionNode,
-                                                   positionSatelliteSelectionModeBuffer);
-etl::string<4> positionFixModeBuffer;
-DataModelStringLeaf positionFixMode("fixMode", &positionNode, positionFixModeBuffer);
-etl::string<activeSatellitesLength> positionActiveSatellitesBuffer;
-DataModelStringLeaf positionActiveSatellites("activeSatellites", &positionNode,
-                                             positionActiveSatellitesBuffer);
-DataModelHundredthsUInt8Leaf positionPDOP("pdop", &positionNode);
-DataModelHundredthsUInt8Leaf positionHDOP("hdop", &positionNode);
-DataModelHundredthsUInt8Leaf positionVDOP("vdop", &positionNode);
-DataModelTenthsUInt16Leaf
-    positionStandardDeviationOfRangeInputsRMS("standardDeviationOfRangeInputsRMS", &positionNode);
-DataModelTenthsUInt16Leaf
-    positionStandardDeviationOfSemiMajorAxis("standardDeviationOfSemiMajorAxis", &positionNode);
-DataModelTenthsUInt16Leaf
-    positionStandardDeviationOfSemiMinorAxis("standardDeviationOfSemiMinorAxis", &positionNode);
-DataModelTenthsUInt16Leaf positionOrientationOfSemiMajorAxis("orientationOfSemiMajorAxis",
-                                                             &positionNode);
-DataModelTenthsUInt16Leaf
-    positionStandardDeviationOfLatitudeError("standardDeviationOfLatitudeError", &positionNode);
-DataModelTenthsUInt16Leaf
-    positionStandardDeviationOfLongitudeError("standardDeviationOfLongitudeError", &positionNode);
-DataModelTenthsUInt16Leaf
-    positionStandardDeviationOfAltitudeError("standardDeviationOfAltitudeError", &positionNode);
-
-DataModelElement *positionNodeChildren[] = {
-    &positionGPSQuality,
-    &positionNumberSatellites,
-    &positionHorizontalDilutionOfPrecision,
-    &positionAntennaAltitude,
-    &positionGeoidalSeparation,
-    &positionGPSDataAge,
-    &positionDifferentialReferenceStation,
-    &positionSatelliteSelectionMode,
-    &positionFixMode,
-    &positionActiveSatellites,
-    &positionPDOP,
-    &positionHDOP,
-    &positionVDOP,
-    &positionStandardDeviationOfRangeInputsRMS,
-    &positionStandardDeviationOfSemiMajorAxis,
-    &positionStandardDeviationOfSemiMinorAxis,
-    &positionOrientationOfSemiMajorAxis,
-    &positionStandardDeviationOfLatitudeError,
-    &positionStandardDeviationOfLongitudeError,
-    &positionStandardDeviationOfAltitudeError,
-    NULL
-};
-DataModelNode positionNode("position", &navigationNode, positionNodeChildren);
-
-DataModelElement *navigationNodeChildren[] = { &positionNode, NULL };
-DataModelNode navigationNode("navigation", &dataModelRoot, navigationNodeChildren);
-
 DataModelElement *topNodeChildren[] = {
     &sysNode,
     &gpsNode,
-    &navigationNode,
     NULL
 };
 DataModelRoot dataModelRoot(topNodeChildren);

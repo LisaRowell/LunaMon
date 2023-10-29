@@ -94,13 +94,13 @@ void NMEADataModelBridge::bridgeNMEAGGAMessage(NMEAGGAMessage *message) {
     message->time.publish(gpsTime);
     message->latitude.publish(gpsLatitude);
     message->longitude.publish(gpsLongitude);
-    message->gpsQuality.publish(positionGPSQuality);
-    message->numberSatellites.publish(positionNumberSatellites);
-    message->horizontalDilutionOfPrecision.publish(positionHorizontalDilutionOfPrecision);
-    message->antennaAltitude.publish(positionAntennaAltitude);
-    message->geoidalSeparation.publish(positionGeoidalSeparation);
-    message->gpsDataAge.publish(positionGPSDataAge);
-    message->differentialReferenceStation.publish(positionDifferentialReferenceStation);
+    message->gpsQuality.publish(gpsGPSQuality);
+    message->numberSatellites.publish(gpsNumberSatellites);
+    message->horizontalDilutionOfPrecision.publish(gpsHorizontalDilutionOfPrecision);
+    message->antennaAltitude.publish(gpsAltitude);
+    message->geoidalSeparation.publish(gpsGeoidalSeparation);
+    message->gpsDataAge.publish(gpsDataAge);
+    message->differentialReferenceStation.publish(gpsDifferentialReferenceStation);
 
     messagesBridgedCounter++;
 }
@@ -115,13 +115,16 @@ void NMEADataModelBridge::bridgeNMEAGLLMessage(NMEAGLLMessage *message) {
     messagesBridgedCounter++;
 }
 
+// The Vesper GPS receivers, and possibly others, emit back to back GSA messages with two sets of
+// satellite IDs. This should be somehow detected so that the two groups can be concatenated
+// together.
 void NMEADataModelBridge::bridgeNMEAGSAMessage(NMEAGSAMessage *message) {
     if (message->automaticMode) {
-        positionSatelliteSelectionMode = "Automatic";
+        gpsSatelliteSelectionMode = "Automatic";
     } else {
-        positionSatelliteSelectionMode = "Manual";
+        gpsSatelliteSelectionMode = "Manual";
     }
-    message->gpsFixMode.publish(positionFixMode);
+    message->gpsFixMode.publish(gpsFixMode);
 
     etl::string<activeSatellitesLength> activeSatellitesStr;
     etl::string_stream activeSatellitesStrStream(activeSatellitesStr);
@@ -137,22 +140,22 @@ void NMEADataModelBridge::bridgeNMEAGSAMessage(NMEAGSAMessage *message) {
         }
     }
 
-    positionActiveSatellites = activeSatellitesStr;
+    gpsActiveSatellites = activeSatellitesStr;
 
-    message->pdop.publish(positionPDOP);
-    message->hdop.publish(positionHDOP);
-    message->vdop.publish(positionVDOP);
+    message->pdop.publish(gpsPDOP);
+    message->hdop.publish(gpsHDOP);
+    message->vdop.publish(gpsVDOP);
 
     messagesBridgedCounter++;
 }
 void NMEADataModelBridge::bridgeNMEAGSTMessage(NMEAGSTMessage *message) {
-    message->standardDeviationOfRangeInputsRMS.publish(positionStandardDeviationOfRangeInputsRMS);
-    message->standardDeviationOfSemiMajorAxis.publish(positionStandardDeviationOfSemiMajorAxis);
-    message->standardDeviationOfSemiMinorAxis.publish(positionStandardDeviationOfSemiMinorAxis);
-    message->orientationOfSemiMajorAxis.publish(positionOrientationOfSemiMajorAxis);
-    message->standardDeviationOfLatitudeError.publish(positionStandardDeviationOfLatitudeError);
-    message->standardDeviationOfLongitudeError.publish(positionStandardDeviationOfLongitudeError);
-    message->standardDeviationOfAltitudeError.publish(positionStandardDeviationOfAltitudeError);
+    message->standardDeviationOfRangeInputsRMS.publish(gpsStandardDeviationOfRangeInputsRMS);
+    message->standardDeviationOfSemiMajorAxis.publish(gpsStandardDeviationOfSemiMajorAxis);
+    message->standardDeviationOfSemiMinorAxis.publish(gpsStandardDeviationOfSemiMinorAxis);
+    message->orientationOfSemiMajorAxis.publish(gpsOrientationOfSemiMajorAxis);
+    message->standardDeviationOfLatitudeError.publish(gpsStandardDeviationOfLatitudeError);
+    message->standardDeviationOfLongitudeError.publish(gpsStandardDeviationOfLongitudeError);
+    message->standardDeviationOfAltitudeError.publish(gpsStandardDeviationOfAltitudeError);
 
     messagesBridgedCounter++;
 }
