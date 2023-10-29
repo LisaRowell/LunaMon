@@ -37,7 +37,7 @@ NMEARMCMessage::NMEARMCMessage(NMEATalker &talker) : NMEAMessage(talker) {
 
 bool NMEARMCMessage::parse(NMEALine &nmeaLine) {
     if (nmeaLine.isEncapsulatedData()) {
-        logger << logWarning << talker << " GSA message in unsupported encapsulated format" << eol;
+        logger << logWarning << talker << " RMC message in unsupported encapsulated format" << eol;
         return false;
     }
 
