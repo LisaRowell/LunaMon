@@ -354,9 +354,55 @@ DataModelElement *gpsNodeChildren[] = {
 };
 DataModelNode gpsNode("gps", &dataModelRoot, gpsNodeChildren);
 
+DataModelTenthsUInt16Leaf depthBelowTransducerFeet("feet", &depthBelowTransducerNode);
+DataModelTenthsUInt16Leaf depthBelowTransducerMeters("meters", &depthBelowTransducerNode);
+DataModelTenthsUInt16Leaf depthBelowTransducerFathoms("fathoms", &depthBelowTransducerNode);
+
+DataModelElement *depthBelowTransducerNodeChildren[] = {
+    &depthBelowTransducerFeet,
+    &depthBelowTransducerMeters,
+    &depthBelowTransducerFathoms,
+    NULL,
+};
+DataModelNode depthBelowTransducerNode("belowTransducer", &depthNode,
+                                       depthBelowTransducerNodeChildren);
+
+DataModelTenthsUInt16Leaf depthBelowKeelFeet("feet", &depthBelowKeelNode);
+DataModelTenthsUInt16Leaf depthBelowKeelMeters("meters", &depthBelowKeelNode);
+DataModelTenthsUInt16Leaf depthBelowKeelFathoms("fathoms", &depthBelowKeelNode);
+
+DataModelElement *depthBelowKeelNodeChildren[] = {
+    &depthBelowKeelFeet,
+    &depthBelowKeelMeters,
+    &depthBelowKeelFathoms,
+    NULL,
+};
+DataModelNode depthBelowKeelNode("belowKeel", &depthNode, depthBelowKeelNodeChildren);
+
+DataModelTenthsUInt16Leaf depthBelowSurfaceFeet("feet", &depthBelowSurfaceNode);
+DataModelTenthsUInt16Leaf depthBelowSurfaceMeters("meters", &depthBelowSurfaceNode);
+DataModelTenthsUInt16Leaf depthBelowSurfaceFathoms("fathoms", &depthBelowSurfaceNode);
+
+DataModelElement *depthBelowSurfaceNodeChildren[] = {
+    &depthBelowSurfaceFeet,
+    &depthBelowSurfaceMeters,
+    &depthBelowSurfaceFathoms,
+    NULL,
+};
+DataModelNode depthBelowSurfaceNode("belowSurface", &depthNode, depthBelowSurfaceNodeChildren);
+
+DataModelElement *depthNodeChildren[] = {
+    &depthBelowTransducerNode,
+    &depthBelowKeelNode,
+    &depthBelowSurfaceNode,
+    NULL,
+};
+DataModelNode depthNode("depth", &dataModelRoot, depthNodeChildren);
+
 DataModelElement *topNodeChildren[] = {
     &sysNode,
     &gpsNode,
+    &depthNode,
     NULL
 };
 DataModelRoot dataModelRoot(topNodeChildren);

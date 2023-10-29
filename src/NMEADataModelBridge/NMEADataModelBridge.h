@@ -19,6 +19,9 @@
 #ifndef NMEA_DATA_MODEL_BRIDGE_H
 #define NMEA_DATA_MODEL_BRIDGE_H
 
+class NMEADBKMessage;
+class NMEADBSMessage;
+class NMEADBTMessage;
 class NMEAGGAMessage;
 class NMEAGLLMessage;
 class NMEAGSAMessage;
@@ -38,6 +41,9 @@ class NMEADataModelBridge : public NMEAMessageHandler, public StatsHolder {
     private:
         StatCounter messagesBridgedCounter;
 
+        void bridgeNMEADBKMessage(NMEADBKMessage *message);
+        void bridgeNMEADBSMessage(NMEADBSMessage *message);
+        void bridgeNMEADBTMessage(NMEADBTMessage *message);
         void bridgeNMEAGGAMessage(NMEAGGAMessage *message);
         void bridgeNMEAGLLMessage(NMEAGLLMessage *message);
         void bridgeNMEAGSAMessage(NMEAGSAMessage *message);

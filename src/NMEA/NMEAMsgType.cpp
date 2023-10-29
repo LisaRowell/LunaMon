@@ -23,7 +23,13 @@
 #include <etl/string.h>
 
 enum NMEAMsgType parseNMEAMsgType(const etl::istring &msgTypeStr) {
-    if (msgTypeStr == "GGA") {
+    if (msgTypeStr == "DBK") {
+        return NMEA_MSG_TYPE_DBK;
+    } else if (msgTypeStr == "DBS") {
+        return NMEA_MSG_TYPE_DBS;
+    } else if (msgTypeStr == "DBT") {
+        return NMEA_MSG_TYPE_DBT;
+    } else if (msgTypeStr == "GGA") {
         return NMEA_MSG_TYPE_GGA;
     } else if (msgTypeStr == "GLL") {
         return NMEA_MSG_TYPE_GLL;
@@ -52,6 +58,12 @@ const char *nmeaMsgTypeName(NMEAMsgType msgType) {
     switch (msgType) {
         case NMEA_MSG_TYPE_UNKNOWN:
             return "Unknown";
+        case NMEA_MSG_TYPE_DBK:
+            return "DBK";
+        case NMEA_MSG_TYPE_DBS:
+            return "DBS";
+        case NMEA_MSG_TYPE_DBT:
+            return "DBT";
         case NMEA_MSG_TYPE_GGA:
             return "GGA";
         case NMEA_MSG_TYPE_GLL:

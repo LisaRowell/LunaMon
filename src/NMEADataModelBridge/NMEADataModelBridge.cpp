@@ -20,6 +20,9 @@
 
 #include "NMEA/NMEAMessage.h"
 #include "NMEA/NMEAMsgType.h"
+#include "NMEA/NMEADBKMessage.h"
+#include "NMEA/NMEADBSMessage.h"
+#include "NMEA/NMEADBTMessage.h"
 #include "NMEA/NMEAGGAMessage.h"
 #include "NMEA/NMEAGLLMessage.h"
 #include "NMEA/NMEAGSAMessage.h"
@@ -51,6 +54,18 @@ void NMEADataModelBridge::processMessage(NMEAMessage *message) {
     // unnecessarily.
     const NMEAMsgType msgType = message->type();
     switch (msgType) {
+        case NMEA_MSG_TYPE_DBK:
+            bridgeNMEADBKMessage((NMEADBKMessage *)message);
+            break;
+
+        case NMEA_MSG_TYPE_DBS:
+            bridgeNMEADBSMessage((NMEADBSMessage *)message);
+            break;
+
+        case NMEA_MSG_TYPE_DBT:
+            bridgeNMEADBTMessage((NMEADBTMessage *)message);
+            break;
+
         case NMEA_MSG_TYPE_GGA:
             bridgeNMEAGGAMessage((NMEAGGAMessage *)message);
             break;
@@ -88,6 +103,30 @@ void NMEADataModelBridge::processMessage(NMEAMessage *message) {
             logger << logWarning << "Unhandled " << message->source() << " "
                    << nmeaMsgTypeName(msgType) << " message in NMEA->Data Model Bridge" << eol;
     }
+}
+
+void NMEADataModelBridge::bridgeNMEADBKMessage(NMEADBKMessage *message) {
+    message->depthFeet.publish(depthBelowKeelFeet);
+    message->depthMeters.publish(depthBelowKeelMeters);
+    message->depthFathoms.publish(depthBelowKeelFathoms);
+
+    messagesBridgedCounter++;
+}
+
+void NMEADataModelBridge::bridgeNMEADBSMessage(NMEADBSMessage *message) {
+    message->depthFeet.publish(depthBelowSurfaceFeet);
+    message->depthMeters.publish(depthBelowSurfaceMeters);
+    message->depthFathoms.publish(depthBelowSurfaceFathoms);
+
+    messagesBridgedCounter++;
+}
+
+void NMEADataModelBridge::bridgeNMEADBTMessage(NMEADBTMessage *message) {
+    message->depthFeet.publish(depthBelowTransducerFeet);
+    message->depthMeters.publish(depthBelowTransducerMeters);
+    message->depthFathoms.publish(depthBelowTransducerFathoms);
+
+    messagesBridgedCounter++;
 }
 
 void NMEADataModelBridge::bridgeNMEAGGAMessage(NMEAGGAMessage *message) {

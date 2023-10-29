@@ -145,6 +145,23 @@ extern DataModelTenthsUInt16Leaf gpsStandardDeviationOfLongitudeError;
 extern DataModelTenthsUInt16Leaf gpsStandardDeviationOfAltitudeError;
 extern DataModelNode gpsNode;
 
+extern DataModelTenthsUInt16Leaf depthBelowTransducerFeet;
+extern DataModelTenthsUInt16Leaf depthBelowTransducerMeters;
+extern DataModelTenthsUInt16Leaf depthBelowTransducerFathoms;
+extern DataModelNode depthBelowTransducerNode;
+
+extern DataModelTenthsUInt16Leaf depthBelowKeelFeet;
+extern DataModelTenthsUInt16Leaf depthBelowKeelMeters;
+extern DataModelTenthsUInt16Leaf depthBelowKeelFathoms;
+extern DataModelNode depthBelowKeelNode;
+
+extern DataModelTenthsUInt16Leaf depthBelowSurfaceFeet;
+extern DataModelTenthsUInt16Leaf depthBelowSurfaceMeters;
+extern DataModelTenthsUInt16Leaf depthBelowSurfaceFathoms;
+extern DataModelNode depthBelowSurfaceNode;
+
+extern DataModelNode depthNode;
+
 extern DataModelRoot dataModelRoot;
 
 const unsigned maxDataModelClients = 2;

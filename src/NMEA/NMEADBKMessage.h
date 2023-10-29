@@ -1,6 +1,6 @@
 /*
  * This file is part of LunaMon (https://github.com/LisaRowell/LunaMon)
- * Copyright (C) 2021-2023 Lisa Rowell
+ * Copyright (C) 2023 Lisa Rowell
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,29 +16,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NMEA_MSG_TYPE_H
-#define NMEA_MSG_TYPE_H
+#ifndef NMEA_DBK_MESSAGE_H
+#define NMEA_DBK_MESSAGE_H
 
-#include <etl/string.h>
+#include "NMEAMessage.h"
 
-enum NMEAMsgType {
-    NMEA_MSG_TYPE_UNKNOWN,
-    NMEA_MSG_TYPE_DBK,
-    NMEA_MSG_TYPE_DBS,
-    NMEA_MSG_TYPE_DBT,
-    NMEA_MSG_TYPE_GGA,
-    NMEA_MSG_TYPE_GLL,
-    NMEA_MSG_TYPE_GSA,
-    NMEA_MSG_TYPE_GST,
-    NMEA_MSG_TYPE_GSV,
-    NMEA_MSG_TYPE_RMC,
-    NMEA_MSG_TYPE_TXT,
-    NMEA_MSG_TYPE_VDM,
-    NMEA_MSG_TYPE_VDO,
-    NMEA_MSG_TYPE_VTG
+#include "NMEATenthsUInt16.h"
+#include "NMEATalker.h"
+#include "NMEALine.h"
+
+class NMEADBKMessage : public NMEAMessage {
+    private:
+        NMEATenthsUInt16 depthFeet;
+        NMEATenthsUInt16 depthMeters;
+        NMEATenthsUInt16 depthFathoms;
+
+    public:
+        NMEADBKMessage(NMEATalker &talker);
+        bool parse(NMEALine &nmeaLine);
+        virtual enum NMEAMsgType type() const override;
+        virtual void log() const override;
+
+    friend class NMEADataModelBridge;
 };
 
-enum NMEAMsgType parseNMEAMsgType(const etl::istring &msgTypeStr);
-const char *nmeaMsgTypeName(NMEAMsgType msgType);
+extern NMEADBKMessage *parseNMEADBKMessage(NMEATalker &talker, NMEALine &nmeaLine);
 
-#endif
+#endif //NMEA_DBK_MESSAGE_H

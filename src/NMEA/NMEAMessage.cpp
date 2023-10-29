@@ -20,6 +20,9 @@
 #include "NMEAMessage.h"
 #include "NMEATalker.h"
 #include "NMEAMsgType.h"
+#include "NMEADBKMessage.h"
+#include "NMEADBSMessage.h"
+#include "NMEADBTMessage.h"
 #include "NMEAGGAMessage.h"
 #include "NMEAGLLMessage.h"
 #include "NMEAGSAMessage.h"
@@ -78,6 +81,15 @@ NMEAMessage *parseNMEAMessage(NMEALine &nmeaLine) {
     enum NMEAMsgType msgType = parseNMEAMsgType(msgTypeStr);
 
     switch (msgType) {
+        case NMEA_MSG_TYPE_DBK:
+            return parseNMEADBKMessage(talker, nmeaLine);
+
+        case NMEA_MSG_TYPE_DBS:
+            return parseNMEADBSMessage(talker, nmeaLine);
+
+        case NMEA_MSG_TYPE_DBT:
+            return parseNMEADBTMessage(talker, nmeaLine);
+
         case NMEA_MSG_TYPE_GGA:
             return parseNMEAGGAMessage(talker, nmeaLine);
 
